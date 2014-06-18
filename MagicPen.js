@@ -50,12 +50,22 @@
         }
     }
 
+    // ansi
     addStyle(defaults, 'ansi', 'red', function (text) {
         return '\x1B[31m' + text + '\x1B[39m';
     });
 
     addStyle(defaults, 'ansi', 'green', function (text) {
         return '\x1B[32m' + text + '\x1B[39m';
+    });
+
+    // html
+    addStyle(defaults, 'html', 'red', function (text) {
+        return '<span style="color: red">' + text + '</span>';
+    });
+
+    addStyle(defaults, 'html', 'green', function (text) {
+        return '<span style="color: green">' + text + '</span>';
     });
 
     function MagicPen(mode) {
