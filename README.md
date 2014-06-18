@@ -3,11 +3,11 @@ var MagicPen = require('MagicPen')
 
 var pen = new MagicPen('ansi');
 
-pen.keyword('Person').space().operator('{').nl()
+pen.keyword('Person').sp().operator('{').nl()
         .indent()
-            .key('name').operator(':').space().string("'Sune Simonsen'").nl()
-            .key('age').operator(':').space().number(34).nl()
-            .key('kids').operator(':').space().operator('[').string("'Svea Skude Simonsen'").operator(']').nl()
+            .key('name').operator(':').sp().string("'Sune Simonsen'").nl()
+            .key('age').operator(':').sp().number(34).nl()
+            .key('kids').operator(':').sp().operator('[').string("'Svea Skude Simonsen'").operator(']').nl()
         .outdent()
         .operator('}')
 

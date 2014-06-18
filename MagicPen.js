@@ -48,7 +48,18 @@
         } else {
             target.styles[style] = handler;
         }
+
+        if (!(style in target)) {
+            target[style] = function (text) {
+                this.write(style, text);
+                return this;
+            };
+        }
     }
+
+    addStyle(defaults, null, 'sp', function () {
+        return ' ';
+    });
 
     // ansi
     addStyle(defaults, 'ansi', 'red', function (text) {
@@ -68,6 +79,10 @@
         return '<span style="color: green">' + text + '</span>';
     });
 
+    addStyle(defaults, 'html', 'sp', function () {
+        return '&nbsp;';
+    });
+
     function MagicPen(mode) {
         extend(this, defaults, {
             output: '',
@@ -76,7 +91,7 @@
     }
 
     MagicPen.prototype.write = function (style, text) {
-        if (typeof text === 'undefined') {
+        if (arguments.length === 1) {
             text = style;
             style = null;
         }
@@ -87,16 +102,18 @@
             text = this.styles[style](text);
         }
         this.output += text;
+        return this;
     };
 
     MagicPen.prototype.addStyle = function (mode, style, handler) {
-        if (typeof handler === 'undefined') {
+        if (arguments.length === 2) {
             handler = style;
             style = mode;
             mode = null;
         }
 
         addStyle(this, mode, style, handler);
+        return this;
     };
 
     MagicPen.prototype.toString = function () {

@@ -81,5 +81,11 @@ describe('MagicPen', function () {
                 });
             });
         });
+
+        it('styles an be called as methods', function () {
+            pen.red('Hello').sp().green('world');
+            expect(pen.toString(), 'to be', '<span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span>');
+        });
     });
+
 });
