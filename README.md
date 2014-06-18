@@ -1,8 +1,9 @@
 ```js
-var magicpen = require('magicpen')
-magicpen.setOutput('ansi color');
+var MagicPen = require('MagicPen')
 
-magicpen.keyword('Person').space().operator('{').nl()
+var pen = new MagicPen('ansi');
+
+pen.keyword('Person').space().operator('{').nl()
         .indent()
             .key('name').operator(':').space().string("'Sune Simonsen'").nl()
             .key('age').operator(':').space().number(34).nl()
@@ -10,7 +11,7 @@ magicpen.keyword('Person').space().operator('{').nl()
         .outdent()
         .operator('}')
 
-console.log(magicpen.toString());
+console.log(pen.toString());
 ```
 
 
@@ -23,15 +24,15 @@ Person {
 ```
 
 ```js
-magicpen.addStyle('ansi color', 'red', function (text) {
-    magicpen.write('\x1B[31m' + text + '\x1B[39m');
+pen.addStyle('ansi', 'red', function (text) {
+    pen.write('\x1B[31m' + text + '\x1B[39m');
 });
 
-magicpen.addStyle('html', 'red', function (text) {
-    magicpen.write('<span style="color: red">' + text + '</span>');
+pen.addStyle('html', 'red', function (text) {
+    pen.write('<span style="color: red">' + text + '</span>');
 });
 
-magicpen.addStyle('error', function (text) {
-    magicpen.red(text);
+pen.addStyle('error', function (text) {
+    pen.red(text);
 });
 ```
