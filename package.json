@@ -1,0 +1,14 @@
+{
+  "name": "magicpen",
+  "version": "0.0.0",
+  "description": "Styled output in both consoles and browsers",
+  "main": "magicpen.js",
+  "directories": {
+    "test": "test"
+  },
+  "author": "Sune Simonsen",
+  "dependencies": {
+    "mocha": "^1.20.1",
+    "unexpected": "^3.2.2"
+  }
+}
