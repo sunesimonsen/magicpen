@@ -88,4 +88,56 @@ describe('MagicPen', function () {
         });
     });
 
+    describe('ansi serializer', function () {
+        var serializer;
+        beforeEach(function () {
+            serializer = new MagicPen.serializers['ansi']();
+        });
+
+        it('converts formatted output to a ansi colored string', function () {
+            var serializedOutput = serializer.serialize([
+                {
+                    style: 'red',
+                    args: ['Hello']
+                },
+                {
+                    style: 'space',
+                    args: []
+                },
+                {
+                    style: 'green',
+                    args: ['world']
+                }
+            ]);
+
+            expect(serializedOutput, 'to be', '\x1B[31mHello\x1B[39m \x1B[32mworld\x1B[39m');
+        });
+    });
+
+    describe('html serializer', function () {
+        var serializer;
+        beforeEach(function () {
+            serializer = new MagicPen.serializers['html']();
+        });
+
+        it('converts formatted output to a ansi colored string', function () {
+            var serializedOutput = serializer.serialize([
+                {
+                    style: 'red',
+                    args: ['Hello']
+                },
+                {
+                    style: 'space',
+                    args: []
+                },
+                {
+                    style: 'green',
+                    args: ['world']
+                }
+            ]);
+
+            expect(serializedOutput, 'to be', '<span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span>');
+        });
+    });
+
 });

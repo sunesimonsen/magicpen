@@ -90,6 +90,70 @@
         });
     }
 
+    function Serializer() {
+    }
+
+    Serializer.prototype.serialize = function (formattedOutput) {
+        var that = this;
+        var serializedEntries = [];
+        forEach(formattedOutput, function (entry) {
+            serializedEntries.push(that.serializeEntry(entry));
+        });
+        return serializedEntries.join('');
+    };
+
+    Serializer.prototype.serializeEntry = function (entry) {
+        if (entry.style in this) {
+            return this[entry.style].apply(this, entry.args);
+        } else {
+            return entry.args.join('');
+        }
+    };
+
+    // Alias space as sp
+    Serializer.prototype.sp = function () {
+        return this.space.apply(this, arguments);
+    };
+
+    function AnsiSerializer() {
+        Serializer.apply(this, arguments);
+    }
+    extend(AnsiSerializer.prototype, Serializer.prototype);
+
+    AnsiSerializer.prototype.red = function (text) {
+        return '\x1B[31m' + text + '\x1B[39m';
+    };
+
+    AnsiSerializer.prototype.green = function (text) {
+        return '\x1B[32m' + text + '\x1B[39m';
+    };
+
+    AnsiSerializer.prototype.space = function (text) {
+        return ' ';
+    };
+
+    function HtmlSerializer() {
+        Serializer.apply(this, arguments);
+    }
+    extend(HtmlSerializer.prototype, Serializer.prototype);
+
+    HtmlSerializer.prototype.red = function (text) {
+        return '<span style="color: red">' + text + '</span>';
+    };
+
+    HtmlSerializer.prototype.green = function (text) {
+        return '<span style="color: green">' + text + '</span>';
+    };
+
+    HtmlSerializer.prototype.space = function (text) {
+        return '&nbsp;';
+    };
+
+    MagicPen.serializers = {
+        ansi: AnsiSerializer,
+        html: HtmlSerializer
+    };
+
     MagicPen.prototype.write = function (style, text) {
         if (arguments.length === 1) {
             text = style;
