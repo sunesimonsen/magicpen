@@ -59,32 +59,6 @@
         }
     }
 
-    addStyle(defaults, null, 'sp', function () {
-        return ' ';
-    });
-
-    // ansi
-    addStyle(defaults, 'ansi', 'red', function (text) {
-        return '\x1B[31m' + text + '\x1B[39m';
-    });
-
-    addStyle(defaults, 'ansi', 'green', function (text) {
-        return '\x1B[32m' + text + '\x1B[39m';
-    });
-
-    // html
-    addStyle(defaults, 'html', 'red', function (text) {
-        return '<span style="color: red">' + text + '</span>';
-    });
-
-    addStyle(defaults, 'html', 'green', function (text) {
-        return '<span style="color: green">' + text + '</span>';
-    });
-
-    addStyle(defaults, 'html', 'sp', function () {
-        return '&nbsp;';
-    });
-
     function Serializer(styles) {
         forEach(requireStyles, function (style) {
             if (!styles[style]) {
@@ -92,7 +66,6 @@
             }
         });
         this.styles = styles;
-
 
         // Alias space as sp
         this.styles.sp = this.styles.space;
@@ -159,12 +132,26 @@
     });
 
     function MagicPen(mode) {
+        var that = this;
         extend(this, defaults, {
             output: []
         });
 
         this.mode = mode || this.mode;
         this.serializer = new MagicPen.serializers[this.mode]();
+
+        forEach(getKeys(this.serializer.styles), function (style) {
+            if (!that[style]) {
+                that[style] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    this.output.push({
+                        style: style,
+                        args: args
+                    });
+                    return this;
+                };
+            }
+        });
     }
 
     MagicPen.serializers = {
