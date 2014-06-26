@@ -35,6 +35,8 @@
         return target;
     }
 
+    var requireStyles = ['space', 'red', 'green'];
+
     var defaults = {
         mode: 'plain',
         styles: {},
@@ -83,14 +85,17 @@
         return '&nbsp;';
     });
 
-    function MagicPen(mode) {
-        extend(this, defaults, {
-            output: '',
-            mode: mode
+    function Serializer(styles) {
+        forEach(requireStyles, function (style) {
+            if (!styles[style]) {
+                throw new Error("Required style '" + style + "' is missing");
+            }
         });
-    }
+        this.styles = styles;
 
-    function Serializer() {
+
+        // Alias space as sp
+        this.styles.sp = this.styles.space;
     }
 
     Serializer.prototype.serialize = function (formattedOutput) {
@@ -103,69 +108,85 @@
     };
 
     Serializer.prototype.serializeEntry = function (entry) {
-        if (entry.style in this) {
-            return this[entry.style].apply(this, entry.args);
+        if (entry.style in this.styles) {
+            return this.styles[entry.style].apply(this, entry.args);
         } else {
             return entry.args.join('');
         }
     };
 
-    // Alias space as sp
-    Serializer.prototype.sp = function () {
-        return this.space.apply(this, arguments);
-    };
-
-    function AnsiSerializer() {
-        Serializer.apply(this, arguments);
+    function createSerializer(styles) {
+        function CustomSerializer() {
+        }
+        CustomSerializer.prototype = new Serializer(styles);
+        return CustomSerializer;
     }
-    extend(AnsiSerializer.prototype, Serializer.prototype);
 
-    AnsiSerializer.prototype.red = function (text) {
-        return '\x1B[31m' + text + '\x1B[39m';
-    };
+    var PlainSerializer = createSerializer({
+        space: function () {
+            return ' ';
+        },
+        red: function (text) {
+            return text;
+        },
+        green: function (text) {
+            return text;
+        }
+    });
 
-    AnsiSerializer.prototype.green = function (text) {
-        return '\x1B[32m' + text + '\x1B[39m';
-    };
+    var AnsiSerializer = createSerializer({
+        space: function () {
+            return ' ';
+        },
+        red: function (text) {
+            return '\x1B[31m' + text + '\x1B[39m';
+        },
+        green: function (text) {
+            return '\x1B[32m' + text + '\x1B[39m';
+        }
+    });
 
-    AnsiSerializer.prototype.space = function (text) {
-        return ' ';
-    };
+    var HtmlSerializer = createSerializer({
+        space: function () {
+            return '&nbsp;';
+        },
+        red: function (text) {
+            return '<span style="color: red">' + text + '</span>';
+        },
+        green: function (text) {
+            return '<span style="color: green">' + text + '</span>';
+        }
+    });
 
-    function HtmlSerializer() {
-        Serializer.apply(this, arguments);
+    function MagicPen(mode) {
+        extend(this, defaults, {
+            output: []
+        });
+
+        this.mode = mode || this.mode;
+        this.serializer = new MagicPen.serializers[this.mode]();
     }
-    extend(HtmlSerializer.prototype, Serializer.prototype);
-
-    HtmlSerializer.prototype.red = function (text) {
-        return '<span style="color: red">' + text + '</span>';
-    };
-
-    HtmlSerializer.prototype.green = function (text) {
-        return '<span style="color: green">' + text + '</span>';
-    };
-
-    HtmlSerializer.prototype.space = function (text) {
-        return '&nbsp;';
-    };
 
     MagicPen.serializers = {
+        plain: PlainSerializer,
         ansi: AnsiSerializer,
         html: HtmlSerializer
     };
 
-    MagicPen.prototype.write = function (style, text) {
-        if (arguments.length === 1) {
-            text = style;
+    MagicPen.prototype.write = function (style) {
+        var args;
+        if (arguments.length > 1) {
+            args = Array.prototype.slice.call(arguments, 1);
+        } else {
+            args = Array.prototype.slice.call(arguments);
             style = null;
         }
 
-        if (this.mode in this.modes && style in this.modes[this.mode]) {
-            text = this.modes[this.mode][style](text);
-        } else if (style in this.styles) {
-            text = this.styles[style](text);
-        }
-        this.output += text;
+        this.output.push({
+            style: style,
+            args: args
+        });
+
         return this;
     };
 
@@ -181,7 +202,7 @@
     };
 
     MagicPen.prototype.toString = function () {
-        return this.output;
+        return this.serializer.serialize(this.output);
     };
 
     return MagicPen;
