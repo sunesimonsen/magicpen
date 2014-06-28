@@ -183,6 +183,20 @@
         html: HtmlSerializer
     };
 
+    function createOutputEntry(styles, args) {
+        if (styles.length === 1) {
+            return {
+                style: styles.shift(),
+                args: args
+            };
+        } else {
+            return {
+                style: styles.shift(),
+                args: [createOutputEntry(styles, args)]
+            };
+        }
+    }
+
     MagicPen.prototype.write = function (style) {
         var args;
         if (arguments.length > 1) {
@@ -192,10 +206,9 @@
             style = null;
         }
 
-        this.output.push({
-            style: style,
-            args: args
-        });
+        var styles = (style && style.indexOf(',') !== -1) ?
+            style.split(/\s*,\s*/) : [style];
+        this.output.push(createOutputEntry(styles, args));
 
         return this;
     };

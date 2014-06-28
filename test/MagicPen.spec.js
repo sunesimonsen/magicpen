@@ -54,6 +54,15 @@ describe('MagicPen', function () {
                     expect(pen.toString(), 'to be', '\x1B[31mHello\x1B[39m \x1B[32mworld\x1B[39m');
                 });
             });
+
+            it('styles an be called as methods', function () {
+                pen.red('Hello').sp().green('world').write('red, bold', '!');
+                expect(pen.toString(), 'to equal',
+                       '\x1B[31mHello\x1B[39m' +
+                       ' ' +
+                       '\x1B[32mworld\x1B[39m' +
+                       '\x1B[31m\x1B[1m!\x1B[22m\x1B[39m');
+            });
         });
     });
 
@@ -83,8 +92,12 @@ describe('MagicPen', function () {
         });
 
         it('styles an be called as methods', function () {
-            pen.red('Hello').sp().green('world');
-            expect(pen.toString(), 'to be', '<span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span>');
+            pen.red('Hello').sp().green('world').write('red, bold', '!');
+            expect(pen.toString(), 'to equal',
+                   '<span style="color: red">Hello</span>' +
+                   '&nbsp;' +
+                   '<span style="color: green">world</span>' +
+                   '<span style="color: red"><span style="font-weight: bold">!</span></span>');
         });
     });
 
