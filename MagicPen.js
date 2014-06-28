@@ -25,6 +25,14 @@
                 callback.call(that, arr[i], i, arr);
     }
 
+    function map(arr, callback, that) {
+        var result = [];
+        for (var i = 0, n = arr.length; i < n; i += 1)
+            if (i in arr)
+                result.push(callback.call(that, arr[i], i, arr));
+        return result;
+    }
+
     function extend(target) {
         var sources = Array.prototype.slice.call(arguments, 1);
         forEach(sources, function (source) {
@@ -35,7 +43,7 @@
         return target;
     }
 
-    var requireStyles = ['space', 'red', 'green', 'bold'];
+    var requireStyles = ['text', 'space', 'red', 'green', 'bold'];
 
     var defaults = {
         mode: 'plain',
@@ -81,7 +89,7 @@
     };
 
     function isOutputEntry(obj) {
-        return obj.style && obj.args;
+        return typeof obj === 'object' && 'style' in obj && 'args' in obj;
     }
 
     Serializer.prototype.serializeEntry = function (entry) {
@@ -110,6 +118,9 @@
     }
 
     var PlainSerializer = createSerializer({
+        text: function (text) {
+            return text;
+        },
         space: function () {
             return ' ';
         },
@@ -125,6 +136,9 @@
     });
 
     var AnsiSerializer = createSerializer({
+        text: function (text) {
+            return text;
+        },
         space: function () {
             return ' ';
         },
@@ -140,6 +154,14 @@
     });
 
     var HtmlSerializer = createSerializer({
+        text: function (text) {
+            return (text || '')
+                .replace(/&/g, '&amp;')
+                .replace(/ /g, '&nbsp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        },
         space: function () {
             return '&nbsp;';
         },
@@ -167,11 +189,7 @@
             if (!that[style]) {
                 that[style] = function () {
                     var args = Array.prototype.slice.call(arguments);
-                    this.output.push({
-                        style: style,
-                        args: args
-                    });
-                    return this;
+                    return this.write.call(this, { style: style, args: args });
                 };
             }
         });
@@ -185,10 +203,27 @@
 
     function createOutputEntry(styles, args) {
         if (styles.length === 1) {
-            return {
-                style: styles.shift(),
-                args: args
-            };
+            var style = styles.shift();
+            if (!style || style === 'text') {
+                return {
+                    style: 'text',
+                    args: args
+                };
+            } else {
+                return {
+                    style: style,
+                    args: map(args, function (arg) {
+                        if (typeof arg === 'string') {
+                            return {
+                                style: 'text',
+                                args: [arg]
+                            };
+                        } else {
+                            return arg;
+                        }
+                    })
+                };
+            }
         } else {
             return {
                 style: styles.shift(),
@@ -197,20 +232,23 @@
         }
     }
 
-    MagicPen.prototype.write = function (style) {
-        var args;
-        if (arguments.length > 1) {
-            args = Array.prototype.slice.call(arguments, 1);
+    MagicPen.prototype.write = function () {
+        var args = Array.prototype.slice.call(arguments);
+        if (args.length === 0) {
+            return this;
+        } else if (args.length === 1 && isOutputEntry(args[0])) {
+            var styleString = args[0].style;
+            var styles = (styleString && styleString.indexOf(',') !== -1) ?
+                styleString.split(/\s*,\s*/) : [styleString];
+
+            var entry = createOutputEntry(styles, args[0].args);
+            this.output.push(entry);
+            return this;
+        } else if (args.length === 1) {
+            return this.write({ style: null, args: args });
         } else {
-            args = Array.prototype.slice.call(arguments);
-            style = null;
+            return this.write({ style: args[0], args: args.slice(1) });
         }
-
-        var styles = (style && style.indexOf(',') !== -1) ?
-            style.split(/\s*,\s*/) : [style];
-        this.output.push(createOutputEntry(styles, args));
-
-        return this;
     };
 
     MagicPen.prototype.addStyle = function (mode, style, handler) {
