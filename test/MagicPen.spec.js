@@ -28,6 +28,11 @@ describe('MagicPen', function () {
                     expect(pen.toString(), 'to equal', 'Hello world');
                 });
             });
+
+            it('styles an be called as methods', function () {
+                pen.red('Hello').sp().green('world').write('red, bold', '!');
+                expect(pen.toString(), 'to equal', 'Hello world!');
+            });
         });
     });
 
