@@ -107,10 +107,21 @@ describe('MagicPen', function () {
                 {
                     style: 'green',
                     args: ['world']
+                },
+                {
+                    style: 'red',
+                    args: [{
+                        style: 'bold',
+                        args: ['!']
+                    }]
                 }
             ]);
 
-            expect(serializedOutput, 'to be', '\x1B[31mHello\x1B[39m \x1B[32mworld\x1B[39m');
+            expect(serializedOutput, 'to equal',
+                   '\x1B[31mHello\x1B[39m' +
+                   ' ' +
+                   '\x1B[32mworld\x1B[39m' +
+                   '\x1B[31m\x1B[1m!\x1B[22m\x1B[39m');
         });
     });
 
@@ -133,10 +144,21 @@ describe('MagicPen', function () {
                 {
                     style: 'green',
                     args: ['world']
+                },
+                {
+                    style: 'red',
+                    args: [{
+                        style: 'bold',
+                        args: ['!']
+                    }]
                 }
             ]);
 
-            expect(serializedOutput, 'to be', '<span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span>');
+            expect(serializedOutput, 'to equal',
+                   '<span style="color: red">Hello</span>' +
+                   '&nbsp;' +
+                   '<span style="color: green">world</span>' +
+                   '<span style="color: red"><span style="font-weight: bold">!</span></span>');
         });
     });
 

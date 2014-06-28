@@ -35,7 +35,7 @@
         return target;
     }
 
-    var requireStyles = ['space', 'red', 'green'];
+    var requireStyles = ['space', 'red', 'green', 'bold'];
 
     var defaults = {
         mode: 'plain',
@@ -80,9 +80,23 @@
         return serializedEntries.join('');
     };
 
+    function isOutputEntry(obj) {
+        return obj.style && obj.args;
+    }
+
     Serializer.prototype.serializeEntry = function (entry) {
+        var that = this;
         if (entry.style in this.styles) {
-            return this.styles[entry.style].apply(this, entry.args);
+            var serializedArgs = [];
+            forEach(entry.args, function (arg) {
+                if (isOutputEntry(arg)) {
+                    serializedArgs.push(that.serializeEntry(arg));
+                } else {
+                    serializedArgs.push(arg);
+                }
+            });
+
+            return this.styles[entry.style].apply(this, serializedArgs);
         } else {
             return entry.args.join('');
         }
@@ -104,6 +118,9 @@
         },
         green: function (text) {
             return text;
+        },
+        bold: function (text) {
+            return text;
         }
     });
 
@@ -116,6 +133,9 @@
         },
         green: function (text) {
             return '\x1B[32m' + text + '\x1B[39m';
+        },
+        bold: function (text) {
+            return '\x1B[1m' + text + '\x1B[22m';
         }
     });
 
@@ -128,6 +148,9 @@
         },
         green: function (text) {
             return '<span style="color: green">' + text + '</span>';
+        },
+        bold: function (text) {
+            return '<span style="font-weight: bold">' + text + '</span>';
         }
     });
 
