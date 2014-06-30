@@ -43,7 +43,16 @@
         return target;
     }
 
-    var requireStyles = ['text', 'space', 'red', 'green', 'bold'];
+    var requireStyles = ['line', 'text', 'space', 'red', 'green', 'bold'];
+
+    function Line(indentation) {
+        this.indentation = indentation;
+        this.content = [];
+    }
+
+    Line.prototype.push = function () {
+        this.content.push.apply(this.content, arguments);
+    };
 
     function addStyle(target, mode, style, handler) {
         if (mode) {
@@ -74,15 +83,20 @@
     }
 
     Serializer.prototype.serialize = function (lines) {
-        var that = this;
-        var serializedEntries = [];
-        forEach(lines, function (line) {
-            forEach(line, function (entry) {
-                serializedEntries.push(that.serializeEntry(entry));
-            });
-        });
+        return this.serializeLines(lines);
+    };
 
-        return serializedEntries.join('');
+    Serializer.prototype.serializeLines = function (lines) {
+        return map(lines, this.serializeLine, this).join('');
+    };
+
+    Serializer.prototype.serializeLine = function (line) {
+        var lineStyle = this.styles.line;
+        return lineStyle(this.serializeLineContent(line.content), line.indentation);
+    };
+
+    Serializer.prototype.serializeLineContent = function (content) {
+        return map(content, this.serializeEntry, this).join('');
     };
 
     function isOutputEntry(obj) {
@@ -118,6 +132,9 @@
         text: function (text) {
             return text;
         },
+        line: function (text, indentation) {
+            return text + '\n';
+        },
         space: function () {
             return ' ';
         },
@@ -135,6 +152,9 @@
     var AnsiSerializer = createSerializer({
         text: function (text) {
             return text;
+        },
+        line: function (text, indentation) {
+            return text + '\n';
         },
         space: function () {
             return ' ';
@@ -159,6 +179,13 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
         },
+        line: function (text, indentation) {
+            var styling = '';
+            if (indentation) {
+                styling = "padding-left: ' + (indentation * 10) + 'px";
+            }
+            return '<div' + styling + '>' + text + '</div>';
+        },
         space: function () {
             return '&nbsp;';
         },
@@ -181,6 +208,7 @@
         var that = this;
 
         extend(this, defaults, {
+            indentation: 0,
             output: [],
             styles: {},
             modes: {}
@@ -198,6 +226,11 @@
             }
         });
     }
+
+    MagicPen.prototype.newline = MagicPen.prototype.nl = function () {
+        this.output.push(new Line(this.indentation));
+        return this;
+    };
 
     MagicPen.serializers = {
         plain: PlainSerializer,
@@ -248,7 +281,7 @@
             var entry = createOutputEntry(styles, args[0].args);
 
             if (this.output.length === 0) {
-                this.output.push([]);
+                this.output.push(new Line(0));
             }
 
             this.output[this.output.length - 1].push(entry);
