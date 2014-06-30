@@ -16,7 +16,7 @@ describe('MagicPen', function () {
                     pen.write('Hello');
                     pen.write(' ');
                     pen.write('world');
-                    expect(pen.toString(), 'to equal', 'Hello world\n');
+                    expect(pen.toString(), 'to equal', 'Hello world');
                 });
             });
 
@@ -25,18 +25,18 @@ describe('MagicPen', function () {
                     pen.write('red', 'Hello');
                     pen.write(' ');
                     pen.write('green', 'world');
-                    expect(pen.toString(), 'to equal', 'Hello world\n');
+                    expect(pen.toString(), 'to equal', 'Hello world');
                 });
             });
 
             it('handles multi line output', function () {
                 pen.red('Hello').nl().green('world');
-                expect(pen.toString(), 'to equal', 'Hello\nworld\n');
+                expect(pen.toString(), 'to equal', 'Hello\nworld');
             });
 
             it('styles an be called as methods', function () {
                 pen.red('Hello').sp().green('world').write('red, bold', '!');
-                expect(pen.toString(), 'to equal', 'Hello world!\n');
+                expect(pen.toString(), 'to equal', 'Hello world!');
             });
         });
     });
@@ -52,7 +52,7 @@ describe('MagicPen', function () {
                     pen.write('Hello');
                     pen.write(' ');
                     pen.write('world');
-                    expect(pen.toString(), 'to equal', 'Hello world\n');
+                    expect(pen.toString(), 'to equal', 'Hello world');
                 });
             });
 
@@ -61,7 +61,7 @@ describe('MagicPen', function () {
                     pen.write('red', 'Hello');
                     pen.write(' ');
                     pen.write('green', 'world');
-                    expect(pen.toString(), 'to equal', '\x1B[31mHello\x1B[39m \x1B[32mworld\x1B[39m\n');
+                    expect(pen.toString(), 'to equal', '\x1B[31mHello\x1B[39m \x1B[32mworld\x1B[39m');
                 });
             });
 
@@ -70,7 +70,7 @@ describe('MagicPen', function () {
                 expect(pen.toString(), 'to equal',
                        '\x1B[31mHello\x1B[39m' +
                        '\n' +
-                       '\x1B[32mworld\x1B[39m\n');
+                       '\x1B[32mworld\x1B[39m');
             });
 
             it('styles an be called as methods', function () {
@@ -79,7 +79,7 @@ describe('MagicPen', function () {
                        '\x1B[31mHello\x1B[39m' +
                        ' ' +
                        '\x1B[32mworld\x1B[39m' +
-                       '\x1B[31m\x1B[1m!\x1B[22m\x1B[39m\n');
+                       '\x1B[31m\x1B[1m!\x1B[22m\x1B[39m');
             });
         });
     });
@@ -121,7 +121,7 @@ describe('MagicPen', function () {
         it('handles multi line output', function () {
             pen.red('Hello').nl().green('world');
             expect(pen.toString(), 'to equal',
-                   '<div><span style="color: red">Hello</span></div>' +
+                   '<div><span style="color: red">Hello</span></div>\n' +
                    '<div><span style="color: green">world</span></div>');
         });
 

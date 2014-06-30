@@ -43,7 +43,7 @@
         return target;
     }
 
-    var requireStyles = ['line', 'text', 'space', 'red', 'green', 'bold'];
+    var requireStyles = ['lines', 'text', 'space', 'red', 'green', 'bold'];
 
     function Line(indentation) {
         this.indentation = indentation;
@@ -87,12 +87,12 @@
     };
 
     Serializer.prototype.serializeLines = function (lines) {
-        return map(lines, this.serializeLine, this).join('');
-    };
-
-    Serializer.prototype.serializeLine = function (line) {
-        var lineStyle = this.styles.line;
-        return lineStyle(this.serializeLineContent(line.content), line.indentation);
+        return this.styles.lines(map(lines, function (line) {
+            return {
+                indentation: line.indentation,
+                content: this.serializeLineContent(line.content)
+            };
+        }, this));
     };
 
     Serializer.prototype.serializeLineContent = function (content) {
@@ -128,12 +128,23 @@
         return CustomSerializer;
     }
 
+    function duplicateText(text, times) {
+        var result = '';
+        for (var i = 0; i < times; i += 1) {
+            result += text;
+        }
+        return result;
+    }
+
     var PlainSerializer = createSerializer({
         text: function (text) {
             return text;
         },
-        line: function (text, indentation) {
-            return text + '\n';
+        lines: function (lines) {
+            return map(lines, function (line) {
+                return duplicateText('  ', line.indentation) + line.content;
+
+            }).join('\n');
         },
         space: function () {
             return ' ';
@@ -153,8 +164,11 @@
         text: function (text) {
             return text;
         },
-        line: function (text, indentation) {
-            return text + '\n';
+        lines: function (lines) {
+            return map(lines, function (line) {
+                return duplicateText('  ', line.indentation) + line.content;
+
+            }).join('\n');
         },
         space: function () {
             return ' ';
@@ -179,12 +193,14 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
         },
-        line: function (text, indentation) {
-            var styling = '';
-            if (indentation) {
-                styling = "padding-left: ' + (indentation * 10) + 'px";
-            }
-            return '<div' + styling + '>' + text + '</div>';
+        lines: function (lines) {
+            return map(lines, function (line) {
+                var styling = '';
+                if (line.indentation) {
+                    styling = "padding-left: " + (line.indentation * 10) + "px";
+                }
+                return '<div' + styling + '>' + line.content + '</div>';
+            }).join('\n');
         },
         space: function () {
             return '&nbsp;';
