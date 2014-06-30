@@ -34,6 +34,18 @@ describe('MagicPen', function () {
                 expect(pen.toString(), 'to equal', 'Hello\nworld');
             });
 
+            it('handles indented lines', function () {
+                pen.red('Hello')
+                   .indent()
+                   .text('beautiful')
+                   .outdent()
+                   .green('world');
+                expect(pen.toString(), 'to equal',
+                       'Hello\n' +
+                       '  beautiful\n' +
+                       'world');
+            });
+
             it('styles an be called as methods', function () {
                 pen.red('Hello').sp().green('world').write('red, bold', '!');
                 expect(pen.toString(), 'to equal', 'Hello world!');
@@ -70,6 +82,18 @@ describe('MagicPen', function () {
                 expect(pen.toString(), 'to equal',
                        '\x1B[31mHello\x1B[39m' +
                        '\n' +
+                       '\x1B[32mworld\x1B[39m');
+            });
+
+            it('handles indented lines', function () {
+                pen.red('Hello')
+                   .indent()
+                   .text('beautiful')
+                   .outdent()
+                   .green('world');
+                expect(pen.toString(), 'to equal',
+                       '\x1B[31mHello\x1B[39m\n' +
+                       '  beautiful\n' +
                        '\x1B[32mworld\x1B[39m');
             });
 
@@ -122,6 +146,18 @@ describe('MagicPen', function () {
             pen.red('Hello').nl().green('world');
             expect(pen.toString(), 'to equal',
                    '<div><span style="color: red">Hello</span></div>\n' +
+                   '<div><span style="color: green">world</span></div>');
+        });
+
+        it('handles indented lines', function () {
+            pen.red('Hello')
+               .indent()
+               .text('beautiful')
+               .outdent()
+               .green('world');
+            expect(pen.toString(), 'to equal',
+                   '<div><span style="color: red">Hello</span></div>\n' +
+                   '<div style="padding-left: 10px">beautiful</div>\n' +
                    '<div><span style="color: green">world</span></div>');
         });
 

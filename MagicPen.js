@@ -143,7 +143,6 @@
         lines: function (lines) {
             return map(lines, function (line) {
                 return duplicateText('  ', line.indentation) + line.content;
-
             }).join('\n');
         },
         space: function () {
@@ -197,7 +196,7 @@
             return map(lines, function (line) {
                 var styling = '';
                 if (line.indentation) {
-                    styling = "padding-left: " + (line.indentation * 10) + "px";
+                    styling = ' style="padding-left: ' + (line.indentation * 10) + 'px"';
                 }
                 return '<div' + styling + '>' + line.content + '</div>';
             }).join('\n');
@@ -307,6 +306,18 @@
         } else {
             return this.write({ style: args[0], args: args.slice(1) });
         }
+    };
+
+    MagicPen.prototype.indent = function () {
+        this.indentation += 1;
+        this.newline();
+        return this;
+    };
+
+    MagicPen.prototype.outdent = function () {
+        this.indentation = Math.max(0, this.indentation - 1);
+        this.newline();
+        return this;
     };
 
     MagicPen.prototype.addStyle = function (mode, style, handler) {
