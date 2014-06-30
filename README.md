@@ -24,14 +24,6 @@ Person {
 ```
 
 ```js
-pen.addStyle('ansi', 'red', function (text) {
-    pen.write('\x1B[31m' + text + '\x1B[39m');
-});
-
-pen.addStyle('html', 'red', function (text) {
-    pen.write('<span style="color: red">' + text + '</span>');
-});
-
 pen.addStyle('error', function (text) {
     pen.red(text);
 });

@@ -166,5 +166,15 @@ describe('MagicPen', function () {
             expect(pen.toString(), 'to equal',
                    '<div><span style="color: red">&lt;foo&nbsp;&amp;&nbsp;&quot;bar&quot;&gt;</span></div>');
         });
+
+        it('handles custom styles', function () {
+            pen.addStyle('error', function (text) {
+                this.red(text);
+            });
+
+            pen.error('Danger').sp().write('error', 'danger');
+            expect(pen.toString(), 'to equal',
+                   '<div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>');
+        });
     });
 });

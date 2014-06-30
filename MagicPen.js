@@ -54,22 +54,6 @@
         this.content.push.apply(this.content, arguments);
     };
 
-    function addStyle(target, mode, style, handler) {
-        if (mode) {
-            target.modes[mode] = target.modes[mode] || {};
-            target.modes[mode][style] = handler;
-        } else {
-            target.styles[style] = handler;
-        }
-
-        if (!(style in target)) {
-            target[style] = function (text) {
-                this.write(style, text);
-                return this;
-            };
-        }
-    }
-
     function Serializer(styles) {
         forEach(requireStyles, function (style) {
             if (!styles[style]) {
@@ -290,6 +274,11 @@
             return this;
         } else if (args.length === 1 && isOutputEntry(args[0])) {
             var styleString = args[0].style;
+            if (this.styles[styleString]) {
+                this.styles[styleString].apply(this, args[0].args);
+                return this;
+            }
+
             var styles = (styleString && styleString.indexOf(',') !== -1) ?
                 styleString.split(/\s*,\s*/) : [styleString];
 
@@ -320,14 +309,15 @@
         return this;
     };
 
-    MagicPen.prototype.addStyle = function (mode, style, handler) {
-        if (arguments.length === 2) {
-            handler = style;
-            style = mode;
-            mode = null;
+    MagicPen.prototype.addStyle = function (style, handler) {
+        var that = this;
+        this.styles[style] = handler;
+        if (!this[style]) {
+            this[style] = function () {
+                handler.apply(that, arguments);
+                return that;
+            };
         }
-
-        addStyle(this, mode, style, handler);
         return this;
     };
 
