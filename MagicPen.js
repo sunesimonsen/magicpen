@@ -45,12 +45,6 @@
 
     var requireStyles = ['text', 'space', 'red', 'green', 'bold'];
 
-    var defaults = {
-        mode: 'plain',
-        styles: {},
-        modes: {}
-    };
-
     function addStyle(target, mode, style, handler) {
         if (mode) {
             target.modes[mode] = target.modes[mode] || {};
@@ -79,12 +73,15 @@
         this.styles.sp = this.styles.space;
     }
 
-    Serializer.prototype.serialize = function (formattedOutput) {
+    Serializer.prototype.serialize = function (lines) {
         var that = this;
         var serializedEntries = [];
-        forEach(formattedOutput, function (entry) {
-            serializedEntries.push(that.serializeEntry(entry));
+        forEach(lines, function (line) {
+            forEach(line, function (entry) {
+                serializedEntries.push(that.serializeEntry(entry));
+            });
         });
+
         return serializedEntries.join('');
     };
 
@@ -176,10 +173,17 @@
         }
     });
 
+    var defaults = {
+        mode: 'plain'
+    };
+
     function MagicPen(mode) {
         var that = this;
+
         extend(this, defaults, {
-            output: []
+            output: [],
+            styles: {},
+            modes: {}
         });
 
         this.mode = mode || this.mode;
@@ -242,7 +246,12 @@
                 styleString.split(/\s*,\s*/) : [styleString];
 
             var entry = createOutputEntry(styles, args[0].args);
-            this.output.push(entry);
+
+            if (this.output.length === 0) {
+                this.output.push([]);
+            }
+
+            this.output[this.output.length - 1].push(entry);
             return this;
         } else if (args.length === 1) {
             return this.write({ style: null, args: args });
