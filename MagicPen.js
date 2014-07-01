@@ -43,7 +43,7 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'space', 'red', 'green', 'bold'];
+    var requireStyles = ['lines', 'text', 'space', 'block', 'red', 'green', 'bold'];
 
     function Line(indentation) {
         this.indentation = indentation;
@@ -132,6 +132,9 @@
         space: function () {
             return ' ';
         },
+        block: function (prefix, text) {
+            return prefix + text;
+        },
         red: function (text) {
             return text;
         },
@@ -143,19 +146,7 @@
         }
     });
 
-    var AnsiSerializer = createSerializer({
-        text: function (text) {
-            return text;
-        },
-        lines: function (lines) {
-            return map(lines, function (line) {
-                return duplicateText('  ', line.indentation) + line.content;
-
-            }).join('\n');
-        },
-        space: function () {
-            return ' ';
-        },
+    var AnsiSerializer = createSerializer(extend({}, PlainSerializer.prototype.styles, {
         red: function (text) {
             return '\x1B[31m' + text + '\x1B[39m';
         },
@@ -165,7 +156,7 @@
         bold: function (text) {
             return '\x1B[1m' + text + '\x1B[22m';
         }
-    });
+    }));
 
     var HtmlSerializer = createSerializer({
         text: function (text) {
@@ -184,6 +175,9 @@
                 }
                 return '<div' + styling + '>' + line.content + '</div>';
             }).join('\n');
+        },
+        block: function (text) {
+            return text;
         },
         space: function () {
             return '&nbsp;';
