@@ -50,6 +50,16 @@ describe('MagicPen', function () {
                 pen.red('Hello').sp().green('world').write('red, bold', '!');
                 expect(pen.toString(), 'to equal', 'Hello world!');
             });
+
+            it('output is appended in blocks', function () {
+                pen.red('Hello').sp().block(
+                    new MagicPen()
+                        .text('This is a').nl()
+                        .text('multiline comment'));
+                expect(pen.toString(), 'to equal',
+                       'Hello This is a\n' +
+                       '      multiline comment');
+            });
         });
     });
 

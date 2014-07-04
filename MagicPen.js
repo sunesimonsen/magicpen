@@ -80,7 +80,7 @@
     };
 
     Serializer.prototype.serializeLineContent = function (content) {
-        return map(content, this.serializeEntry, this).join('');
+        return map(content, this.serializeEntry, this);
     };
 
     function isOutputEntry(obj) {
@@ -125,15 +125,32 @@
             return text;
         },
         lines: function (lines) {
-            return map(lines, function (line) {
-                return duplicateText('  ', line.indentation) + line.content;
-            }).join('\n');
+            function serializeLine(line) {
+                var serializedLines = [duplicateText('  ', line.indentation)];
+
+                forEach(line.content, function (inlineBlock) {
+                    var blockLines = inlineBlock.split('\n');
+                    var blockStartIndex = serializedLines[0].length;
+                    serializedLines[0] += blockLines[0];
+
+                    forEach(blockLines.slice(1), function (blockLine, index) {
+                        var lineIndex = index + 1;
+                        serializedLines[lineIndex] = serializedLines[lineIndex] || '';
+                        var padding = duplicateText(' ', blockStartIndex - serializedLines[lineIndex].length);
+                        serializedLines[lineIndex] += padding + blockLine;
+                    });
+                });
+
+                return serializedLines.join('\n');
+            }
+
+            return map(lines, serializeLine).join('\n');
         },
         space: function () {
             return ' ';
         },
-        block: function (prefix, text) {
-            return prefix + text;
+        block: function (pen) {
+            return pen.toString();
         },
         red: function (text) {
             return text;
@@ -173,11 +190,11 @@
                 if (line.indentation) {
                     styling = ' style="padding-left: ' + (line.indentation * 10) + 'px"';
                 }
-                return '<div' + styling + '>' + line.content + '</div>';
+                return '<div' + styling + '>' + line.content.join('') + '</div>';
             }).join('\n');
         },
-        block: function (text) {
-            return text;
+        block: function (pen) {
+            return pen.toString();
         },
         space: function () {
             return '&nbsp;';

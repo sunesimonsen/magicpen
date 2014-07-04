@@ -19,7 +19,8 @@ console.log(pen.toString());
 Person {
     name: 'Sune Simonsen',
     age: 34,
-    kids: ['Svea Skude Simonsen']
+    kids: ['Svea Skude Simonsen'] // this is an
+                                  // indented block
 }
 ```
 
