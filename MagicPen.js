@@ -194,10 +194,12 @@
                 .replace(/"/g, '&quot;');
         },
         lines: function (lines) {
-            return map(lines, function (line) {
-                var indent = duplicateText('&nbsp;&nbsp;', line.indentation);
-                return '<div>' + indent + line.content.join('') + '</div>';
-            }).join('\n');
+            return '<code>\n' +
+                map(lines, function (line) {
+                    var indent = duplicateText('&nbsp;&nbsp;', line.indentation);
+                    return '  <div>' + indent + line.content.join('') + '</div>';
+                }).join('\n') + '\n' +
+                '</code>';
         },
         block: function (pen) {
             return pen.toString();

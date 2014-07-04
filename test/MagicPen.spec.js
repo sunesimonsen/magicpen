@@ -129,7 +129,10 @@ describe('MagicPen', function () {
                     pen.write('Hello');
                     pen.write(' ');
                     pen.write('world');
-                    expect(pen.toString(), 'to equal', '<div>Hello&nbsp;world</div>');
+                    expect(pen.toString(), 'to equal',
+                           '<code>\n' +
+                           '  <div>Hello&nbsp;world</div>\n' +
+                           '</code>');
                 });
             });
 
@@ -138,7 +141,10 @@ describe('MagicPen', function () {
                     pen.write('red', 'Hello');
                     pen.write(' ');
                     pen.write('green', 'world');
-                    expect(pen.toString(), 'to equal', '<div><span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span></div>');
+                    expect(pen.toString(), 'to equal',
+                           '<code>\n' +
+                           '  <div><span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span></div>\n' +
+                           '</code>');
                 });
             });
         });
@@ -146,17 +152,21 @@ describe('MagicPen', function () {
         it('styles an be called as methods', function () {
             pen.red('Hello').sp().green('world').write('red, bold', '!');
             expect(pen.toString(), 'to equal',
-                   '<div><span style="color: red">Hello</span>' +
+                   '<code>\n' +
+                   '  <div><span style="color: red">Hello</span>' +
                    '&nbsp;' +
                    '<span style="color: green">world</span>' +
-                   '<span style="color: red"><span style="font-weight: bold">!</span></span></div>');
+                   '<span style="color: red"><span style="font-weight: bold">!</span></span></div>\n' +
+                   '</code>');
         });
 
         it('handles multi line output', function () {
             pen.red('Hello').nl().green('world');
             expect(pen.toString(), 'to equal',
-                   '<div><span style="color: red">Hello</span></div>\n' +
-                   '<div><span style="color: green">world</span></div>');
+                   '<code>\n' +
+                   '  <div><span style="color: red">Hello</span></div>\n' +
+                   '  <div><span style="color: green">world</span></div>\n' +
+                   '</code>');
         });
 
         it('handles indented lines', function () {
@@ -166,15 +176,19 @@ describe('MagicPen', function () {
                .outdent()
                .green('world');
             expect(pen.toString(), 'to equal',
-                   '<div><span style="color: red">Hello</span></div>\n' +
-                   '<div>&nbsp;&nbsp;beautiful</div>\n' +
-                   '<div><span style="color: green">world</span></div>');
+                   '<code>\n' +
+                   '  <div><span style="color: red">Hello</span></div>\n' +
+                   '  <div>&nbsp;&nbsp;beautiful</div>\n' +
+                   '  <div><span style="color: green">world</span></div>\n' +
+                   '</code>');
         });
 
         it('encodes text inserted in tags', function () {
             pen.red('<foo & "bar">');
             expect(pen.toString(), 'to equal',
-                   '<div><span style="color: red">&lt;foo&nbsp;&amp;&nbsp;&quot;bar&quot;&gt;</span></div>');
+                   '<code>\n' +
+                   '  <div><span style="color: red">&lt;foo&nbsp;&amp;&nbsp;&quot;bar&quot;&gt;</span></div>\n' +
+                   '</code>');
         });
 
         it('handles custom styles', function () {
@@ -184,7 +198,9 @@ describe('MagicPen', function () {
 
             pen.error('Danger').sp().write('error', 'danger');
             expect(pen.toString(), 'to equal',
-                   '<div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>');
+                   '<code>\n' +
+                   '  <div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>\n' +
+                   '</code>');
         });
     });
 });
