@@ -43,7 +43,7 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'space', 'block', 'red', 'green', 'bold'];
+    var requireStyles = ['lines', 'text', 'space', 'block', 'red', 'green', 'gray', 'bold'];
 
     function Serializer(styles) {
         forEach(requireStyles, function (style) {
@@ -158,6 +158,9 @@
         green: function (text) {
             return text;
         },
+        gray: function (text) {
+            return text;
+        },
         bold: function (text) {
             return text;
         }
@@ -169,6 +172,9 @@
         },
         green: function (text) {
             return '\x1B[32m' + text + '\x1B[39m';
+        },
+        gray: function (text) {
+            return '\x1B[90m' + text + '\x1B[39m';
         },
         bold: function (text) {
             return '\x1B[1m' + text + '\x1B[22m';
@@ -202,6 +208,9 @@
         },
         green: function (text) {
             return '<span style="color: green">' + text + '</span>';
+        },
+        gray: function (text) {
+            return '<span style="color: gray">' + text + '</span>';
         },
         bold: function (text) {
             return '<span style="font-weight: bold">' + text + '</span>';
