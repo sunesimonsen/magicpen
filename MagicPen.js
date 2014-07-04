@@ -146,8 +146,8 @@
 
             return map(lines, serializeLine).join('\n');
         },
-        space: function () {
-            return ' ';
+        space: function (count) {
+            return duplicateText(' ', count || 1);
         },
         block: function (pen) {
             return pen.toString();
@@ -194,8 +194,8 @@
         block: function (pen) {
             return pen.toString();
         },
-        space: function () {
-            return '&nbsp;';
+        space: function (count) {
+            return duplicateText('&nbsp;', count || 1);
         },
         red: function (text) {
             return '<span style="color: red">' + text + '</span>';
@@ -314,7 +314,7 @@
 
     MagicPen.prototype.indentation = function () {
         for (var i = 0; i < this.indentationLevel; i += 1) {
-            this.space().space();
+            this.space(2);
         }
         return this;
     };
