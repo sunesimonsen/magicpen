@@ -45,14 +45,6 @@
 
     var requireStyles = ['lines', 'text', 'space', 'block', 'red', 'green', 'bold'];
 
-    function Line() {
-        this.content = [];
-    }
-
-    Line.prototype.push = function () {
-        this.content.push.apply(this.content, arguments);
-    };
-
     function Serializer(styles) {
         forEach(requireStyles, function (style) {
             if (!styles[style]) {
@@ -73,7 +65,7 @@
         return this.styles.lines(map(lines, function (line) {
             return {
                 indentation: line.indentation,
-                content: this.serializeLineContent(line.content)
+                content: this.serializeLineContent(line)
             };
         }, this));
     };
@@ -244,7 +236,7 @@
     }
 
     MagicPen.prototype.newline = MagicPen.prototype.nl = function () {
-        this.output.push(new Line(0));
+        this.output.push([]);
         return this;
     };
 
@@ -302,7 +294,7 @@
             var entry = createOutputEntry(styles, args[0].args);
 
             if (this.output.length === 0) {
-                this.output.push(new Line(0));
+                this.output.push([]);
             }
 
             this.output[this.output.length - 1].push(entry);
