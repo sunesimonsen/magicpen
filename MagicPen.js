@@ -45,8 +45,7 @@
 
     var requireStyles = ['lines', 'text', 'space', 'block', 'red', 'green', 'bold'];
 
-    function Line(indentation) {
-        this.indentation = indentation;
+    function Line() {
         this.content = [];
     }
 
@@ -126,7 +125,7 @@
         },
         lines: function (lines) {
             function serializeLine(line) {
-                var serializedLines = [duplicateText('  ', line.indentation)];
+                var serializedLines = [''];
 
                 forEach(line.content, function (inlineBlock, blockIndex) {
                     var blockLines = inlineBlock.split('\n');
@@ -196,8 +195,7 @@
         lines: function (lines) {
             return '<code>\n' +
                 map(lines, function (line) {
-                    var indent = duplicateText('&nbsp;&nbsp;', line.indentation);
-                    return '  <div>' + indent + line.content.join('') + '</div>';
+                    return '  <div>' + line.content.join('') + '</div>';
                 }).join('\n') + '\n' +
                 '</code>';
         },
@@ -226,7 +224,7 @@
         var that = this;
 
         extend(this, defaults, {
-            indentation: 0,
+            indentationLevel: 0,
             output: [],
             styles: {},
             modes: {}
@@ -246,7 +244,7 @@
     }
 
     MagicPen.prototype.newline = MagicPen.prototype.nl = function () {
-        this.output.push(new Line(this.indentation));
+        this.output.push(new Line(0));
         return this;
     };
 
@@ -317,13 +315,20 @@
     };
 
     MagicPen.prototype.indent = function () {
-        this.indentation += 1;
+        this.indentationLevel += 1;
         this.newline();
         return this;
     };
 
+    MagicPen.prototype.indentation = function () {
+        for (var i = 0; i < this.indentationLevel; i += 1) {
+            this.space().space();
+        }
+        return this;
+    };
+
     MagicPen.prototype.outdent = function () {
-        this.indentation = Math.max(0, this.indentation - 1);
+        this.indentationLevel = Math.max(0, this.indentationLevel - 1);
         this.newline();
         return this;
     };

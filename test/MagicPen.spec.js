@@ -37,7 +37,19 @@ describe('MagicPen', function () {
             it('handles indented lines', function () {
                 pen.red('Hello')
                    .indent()
-                   .text('beautiful')
+                   .indentation().text('beautiful')
+                   .outdent()
+                   .green('world');
+                expect(pen.toString(), 'to equal',
+                       'Hello\n' +
+                       '  beautiful\n' +
+                       'world');
+            });
+
+            it('gutter can be set for and reset', function () {
+                pen.red('Hello')
+                   .indent()
+                   .indentation().text('beautiful')
                    .outdent()
                    .green('world');
                 expect(pen.toString(), 'to equal',
@@ -98,7 +110,7 @@ describe('MagicPen', function () {
             it('handles indented lines', function () {
                 pen.red('Hello')
                    .indent()
-                   .text('beautiful')
+                   .indentation().text('beautiful')
                    .outdent()
                    .green('world');
                 expect(pen.toString(), 'to equal',
@@ -172,7 +184,7 @@ describe('MagicPen', function () {
         it('handles indented lines', function () {
             pen.red('Hello')
                .indent()
-               .text('beautiful')
+               .indentation().text('beautiful')
                .outdent()
                .green('world');
             expect(pen.toString(), 'to equal',
