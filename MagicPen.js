@@ -218,8 +218,7 @@
         extend(this, defaults, {
             indentationLevel: 0,
             output: [],
-            styles: {},
-            modes: {}
+            styles: {}
         });
 
         this.mode = mode || this.mode;
@@ -339,6 +338,15 @@
 
     MagicPen.prototype.toString = function () {
         return this.serializer.serialize(this.output);
+    };
+
+    MagicPen.prototype.clone = function () {
+        function MagicPenClone() {}
+        MagicPenClone.prototype = this;
+        var clonedPen = new MagicPenClone();
+        clonedPen.indentationLevel = 0;
+        clonedPen.output = [];
+        return clonedPen;
     };
 
     return MagicPen;

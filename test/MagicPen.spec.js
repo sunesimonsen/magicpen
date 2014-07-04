@@ -64,13 +64,14 @@ describe('MagicPen', function () {
             });
 
             it('output is appended in blocks', function () {
-                pen.red('Hello').sp().block(
-                    new MagicPen()
-                        .text('This is a').nl()
-                        .text('multiline comment'));
+                pen.red('Hello').block(
+                    pen.clone()
+                        .text(' // ').text('This is a')
+                        .indent()
+                        .text(' // ').indentation().text('multiline comment'));
                 expect(pen.toString(), 'to equal',
-                       'Hello This is a\n' +
-                       '      multiline comment');
+                       'Hello // This is a\n' +
+                       '      //   multiline comment');
             });
         });
     });
