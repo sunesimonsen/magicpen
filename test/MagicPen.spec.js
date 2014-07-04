@@ -167,7 +167,7 @@ describe('MagicPen', function () {
                .green('world');
             expect(pen.toString(), 'to equal',
                    '<div><span style="color: red">Hello</span></div>\n' +
-                   '<div style="padding-left: 10px">beautiful</div>\n' +
+                   '<div>&nbsp;&nbsp;beautiful</div>\n' +
                    '<div><span style="color: green">world</span></div>');
         });
 

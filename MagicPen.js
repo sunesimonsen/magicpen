@@ -128,10 +128,19 @@
             function serializeLine(line) {
                 var serializedLines = [duplicateText('  ', line.indentation)];
 
-                forEach(line.content, function (inlineBlock) {
+                forEach(line.content, function (inlineBlock, blockIndex) {
                     var blockLines = inlineBlock.split('\n');
+                    var longestBlockLine = 0;
+                    forEach(blockLines, function (blockLine) {
+                        longestBlockLine = Math.max(longestBlockLine, blockLine.length);
+                    });
+
                     var blockStartIndex = serializedLines[0].length;
                     serializedLines[0] += blockLines[0];
+                    if (blockLines.length > 1 && blockIndex < line.content.length - 1) {
+                        serializedLines[0] += duplicateText(' ', longestBlockLine - blockLines[0].length);
+                    }
+
 
                     forEach(blockLines.slice(1), function (blockLine, index) {
                         var lineIndex = index + 1;
@@ -186,11 +195,8 @@
         },
         lines: function (lines) {
             return map(lines, function (line) {
-                var styling = '';
-                if (line.indentation) {
-                    styling = ' style="padding-left: ' + (line.indentation * 10) + 'px"';
-                }
-                return '<div' + styling + '>' + line.content.join('') + '</div>';
+                var indent = duplicateText('&nbsp;&nbsp;', line.indentation);
+                return '<div>' + indent + line.content.join('') + '</div>';
             }).join('\n');
         },
         block: function (pen) {
