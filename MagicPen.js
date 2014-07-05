@@ -51,7 +51,7 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'space'];
+    var requireStyles = ['lines', 'text', 'space', 'block'];
 
     function Serializer(styles) {
         var that = this;
@@ -98,7 +98,7 @@
         forEach(textStyles, function (textStyle) {
             if (!that.styles[textStyle]) {
                 that.styles[textStyle] = function (text) {
-                    return this.styles.text.call(that, text, textStyle);
+                    return this.text.call(that, text, textStyle);
                 };
             }
         });
@@ -128,7 +128,7 @@
     Serializer.prototype.serializeEntry = function (entry) {
         var that = this;
         if (entry.style in this.styles) {
-            return this.styles[entry.style].apply(this, entry.args);
+            return this.styles[entry.style].apply(this.styles, entry.args);
         } else {
             return entry.args.join('');
         }
@@ -186,6 +186,9 @@
         },
         space: function (count) {
             return duplicateText(' ', count || 1);
+        },
+        block: function (content) {
+            return content;
         }
     });
 
@@ -303,6 +306,9 @@
                 }).join('\n') + '\n' +
                 '</code>';
         },
+        block: function (content) {
+            return '<div style="display: inline-block; vertical-align: top">' + content + '</div>';
+        },
         space: function (count) {
             return duplicateText('&nbsp;', count || 1);
         }
@@ -408,7 +414,7 @@
 
     MagicPen.prototype.block = function (pen) {
         this.ensurePenWithSameMode(pen);
-        return this.raw(pen.toString());
+        return this.write('block', pen.toString());
     };
 
     MagicPen.prototype.append = function (pen) {

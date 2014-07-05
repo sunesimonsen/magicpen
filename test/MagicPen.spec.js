@@ -261,5 +261,20 @@ describe('MagicPen', function () {
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;Third&nbsp;line</div>\n' +
                    '</code>');
         });
+
+        it('the content of a pen can be appended in a block', function () {
+            pen.red('Hello').block(
+                pen.clone()
+                    .gray(' // ').text('This is a')
+                    .indentLines()
+                    .gray(' // ').indent().text('multiline comment'));
+            expect(pen.toString(), 'to equal',
+                   '<code>\n' +
+                   '  <div><span style="color: red">Hello</span><div style="display: inline-block; vertical-align: top"><code>\n' +
+                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>This&nbsp;is&nbsp;a</div>\n' +
+                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;multiline&nbsp;comment</div>\n' +
+                   '</code></div></div>\n' +
+                   '</code>');
+        });
     });
 });
