@@ -128,16 +128,7 @@
     Serializer.prototype.serializeEntry = function (entry) {
         var that = this;
         if (entry.style in this.styles) {
-            var serializedArgs = [];
-            forEach(entry.args, function (arg) {
-                if (isOutputEntry(arg)) {
-                    serializedArgs.push(that.serializeEntry(arg));
-                } else {
-                    serializedArgs.push(arg);
-                }
-            });
-
-            return this.styles[entry.style].apply(this, serializedArgs);
+            return this.styles[entry.style].apply(this, entry.args);
         } else {
             return entry.args.join('');
         }
