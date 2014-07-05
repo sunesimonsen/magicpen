@@ -357,13 +357,27 @@
     MagicPen.prototype.append = function (pen) {
         this.ensurePenWithSameMode(pen);
         if (pen.output.length === 0) {
-            return;
+            return this;
         }
 
         this.output[0] = this.output[0] || [];
         this.output[0].push.apply(this.output[0], pen.output[0]);
 
         this.output.push.apply(this.output, pen.output.slice(1));
+
+        return this;
+    };
+
+    MagicPen.prototype.prependLinesWith = function (pen) {
+        this.ensurePenWithSameMode(pen);
+        if (pen.output.length === 0 || this.output.length === 0) {
+            return this;
+        }
+        var outputToPrepend = Array.prototype.concat.apply([], pen.output);
+
+        this.output = map(this.output, function (line) {
+            return outputToPrepend.concat(line);
+        });
 
         return this;
     };

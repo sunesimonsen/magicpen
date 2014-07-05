@@ -81,6 +81,19 @@ describe('MagicPen', function () {
                 expect(pen.toString(), 'to equal',
                        'Hello world!');
             });
+
+            it('the content of a pen can be prepended to the start of each line', function () {
+                pen.text('First line').nl()
+                   .text('Second line')
+                   .indentLines()
+                   .indent().text('Third line')
+                   .prependLinesWith(pen.clone().gray(' // '));
+
+                expect(pen.toString(), 'to equal',
+                       ' // First line\n' +
+                       ' // Second line\n' +
+                       ' //   Third line');
+            });
         });
     });
 
@@ -231,6 +244,21 @@ describe('MagicPen', function () {
             expect(pen.toString(), 'to equal',
                    '<code>\n' +
                    '  <div>Hello&nbsp;<span style="color: red">world!</span></div>\n' +
+                   '</code>');
+        });
+
+        it('the content of a pen can be prepended to the start of each line', function () {
+            pen.text('First line').nl()
+                .text('Second line')
+                .indentLines()
+                .indent().text('Third line')
+                .prependLinesWith(pen.clone().gray(' // '));
+
+            expect(pen.toString(), 'to equal',
+                   '<code>\n' +
+                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>First&nbsp;line</div>\n' +
+                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>Second&nbsp;line</div>\n' +
+                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;Third&nbsp;line</div>\n' +
                    '</code>');
         });
     });
