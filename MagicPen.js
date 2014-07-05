@@ -33,6 +33,14 @@
         return result;
     }
 
+    function filter(arr, callback, that) {
+        var result = [];
+        for (var i = 0, n = arr.length; i < n; i += 1)
+            if (i in arr && callback.call(that, arr[i], i, arr))
+                result.push(arr[i]);
+        return result;
+    }
+
     function extend(target) {
         var sources = Array.prototype.slice.call(arguments, 1);
         forEach(sources, function (source) {
@@ -43,9 +51,10 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'space', 'red', 'green', 'gray', 'bold'];
+    var requireStyles = ['lines', 'text', 'space'];
 
     function Serializer(styles) {
+        var that = this;
         forEach(requireStyles, function (style) {
             if (!styles[style]) {
                 throw new Error("Required style '" + style + "' is missing");
@@ -58,6 +67,41 @@
 
         // Alias space as sp
         this.styles.sp = this.styles.space;
+
+        var textStyles = [
+            'bold',
+            'dim',
+            'italic',
+            'underline',
+            'inverse',
+            'hidden',
+            'strikethrough',
+            'black',
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'magenta',
+            'cyan',
+            'white',
+            'gray',
+            'bgBlack',
+            'bgRed',
+            'bgGreen',
+            'bgYellow',
+            'bgBlue',
+            'bgMagenta',
+            'bgCyan',
+            'bgWhite'
+        ];
+
+        forEach(textStyles, function (textStyle) {
+            if (!that.styles[textStyle]) {
+                that.styles[textStyle] = function (text) {
+                    return this.styles.text.call(that, text, textStyle);
+                };
+            }
+        });
     }
 
     Serializer.prototype.serialize = function (lines) {
@@ -151,44 +195,115 @@
         },
         space: function (count) {
             return duplicateText(' ', count || 1);
-        },
-        red: function (text) {
-            return text;
-        },
-        green: function (text) {
-            return text;
-        },
-        gray: function (text) {
-            return text;
-        },
-        bold: function (text) {
-            return text;
         }
     });
 
+    var ansiStyles = (function () {
+        // Copied from https://github.com/sindresorhus/ansi-styles/
+        // License: raw.githubusercontent.com/sindresorhus/ansi-styles/master/license
+        var styles = {};
+
+        var codes = {
+            bold: [1, 22], // 21 isn't widely supported and 22 does the same thing
+            dim: [2, 22],
+            italic: [3, 23],
+            underline: [4, 24],
+            inverse: [7, 27],
+            hidden: [8, 28],
+            strikethrough: [9, 29],
+
+            black: [30, 39],
+            red: [31, 39],
+            green: [32, 39],
+            yellow: [33, 39],
+            blue: [34, 39],
+            magenta: [35, 39],
+            cyan: [36, 39],
+            white: [37, 39],
+            gray: [90, 39],
+
+            bgBlack: [40, 49],
+            bgRed: [41, 49],
+            bgGreen: [42, 49],
+            bgYellow: [43, 49],
+            bgBlue: [44, 49],
+            bgMagenta: [45, 49],
+            bgCyan: [46, 49],
+            bgWhite: [47, 49]
+        };
+
+        Object.keys(codes).forEach(function (key) {
+            var val = codes[key];
+            var style = styles[key] = {};
+            style.open = '\x1B[' + val[0] + 'm';
+            style.close = '\x1B[' + val[1] + 'm';
+        });
+
+        return styles;
+    }());
+
     var AnsiSerializer = createSerializer(extend({}, PlainSerializer.prototype.styles, {
-        red: function (text) {
-            return '\x1B[31m' + text + '\x1B[39m';
-        },
-        green: function (text) {
-            return '\x1B[32m' + text + '\x1B[39m';
-        },
-        gray: function (text) {
-            return '\x1B[90m' + text + '\x1B[39m';
-        },
-        bold: function (text) {
-            return '\x1B[1m' + text + '\x1B[22m';
+        text: function (text, stylesString) {
+            if (stylesString) {
+                var styles = stylesString.split(/\s*,\s*/);
+                forEach(styles, function (style) {
+                    if (ansiStyles[style]) {
+                        text = ansiStyles[style].open + text + ansiStyles[style].close;
+                    }
+                });
+            }
+
+            return text;
         }
     }));
 
+    var htmlStyles = {
+        bold: 'font-weight: bold',
+        dim: 'opacity: 0.7',
+        italic: 'font-style: italic',
+        underline: 'text-decoration: underline',
+        inverse: '-webkit-filter: invert(%100); filter: invert(100%)',
+        hidden: 'visibility: hidden',
+        strikethrough: 'text-decoration: line-through',
+
+        black: 'color: black',
+        red: 'color: red',
+        green: 'color: green',
+        yellow: 'color: yellow',
+        blue: 'color: blue',
+        magenta: 'color: magenta',
+        cyan: 'color: cyan',
+        white: 'color: white',
+        gray: 'color: gray',
+
+        bgBlack: 'background-color: black',
+        bgRed: 'background-color: red',
+        bgGreen: 'background-color: green',
+        bgYellow: 'background-color: yellow',
+        bgBlue: 'background-color: blue',
+        bgMagenta: 'background-color: magenta',
+        bgCyan: 'background-color: cyan',
+        bgWhite: 'background-color: white'
+    };
+
     var HtmlSerializer = createSerializer({
-        text: function (text) {
-            return (text || '')
+        text: function (text, stylesString) {
+            text = (text || '')
                 .replace(/&/g, '&amp;')
                 .replace(/ /g, '&nbsp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+
+            if (stylesString) {
+                var styles = filter(stylesString.split(/\s*,\s*/), function (styleName) {
+                    return htmlStyles[styleName];
+                });
+                text = '<span style="' + map(styles, function (styleName) {
+                    return htmlStyles[styleName];
+                }).join('; ') + '">' + text + '</span>';
+            }
+            return text;
         },
         lines: function (lines) {
             return '<code>\n' +
@@ -199,18 +314,6 @@
         },
         space: function (count) {
             return duplicateText('&nbsp;', count || 1);
-        },
-        red: function (text) {
-            return '<span style="color: red">' + text + '</span>';
-        },
-        green: function (text) {
-            return '<span style="color: green">' + text + '</span>';
-        },
-        gray: function (text) {
-            return '<span style="color: gray">' + text + '</span>';
-        },
-        bold: function (text) {
-            return '<span style="font-weight: bold">' + text + '</span>';
         }
     });
 
@@ -251,58 +354,21 @@
         html: HtmlSerializer
     };
 
-    function createOutputEntry(styles, args) {
-        if (styles.length === 1) {
-            var style = styles.shift() || 'text';
-            if (style === 'text' || style === 'raw') {
-                return {
-                    style: style,
-                    args: args
-                };
-            } else {
-                return {
-                    style: style,
-                    args: map(args, function (arg) {
-                        if (typeof arg === 'string') {
-                            return {
-                                style: 'text',
-                                args: [arg]
-                            };
-                        } else {
-                            return arg;
-                        }
-                    })
-                };
-            }
-        } else {
-            return {
-                style: styles.shift(),
-                args: [createOutputEntry(styles, args)]
-            };
-        }
-    }
-
     MagicPen.prototype.write = function () {
         var args = Array.prototype.slice.call(arguments);
         if (args.length === 0) {
             return this;
         } else if (args.length === 1 && isOutputEntry(args[0])) {
-            var styleString = args[0].style;
-            if (this.styles[styleString]) {
-                this.styles[styleString].apply(this, args[0].args);
+            var options = args[0];
+            if (this.styles[options.style]) {
+                this.styles[options.style].apply(this, options.args);
                 return this;
             }
-
-            var styles = (styleString && styleString.indexOf(',') !== -1) ?
-                styleString.split(/\s*,\s*/) : [styleString];
-
-            var entry = createOutputEntry(styles, args[0].args);
-
             this.output[0] = this.output[0] || [];
-            this.output[this.output.length - 1].push(entry);
+            this.output[this.output.length - 1].push(options);
             return this;
         } else if (args.length === 1) {
-            return this.write({ style: null, args: args });
+            return this.write({ style: 'text', args: args });
         } else {
             return this.write({ style: args[0], args: args.slice(1) });
         }
