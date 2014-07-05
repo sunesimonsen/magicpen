@@ -36,9 +36,9 @@ describe('MagicPen', function () {
 
             it('handles indented lines', function () {
                 pen.red('Hello')
-                   .indent()
-                   .indentation().text('beautiful')
-                   .outdent()
+                   .indentLines()
+                   .indent().text('beautiful')
+                   .outdentLines()
                    .green('world');
                 expect(pen.toString(), 'to equal',
                        'Hello\n' +
@@ -48,9 +48,9 @@ describe('MagicPen', function () {
 
             it('gutter can be set for and reset', function () {
                 pen.red('Hello')
-                   .indent()
-                   .indentation().text('beautiful')
-                   .outdent()
+                   .indentLines()
+                   .indent().text('beautiful')
+                   .outdentLines()
                    .green('world');
                 expect(pen.toString(), 'to equal',
                        'Hello\n' +
@@ -67,8 +67,8 @@ describe('MagicPen', function () {
                 pen.red('Hello').block(
                     pen.clone()
                         .gray(' // ').text('This is a')
-                        .indent()
-                        .gray(' // ').indentation().text('multiline comment'));
+                        .indentLines()
+                        .gray(' // ').indent().text('multiline comment'));
                 expect(pen.toString(), 'to equal',
                        'Hello // This is a\n' +
                        '      //   multiline comment');
@@ -118,9 +118,9 @@ describe('MagicPen', function () {
 
             it('handles indented lines', function () {
                 pen.red('Hello')
-                   .indent()
-                   .indentation().text('beautiful')
-                   .outdent()
+                   .indentLines()
+                   .indent().text('beautiful')
+                   .outdentLines()
                    .green('world');
                 expect(pen.toString(), 'to equal',
                        '\x1B[31mHello\x1B[39m\n' +
@@ -192,9 +192,9 @@ describe('MagicPen', function () {
 
         it('handles indented lines', function () {
             pen.red('Hello')
-               .indent()
-               .indentation().text('beautiful')
-               .outdent()
+               .indentLines()
+               .indent().text('beautiful')
+               .outdentLines()
                .green('world');
             expect(pen.toString(), 'to equal',
                    '<code>\n' +

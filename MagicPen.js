@@ -308,20 +308,20 @@
         }
     };
 
-    MagicPen.prototype.indent = function () {
+    MagicPen.prototype.indentLines = function () {
         this.indentationLevel += 1;
         this.newline();
         return this;
     };
 
-    MagicPen.prototype.indentation = function () {
+    MagicPen.prototype.indent = function () {
         for (var i = 0; i < this.indentationLevel; i += 1) {
             this.space(2);
         }
         return this;
     };
 
-    MagicPen.prototype.outdent = function () {
+    MagicPen.prototype.outdentLines = function () {
         this.indentationLevel = Math.max(0, this.indentationLevel - 1);
         this.newline();
         return this;
