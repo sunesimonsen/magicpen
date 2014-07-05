@@ -63,7 +63,7 @@ describe('MagicPen', function () {
                 expect(pen.toString(), 'to equal', 'Hello world!');
             });
 
-            it('output is appended in blocks', function () {
+            it('the content of a pen can be appended in a block', function () {
                 pen.red('Hello').block(
                     pen.clone()
                         .gray(' // ').text('This is a')
@@ -72,6 +72,14 @@ describe('MagicPen', function () {
                 expect(pen.toString(), 'to equal',
                        'Hello // This is a\n' +
                        '      //   multiline comment');
+            });
+
+            it('the content of a pen can be appended to the end of the output', function () {
+                pen.text('Hello').sp().append(
+                    pen.clone()
+                        .red('world!'));
+                expect(pen.toString(), 'to equal',
+                       'Hello world!');
             });
         });
     });
@@ -213,6 +221,16 @@ describe('MagicPen', function () {
             expect(pen.toString(), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>\n' +
+                   '</code>');
+        });
+
+        it('the content of a pen can be appended to the end of the output', function () {
+            pen.text('Hello').sp().append(
+                pen.clone()
+                    .red('world!'));
+            expect(pen.toString(), 'to equal',
+                   '<code>\n' +
+                   '  <div>Hello&nbsp;<span style="color: red">world!</span></div>\n' +
                    '</code>');
         });
     });

@@ -43,7 +43,7 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'space', 'block', 'red', 'green', 'gray', 'bold'];
+    var requireStyles = ['lines', 'text', 'space', 'red', 'green', 'gray', 'bold'];
 
     function Serializer(styles) {
         forEach(requireStyles, function (style) {
@@ -52,6 +52,9 @@
             }
         });
         this.styles = styles;
+        this.styles.raw = function (text) {
+            return text;
+        };
 
         // Alias space as sp
         this.styles.sp = this.styles.space;
@@ -149,9 +152,6 @@
         space: function (count) {
             return duplicateText(' ', count || 1);
         },
-        block: function (pen) {
-            return pen.toString();
-        },
         red: function (text) {
             return text;
         },
@@ -196,9 +196,6 @@
                     return '  <div>' + line.content.join('') + '</div>';
                 }).join('\n') + '\n' +
                 '</code>';
-        },
-        block: function (pen) {
-            return pen.toString();
         },
         space: function (count) {
             return duplicateText('&nbsp;', count || 1);
@@ -256,10 +253,10 @@
 
     function createOutputEntry(styles, args) {
         if (styles.length === 1) {
-            var style = styles.shift();
-            if (!style || style === 'text') {
+            var style = styles.shift() || 'text';
+            if (style === 'text' || style === 'raw') {
                 return {
-                    style: 'text',
+                    style: style,
                     args: args
                 };
             } else {
@@ -301,10 +298,7 @@
 
             var entry = createOutputEntry(styles, args[0].args);
 
-            if (this.output.length === 0) {
-                this.output.push([]);
-            }
-
+            this.output[0] = this.output[0] || [];
             this.output[this.output.length - 1].push(entry);
             return this;
         } else if (args.length === 1) {
@@ -347,6 +341,31 @@
 
     MagicPen.prototype.toString = function () {
         return this.serializer.serialize(this.output);
+    };
+
+    MagicPen.prototype.ensurePenWithSameMode = function (pen) {
+        if (!(pen instanceof MagicPen) || pen.mode !== this.mode) {
+            throw new Error('Expected an instance of a MagicPen in ' + this.mode + ' mode');
+        }
+    };
+
+    MagicPen.prototype.block = function (pen) {
+        this.ensurePenWithSameMode(pen);
+        return this.raw(pen.toString());
+    };
+
+    MagicPen.prototype.append = function (pen) {
+        this.ensurePenWithSameMode(pen);
+        if (pen.output.length === 0) {
+            return;
+        }
+
+        this.output[0] = this.output[0] || [];
+        this.output[0].push.apply(this.output[0], pen.output[0]);
+
+        this.output.push.apply(this.output, pen.output.slice(1));
+
+        return this;
     };
 
     MagicPen.prototype.clone = function () {
