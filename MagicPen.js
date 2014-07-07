@@ -158,7 +158,7 @@
                 var serializedLines = [''];
 
                 forEach(line.content, function (inlineBlock, blockIndex) {
-                    var blockLines = inlineBlock.split('\n');
+                    var blockLines = String(inlineBlock).split('\n');
                     var longestBlockLine = 0;
                     forEach(blockLines, function (blockLine) {
                         longestBlockLine = Math.max(longestBlockLine, blockLine.length);
@@ -282,7 +282,7 @@
 
     var HtmlSerializer = createSerializer({
         text: function (text, stylesString) {
-            text = (text || '')
+            text = String(text)
                 .replace(/&/g, '&amp;')
                 .replace(/ /g, '&nbsp;')
                 .replace(/</g, '&lt;')
