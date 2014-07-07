@@ -149,6 +149,10 @@
         return result;
     }
 
+    // copied from https://github.com/sindresorhus/ansi-regex
+    // License https://raw.githubusercontent.com/sindresorhus/ansi-regex/master/license
+    var ansiRegex = /\u001b\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]/g;
+
     var PlainSerializer = createSerializer({
         text: function (text) {
             return text;
@@ -158,24 +162,28 @@
                 var serializedLines = [''];
 
                 forEach(line.content, function (inlineBlock, blockIndex) {
-                    var blockLines = String(inlineBlock).split('\n');
+                    var blockLines = map(String(inlineBlock).split('\n'), function (serializedBlockLine) {
+                        return {
+                            content: serializedBlockLine,
+                            length: serializedBlockLine.replace(ansiRegex, '').length
+                        };
+                    });
                     var longestBlockLine = 0;
                     forEach(blockLines, function (blockLine) {
                         longestBlockLine = Math.max(longestBlockLine, blockLine.length);
                     });
 
-                    var blockStartIndex = serializedLines[0].length;
-                    serializedLines[0] += blockLines[0];
+                    var blockStartIndex = serializedLines[0].replace(ansiRegex, '').length;
+                    serializedLines[0] += blockLines[0].content;
                     if (blockLines.length > 1 && blockIndex < line.content.length - 1) {
                         serializedLines[0] += duplicateText(' ', longestBlockLine - blockLines[0].length);
                     }
 
-
                     forEach(blockLines.slice(1), function (blockLine, index) {
                         var lineIndex = index + 1;
                         serializedLines[lineIndex] = serializedLines[lineIndex] || '';
-                        var padding = duplicateText(' ', blockStartIndex - serializedLines[lineIndex].length);
-                        serializedLines[lineIndex] += padding + blockLine;
+                        var padding = duplicateText(' ', blockStartIndex - serializedLines[lineIndex].replace(ansiRegex, '').length);
+                        serializedLines[lineIndex] += padding + blockLine.content;
                     });
                 });
 
