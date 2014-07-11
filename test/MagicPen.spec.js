@@ -299,6 +299,63 @@ describe('MagicPen', function () {
 
     });
 
+    describe('Rainbow example', function () {
+        var rainbowColors = ['gray', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'];
+        function writeRainbowWithPen(pen) {
+            pen.addStyle('rainbow', function (text) {
+                for (var i = 0; i < text.length; i += 1) {
+                    var color = rainbowColors[i % rainbowColors.length];
+                    this.text(text[i], color);
+                }
+            });
+
+            pen.rainbow('Hello world');
+        }
+
+        it('in plain mode', function () {
+            var pen = new MagicPen();
+            writeRainbowWithPen(pen);
+            expect(pen.toString(), 'to equal', 'Hello world');
+        });
+
+        it('in ansi mode', function () {
+            var pen = new MagicPen('ansi');
+            writeRainbowWithPen(pen);
+            expect(pen.toString(), 'to equal',
+                   '\x1B[90mH\x1B[39m' +
+                   '\x1B[31me\x1B[39m' +
+                   '\x1B[32ml\x1B[39m' +
+                   '\x1B[33ml\x1B[39m' +
+                   '\x1B[34mo\x1B[39m' +
+                   '\x1B[35m \x1B[39m' +
+                   '\x1B[36mw\x1B[39m' +
+                   '\x1B[90mo\x1B[39m' +
+                   '\x1B[31mr\x1B[39m' +
+                   '\x1B[32ml\x1B[39m' +
+                   '\x1B[33md\x1B[39m');
+        });
+
+        it('in html mode', function () {
+            var pen = new MagicPen('html');
+            writeRainbowWithPen(pen);
+            expect(pen.toString(), 'to equal',
+                   '<code>\n' +
+                   '  <div>' +
+                   '<span style="color: gray">H</span>' +
+                   '<span style="color: red">e</span>' +
+                   '<span style="color: green">l</span>' +
+                   '<span style="color: yellow">l</span>' +
+                   '<span style="color: blue">o</span>' +
+                   '<span style="color: magenta">&nbsp;</span>' +
+                   '<span style="color: cyan">w</span>' +
+                   '<span style="color: gray">o</span>' +
+                   '<span style="color: red">r</span>' +
+                   '<span style="color: green">l</span>' +
+                   '<span style="color: yellow">d</span></div>\n' +
+                   '</code>');
+        });
+    });
+
     describe('Fib example', function () {
         function writeFibWithPen(pen) {
             pen.addStyle('keyword', function (text) {

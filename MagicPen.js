@@ -247,8 +247,9 @@
     }());
 
     var AnsiSerializer = createSerializer(extend({}, PlainSerializer.prototype.styles, {
-        text: function (text, stylesString) {
-            if (stylesString) {
+        text: function (text) {
+            if (arguments.length > 1) {
+                var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
                 var styles = stylesString.split(/\s*,\s*/);
                 forEach(styles, function (style) {
                     if (ansiStyles[style]) {
@@ -291,7 +292,7 @@
     };
 
     var HtmlSerializer = createSerializer({
-        text: function (text, stylesString) {
+        text: function (text) {
             text = String(text)
                 .replace(/&/g, '&amp;')
                 .replace(/ /g, '&nbsp;')
@@ -299,10 +300,12 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
 
-            if (stylesString) {
+            if (arguments.length > 1) {
+                var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
                 var styles = filter(stylesString.split(/\s*,\s*/), function (styleName) {
                     return htmlStyles[styleName];
                 });
+
                 text = '<span style="' + map(styles, function (styleName) {
                     return htmlStyles[styleName];
                 }).join('; ') + '">' + text + '</span>';
