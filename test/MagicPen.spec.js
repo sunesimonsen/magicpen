@@ -94,6 +94,16 @@ describe('MagicPen', function () {
                        ' // Second line\n' +
                        ' //   Third line');
             });
+
+            it('handles custom styles', function () {
+                pen.addStyle('error', function (text) {
+                    this.red(text);
+                });
+
+                pen.error('Danger').sp().write('error', 'danger');
+                expect(pen.toString(), 'to equal',
+                       'Danger danger');
+            });
         });
     });
 
@@ -139,6 +149,16 @@ describe('MagicPen', function () {
                        '\x1B[31mHello\x1B[39m\n' +
                        '  beautiful\n' +
                        '\x1B[32mworld\x1B[39m');
+            });
+
+            it('handles custom styles', function () {
+                pen.addStyle('error', function (text) {
+                    this.red(text);
+                });
+
+                pen.error('Danger').sp().write('error', 'danger');
+                expect(pen.toString(), 'to equal',
+                       '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
             });
 
             it('styles an be called as methods', function () {
