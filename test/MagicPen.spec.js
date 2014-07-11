@@ -292,14 +292,14 @@ describe('MagicPen', function () {
             });
             pen.keyword('function').sp().functionName('fib').text(' {')
                 .indentLines()
-                    .indent().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1).text('];').nl()
-                    .indent().keyword('for').text(' (; i < n; i += ').number(1).text(') {')
+                    .i().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1).text('];').nl()
+                    .i().keyword('for').text(' (; i < n; i += ').number(1).text(') {')
                     .indentLines()
-                        .indent().text('fibs.push(fibs[').number(0).text('] + fibs[').number(1).text(']);').nl()
-                        .indent().text('fibs.shift();')
+                        .i().text('fibs.push(fibs[').number(0).text('] + fibs[').number(1).text(']);').nl()
+                        .i().text('fibs.shift();')
                     .outdentLines()
-                    .indent().text('}').nl()
-                    .indent().keyword('return').text(' fibs[').number(0).text('];')
+                    .i().text('}').nl()
+                    .i().keyword('return').text(' fibs[').number(0).text('];')
                 .outdentLines()
                 .text('}');
         }

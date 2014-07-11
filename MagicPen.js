@@ -391,7 +391,7 @@
         return this;
     };
 
-    MagicPen.prototype.indent = function () {
+    MagicPen.prototype.indent = MagicPen.prototype.i = function () {
         for (var i = 0; i < this.indentationLevel; i += 1) {
             this.space(2);
         }
