@@ -1,12 +1,14 @@
-(function (root, factory) {
+/*global weknowhow:true*/
+(function (global, factory) {
     if (typeof exports === 'object') {
         module.exports = factory();
     } else if (typeof define === 'function' && define.amd) {
         define(factory);
     } else {
-        factory();
+        weknowhow.MagicPen = factory();
     }
 }(this, function () {
+    var global = this;
     function getKeys(obj) {
         var result = [];
 
@@ -327,6 +329,10 @@
     };
 
     function MagicPen(mode) {
+        if (this === global) {
+            return new MagicPen(mode);
+        }
+
         var that = this;
 
         extend(this, defaults, {
