@@ -5,7 +5,7 @@
     } else if (typeof define === 'function' && define.amd) {
         define(factory);
     } else {
-        weknowhow.MagicPen = factory();
+        weknowhow.magicpen = factory();
     }
 }(this, function () {
     var global = this;

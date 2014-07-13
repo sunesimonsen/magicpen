@@ -2,7 +2,7 @@
   "name": "magicpen",
   "version": "0.0.0",
   "description": "Styled output in both consoles and browsers",
-  "main": "MagicPen.js",
+  "main": "magicpen.js",
   "directories": {
     "test": "test"
   },

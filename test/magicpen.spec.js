@@ -1,13 +1,13 @@
 /*global describe, it, beforeEach, before*/
-var MagicPen = require('../MagicPen');
+var magicpen = require('../magicpen');
 var expect = require('unexpected');
 
-describe('MagicPen', function () {
+describe('magicpen', function () {
     var pen;
 
     describe('in plain mode', function () {
         beforeEach(function () {
-            pen = new MagicPen();
+            pen = magicpen();
         });
 
         describe('write', function () {
@@ -109,7 +109,7 @@ describe('MagicPen', function () {
 
     describe('in ansi mode', function () {
         beforeEach(function () {
-            pen = new MagicPen('ansi');
+            pen = magicpen('ansi');
         });
 
         describe('write', function () {
@@ -174,7 +174,7 @@ describe('MagicPen', function () {
 
     describe('in html mode', function () {
         beforeEach(function () {
-            pen = new MagicPen('html');
+            pen = magicpen('html');
         });
 
         describe('write', function () {
@@ -313,13 +313,13 @@ describe('MagicPen', function () {
         }
 
         it('in plain mode', function () {
-            var pen = new MagicPen();
+            var pen = magicpen();
             writeRainbowWithPen(pen);
             expect(pen.toString(), 'to equal', 'Hello world');
         });
 
         it('in ansi mode', function () {
-            var pen = new MagicPen('ansi');
+            var pen = magicpen('ansi');
             writeRainbowWithPen(pen);
             expect(pen.toString(), 'to equal',
                    '\x1B[90mH\x1B[39m' +
@@ -336,7 +336,7 @@ describe('MagicPen', function () {
         });
 
         it('in html mode', function () {
-            var pen = new MagicPen('html');
+            var pen = magicpen('html');
             writeRainbowWithPen(pen);
             expect(pen.toString(), 'to equal',
                    '<code>\n' +
@@ -382,7 +382,7 @@ describe('MagicPen', function () {
         }
 
         it('in plain mode', function () {
-            var pen = new MagicPen();
+            var pen = magicpen();
             writeFibWithPen(pen);
             expect(pen.toString(), 'to equal',
                    'function fib {\n' +
@@ -396,7 +396,7 @@ describe('MagicPen', function () {
         });
 
         it('in ansi mode', function () {
-            var pen = new MagicPen('ansi');
+            var pen = magicpen('ansi');
             pen.addStyle('keyword', function (text) {
                 this.text(text, 'blue, bold');
             });
@@ -419,7 +419,7 @@ describe('MagicPen', function () {
         });
 
         it('in html mode', function () {
-            var pen = new MagicPen('html');
+            var pen = magicpen('html');
             pen.addStyle('keyword', function (text) {
                 this.text(text, 'black, bold');
             });
