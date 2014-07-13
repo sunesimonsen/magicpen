@@ -77,7 +77,7 @@
             'underline',
             'inverse',
             'hidden',
-            'strikethrough',
+            'strikeThrough',
             'black',
             'red',
             'green',
@@ -214,7 +214,7 @@
             underline: [4, 24],
             inverse: [7, 27],
             hidden: [8, 28],
-            strikethrough: [9, 29],
+            strikeThrough: [9, 29],
 
             black: [30, 39],
             red: [31, 39],
@@ -269,7 +269,7 @@
         underline: 'text-decoration: underline',
         inverse: '-webkit-filter: invert(%100); filter: invert(100%)',
         hidden: 'visibility: hidden',
-        strikethrough: 'text-decoration: line-through',
+        strikeThrough: 'text-decoration: line-through',
 
         black: 'color: black',
         red: 'color: red',
