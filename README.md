@@ -123,6 +123,19 @@ console.log(pen.toString());
 
 ![Hello colorful world](images/Hello colorful world.png)
 
+Notice that special characters might get escaped by this method. The
+example below shows how special html characters is escaped by the html
+mode.
+
+```js
+var pen = magicpen('html');
+pen.text('<strong>Hello world!</strong>');
+expect(pen.toString(), 'to equal',
+    '<code>\n' +
+    '  <div>&lt;strong&gt;Hello&nbsp;world!&lt;/strong&gt;</div>\n' +
+    '</code>');
+```
+
 ## Aliases
 
 ### bold(content)
