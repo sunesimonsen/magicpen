@@ -100,7 +100,15 @@ You will get the following output it the browser:
 
 Append the given content to the output with the styles specified in the style strings.
 
-Example:
+*Supported styles are:*
+
+Text properties: bold, dim, italic, underline, inverse, hidden, strikeThrough.
+
+Foreground colors: black, red, green, yellow, blue, magenta, cyan, white, gray.
+
+Background colors: bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite.
+
+*Example:*
 
 ```js
 var pen = magicpen('ansi');
