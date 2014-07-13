@@ -68,7 +68,7 @@ format the output for the console with colors and basic styling. The
 `html` mode will format the output in html with colors and basic
 styling.
 
-Let's try to create out first `magicpen` in `ansi` mode:
+Let's try to create our first `magicpen` in `ansi` mode:
 
 ```js
 magicpen('ansi');
@@ -80,4 +80,16 @@ The above snippet create a new `magicpen` in `ansi` mode and writes
 _Hello_ in red, space and _world!_ in green and prints the formatted
 output to the console. This will produce the following output:
 
-![Hello world!](images/Hello world.png)
+![Hello world!](images/Hello world - ansi.png)
+
+Let's try to create the same output but format it as html:
+
+```js
+magicpen('html');
+pen.red('Hello').sp().green('world!');
+document.getElementById('output').innerHTML = pen.toString();
+```
+
+You will get the following output it the browser:
+
+![Hello world!](images/Hello world - html.png)
