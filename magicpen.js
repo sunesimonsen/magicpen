@@ -66,41 +66,6 @@
         this.styles.raw = function (content) {
             return content;
         };
-
-        var textStyles = [
-            'bold',
-            'dim',
-            'italic',
-            'underline',
-            'inverse',
-            'hidden',
-            'strikeThrough',
-            'black',
-            'red',
-            'green',
-            'yellow',
-            'blue',
-            'magenta',
-            'cyan',
-            'white',
-            'gray',
-            'bgBlack',
-            'bgRed',
-            'bgGreen',
-            'bgYellow',
-            'bgBlue',
-            'bgMagenta',
-            'bgCyan',
-            'bgWhite'
-        ];
-
-        forEach(textStyles, function (textStyle) {
-            if (!that.styles[textStyle]) {
-                that.styles[textStyle] = function (content) {
-                    return this.text.call(that, content, textStyle);
-                };
-            }
-        });
     }
 
     Serializer.prototype.serialize = function (lines) {
@@ -457,6 +422,18 @@
         this.write('text', duplicateText(' ', count || 1));
         return this;
     };
+
+    forEach([
+        'bold', 'dim', 'italic', 'underline', 'inverse', 'hidden',
+        'strikeThrough', 'black', 'red', 'green', 'yellow', 'blue',
+        'magenta', 'cyan', 'white', 'gray', 'bgBlack', 'bgRed',
+        'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan',
+        'bgWhite'
+    ], function (textStyle) {
+        MagicPen.prototype[textStyle] = function (content) {
+            return this.text.call(this, content, textStyle);
+        };
+    });
 
     MagicPen.prototype.clone = function () {
         function MagicPenClone() {}

@@ -7,8 +7,10 @@
     "test": "test"
   },
   "author": "Sune Simonsen",
-  "dependencies": {
+  "devDependencies": {
     "mocha": "^1.20.1",
-    "unexpected": "^3.2.2"
+    "unexpected": "^3.2.2",
+    "unexpected-sinon": "^3.0.2",
+    "sinon": "=1.9.1"
   }
 }

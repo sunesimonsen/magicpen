@@ -1,109 +1,97 @@
 /*global describe, it, beforeEach, before*/
 var magicpen = require('../magicpen');
 var expect = require('unexpected');
+var sinon = require('sinon');
+expect.installPlugin(require('unexpected-sinon'));
 
 describe('magicpen', function () {
     var pen;
+
+    function forEach(arr, callback, that) {
+        for (var i = 0, n = arr.length; i < n; i += 1)
+            if (i in arr)
+                callback.call(that, arr[i], i, arr);
+    }
 
     describe('in plain mode', function () {
         beforeEach(function () {
             pen = magicpen();
         });
 
-        describe('write', function () {
-            describe('when given one argument', function () {
-                it('appends the given text to the output', function () {
-                    pen.write('Hello');
-                    pen.write(' ');
-                    pen.write('world');
-                    expect(pen.toString(), 'to equal', 'Hello world');
-                });
+        it('handles multi line output', function () {
+            pen.red('Hello').nl().green('world');
+            expect(pen.toString(), 'to equal', 'Hello\nworld');
+        });
+
+        it('handles indented lines', function () {
+            pen.red('Hello')
+                .indentLines()
+                .indent().text('beautiful')
+                .outdentLines()
+                .green('world');
+            expect(pen.toString(), 'to equal',
+                   'Hello\n' +
+                   '  beautiful\n' +
+                   'world');
+        });
+
+        it('gutter can be set for and reset', function () {
+            pen.red('Hello')
+                .indentLines()
+                .indent().text('beautiful')
+                .outdentLines()
+                .green('world');
+            expect(pen.toString(), 'to equal',
+                   'Hello\n' +
+                   '  beautiful\n' +
+                   'world');
+        });
+
+        it('styles an be called as methods', function () {
+            pen.red('Hello').sp().green('world').text('!', 'red, bold');
+            expect(pen.toString(), 'to equal', 'Hello world!');
+        });
+
+        it('the content of a pen can be appended in a block', function () {
+            pen.red('Hello').block(
+                pen.clone()
+                    .gray(' // ').text('This is a')
+                    .indentLines()
+                    .gray(' // ').indent().text('multiline comment'));
+            expect(pen.toString(), 'to equal',
+                   'Hello // This is a\n' +
+                   '      //   multiline comment');
+        });
+
+        it('the content of a pen can be appended to the end of the output', function () {
+            pen.text('Hello').sp().append(
+                pen.clone()
+                    .red('world!'));
+            expect(pen.toString(), 'to equal',
+                   'Hello world!');
+        });
+
+        it('the content of a pen can be prepended to the start of each line', function () {
+            pen.text('First line').nl()
+                .text('Second line')
+                .indentLines()
+                .indent().text('Third line')
+                .prependLinesWith(pen.clone().gray(' // '));
+
+            expect(pen.toString(), 'to equal',
+                   ' // First line\n' +
+                   ' // Second line\n' +
+                   ' //   Third line');
+        });
+
+        it('handles custom styles', function () {
+            pen.addStyle('error', function (text) {
+                this.red(text);
             });
 
-            describe('when given a style as the first argument', function () {
-                it('appends the given text to the output with the specified styles', function () {
-                    pen.write('red', 'Hello');
-                    pen.write(' ');
-                    pen.write('green', 'world');
-                    expect(pen.toString(), 'to equal', 'Hello world');
-                });
-            });
-
-            it('handles multi line output', function () {
-                pen.red('Hello').nl().green('world');
-                expect(pen.toString(), 'to equal', 'Hello\nworld');
-            });
-
-            it('handles indented lines', function () {
-                pen.red('Hello')
-                   .indentLines()
-                   .indent().text('beautiful')
-                   .outdentLines()
-                   .green('world');
-                expect(pen.toString(), 'to equal',
-                       'Hello\n' +
-                       '  beautiful\n' +
-                       'world');
-            });
-
-            it('gutter can be set for and reset', function () {
-                pen.red('Hello')
-                   .indentLines()
-                   .indent().text('beautiful')
-                   .outdentLines()
-                   .green('world');
-                expect(pen.toString(), 'to equal',
-                       'Hello\n' +
-                       '  beautiful\n' +
-                       'world');
-            });
-
-            it('styles an be called as methods', function () {
-                pen.red('Hello').sp().green('world').write('red, bold', '!');
-                expect(pen.toString(), 'to equal', 'Hello world!');
-            });
-
-            it('the content of a pen can be appended in a block', function () {
-                pen.red('Hello').block(
-                    pen.clone()
-                        .gray(' // ').text('This is a')
-                        .indentLines()
-                        .gray(' // ').indent().text('multiline comment'));
-                expect(pen.toString(), 'to equal',
-                       'Hello // This is a\n' +
-                       '      //   multiline comment');
-            });
-
-            it('the content of a pen can be appended to the end of the output', function () {
-                pen.text('Hello').sp().append(
-                    pen.clone()
-                        .red('world!'));
-                expect(pen.toString(), 'to equal',
-                       'Hello world!');
-            });
-
-            it('the content of a pen can be prepended to the start of each line', function () {
-                pen.text('First line').nl()
-                   .text('Second line')
-                   .indentLines()
-                   .indent().text('Third line')
-                   .prependLinesWith(pen.clone().gray(' // '));
-
-                expect(pen.toString(), 'to equal',
-                       ' // First line\n' +
-                       ' // Second line\n' +
-                       ' //   Third line');
-            });
-
-            it('handles custom styles', function () {
-                pen.addStyle('error', function (text) {
-                    this.red(text);
-                });
-
-                pen.error('Danger').sp().write('error', 'danger');
-                expect(pen.toString(), 'to equal',
-                       'Danger danger');
-            });
+            pen.error('Danger').sp().error('danger');
+            expect(pen.toString(), 'to equal',
+                   'Danger danger');
         });
     });
 
@@ -112,95 +100,50 @@ describe('magicpen', function () {
             pen = magicpen('ansi');
         });
 
-        describe('write', function () {
-            describe('when given one argument', function () {
-                it('appends the given text to the output', function () {
-                    pen.write('Hello');
-                    pen.write(' ');
-                    pen.write('world');
-                    expect(pen.toString(), 'to equal', 'Hello world');
-                });
+
+        it('handles multi line output', function () {
+            pen.red('Hello').nl().green('world');
+            expect(pen.toString(), 'to equal',
+                   '\x1B[31mHello\x1B[39m' +
+                   '\n' +
+                   '\x1B[32mworld\x1B[39m');
+        });
+
+        it('handles indented lines', function () {
+            pen.red('Hello')
+                .indentLines()
+                .indent().text('beautiful')
+                .outdentLines()
+                .green('world');
+            expect(pen.toString(), 'to equal',
+                   '\x1B[31mHello\x1B[39m\n' +
+                   '  beautiful\n' +
+                   '\x1B[32mworld\x1B[39m');
+        });
+
+        it('handles custom styles', function () {
+            pen.addStyle('error', function (text) {
+                this.red(text);
             });
 
-            describe('when given a style as the first argument', function () {
-                it('appends the given text to the output with the specified styles', function () {
-                    pen.write('red', 'Hello');
-                    pen.write(' ');
-                    pen.write('green', 'world');
-                    expect(pen.toString(), 'to equal', '\x1B[31mHello\x1B[39m \x1B[32mworld\x1B[39m');
-                });
-            });
+            pen.error('Danger').sp().write('error', 'danger');
+            expect(pen.toString(), 'to equal',
+                   '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
+        });
 
-            it('handles multi line output', function () {
-                pen.red('Hello').nl().green('world');
-                expect(pen.toString(), 'to equal',
-                       '\x1B[31mHello\x1B[39m' +
-                       '\n' +
-                       '\x1B[32mworld\x1B[39m');
-            });
-
-            it('handles indented lines', function () {
-                pen.red('Hello')
-                   .indentLines()
-                   .indent().text('beautiful')
-                   .outdentLines()
-                   .green('world');
-                expect(pen.toString(), 'to equal',
-                       '\x1B[31mHello\x1B[39m\n' +
-                       '  beautiful\n' +
-                       '\x1B[32mworld\x1B[39m');
-            });
-
-            it('handles custom styles', function () {
-                pen.addStyle('error', function (text) {
-                    this.red(text);
-                });
-
-                pen.error('Danger').sp().write('error', 'danger');
-                expect(pen.toString(), 'to equal',
-                       '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
-            });
-
-            it('styles an be called as methods', function () {
-                pen.red('Hello').sp().green('world').text('!', 'red, bold');
-                expect(pen.toString(), 'to equal',
-                       '\x1B[31mHello\x1B[39m' +
-                       ' ' +
-                       '\x1B[32mworld\x1B[39m' +
-                       '\x1B[1m\x1B[31m!\x1B[39m\x1B[22m');
-            });
+        it('styles an be called as methods', function () {
+            pen.red('Hello').sp().green('world').text('!', 'red, bold');
+            expect(pen.toString(), 'to equal',
+                   '\x1B[31mHello\x1B[39m' +
+                   ' ' +
+                   '\x1B[32mworld\x1B[39m' +
+                   '\x1B[1m\x1B[31m!\x1B[39m\x1B[22m');
         });
     });
 
     describe('in html mode', function () {
         beforeEach(function () {
             pen = magicpen('html');
-        });
-
-        describe('write', function () {
-            describe('when given one argument', function () {
-                it('appends the given text to the output', function () {
-                    pen.write('Hello');
-                    pen.write(' ');
-                    pen.write('world');
-                    expect(pen.toString(), 'to equal',
-                           '<code>\n' +
-                           '  <div>Hello&nbsp;world</div>\n' +
-                           '</code>');
-                });
-            });
-
-            describe('when given a style as the first argument', function () {
-                it('appends the given text to the output with the specified styles', function () {
-                    pen.write('red', 'Hello');
-                    pen.write(' ');
-                    pen.write('green', 'world');
-                    expect(pen.toString(), 'to equal',
-                           '<code>\n' +
-                           '  <div><span style="color: red">Hello</span>&nbsp;<span style="color: green">world</span></div>\n' +
-                           '</code>');
-                });
-            });
         });
 
         it('styles an be called as methods', function () {
@@ -225,10 +168,10 @@ describe('magicpen', function () {
 
         it('handles indented lines', function () {
             pen.red('Hello')
-               .indentLines()
-               .indent().text('beautiful')
-               .outdentLines()
-               .green('world');
+                .indentLines()
+                .indent().text('beautiful')
+                .outdentLines()
+                .green('world');
             expect(pen.toString(), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
@@ -353,6 +296,22 @@ describe('magicpen', function () {
                    '<span style="color: green">l</span>' +
                    '<span style="color: yellow">d</span></div>\n' +
                    '</code>');
+        });
+    });
+
+    describe('aliases', function () {
+        forEach([
+            'bold', 'dim', 'italic', 'underline', 'inverse', 'hidden',
+            'strikeThrough', 'black', 'red', 'green', 'yellow',
+            'blue', 'magenta', 'cyan', 'white', 'gray', 'bgBlack',
+            'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta',
+            'bgCyan', 'bgWhite'
+        ], function (textStyle) {
+            it(textStyle + '(content) is an alias for text(content, "' + textStyle + '"', function () {
+                pen.text = sinon.spy();
+                pen[textStyle]('test');
+                expect(pen.text, 'was called with', 'test', textStyle);
+            });
         });
     });
 
