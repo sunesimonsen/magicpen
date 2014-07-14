@@ -300,6 +300,26 @@ describe('magicpen', function () {
     });
 
     describe('aliases', function () {
+        forEach(['space', 'sp'], function (methodName) {
+            it(methodName + '() is an alias for text(" ")', function () {
+                pen.text = sinon.spy();
+                pen[methodName]();
+                expect(pen.text, 'was called with', ' ');
+            });
+
+            it(methodName + '(1) is an alias for text(" ")', function () {
+                pen.text = sinon.spy();
+                pen[methodName](1);
+                expect(pen.text, 'was called with', ' ');
+            });
+
+            it(methodName + '(2) is an alias for text("  ")', function () {
+                pen.text = sinon.spy();
+                pen[methodName](2);
+                expect(pen.text, 'was called with', '  ');
+            });
+        });
+
         forEach([
             'bold', 'dim', 'italic', 'underline', 'inverse', 'hidden',
             'strikeThrough', 'black', 'red', 'green', 'yellow',

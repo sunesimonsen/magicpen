@@ -138,7 +138,7 @@ expect(pen.toString(), 'to equal',
 
 ## Aliases
 
-### space(count = 1)
+### space(count = 1), sp(count = 1)
 Alias for `text(duplicate(' ', count))`.
 
 ### bold(content)
