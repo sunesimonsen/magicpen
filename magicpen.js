@@ -63,8 +63,8 @@
             }
         });
         this.styles = styles;
-        this.styles.raw = function (text) {
-            return text;
+        this.styles.raw = function (content) {
+            return content;
         };
 
         var textStyles = [
@@ -96,8 +96,8 @@
 
         forEach(textStyles, function (textStyle) {
             if (!that.styles[textStyle]) {
-                that.styles[textStyle] = function (text) {
-                    return this.text.call(that, text, textStyle);
+                that.styles[textStyle] = function (content) {
+                    return this.text.call(that, content, textStyle);
                 };
             }
         });
@@ -140,10 +140,10 @@
         return CustomSerializer;
     }
 
-    function duplicateText(text, times) {
+    function duplicateText(content, times) {
         var result = '';
         for (var i = 0; i < times; i += 1) {
-            result += text;
+            result += content;
         }
         return result;
     }
@@ -153,8 +153,8 @@
     var ansiRegex = /\u001b\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]/g;
 
     var PlainSerializer = createSerializer({
-        text: function (text) {
-            return text;
+        text: function (content) {
+            return content;
         },
         lines: function (lines) {
             function serializeLine(line) {
@@ -241,18 +241,18 @@
     }());
 
     var AnsiSerializer = createSerializer(extend({}, PlainSerializer.prototype.styles, {
-        text: function (text) {
+        text: function (content) {
             if (arguments.length > 1) {
                 var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
                 var styles = stylesString.split(/\s*,\s*/);
                 forEach(styles, function (style) {
                     if (ansiStyles[style]) {
-                        text = ansiStyles[style].open + text + ansiStyles[style].close;
+                        content = ansiStyles[style].open + content + ansiStyles[style].close;
                     }
                 });
             }
 
-            return text;
+            return content;
         }
     }));
 
@@ -286,8 +286,8 @@
     };
 
     var HtmlSerializer = createSerializer({
-        text: function (text) {
-            text = String(text)
+        text: function (content) {
+            content = String(content)
                 .replace(/&/g, '&amp;')
                 .replace(/ /g, '&nbsp;')
                 .replace(/</g, '&lt;')
@@ -300,11 +300,11 @@
                     return htmlStyles[styleName];
                 });
 
-                text = '<span style="' + map(styles, function (styleName) {
+                content = '<span style="' + map(styles, function (styleName) {
                     return htmlStyles[styleName];
-                }).join('; ') + '">' + text + '</span>';
+                }).join('; ') + '">' + content + '</span>';
             }
-            return text;
+            return content;
         },
         lines: function (lines) {
             return '<code>\n' +
