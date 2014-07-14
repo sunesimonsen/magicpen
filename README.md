@@ -1,6 +1,6 @@
 # MagicPen
 
-![This sucker is spraying unicorns and rainbows](images/magic-pen-6-colours.jpg "This sucker is spraying unicorns and rainbows")
+![This sucker is spraying rainbows and unicorns right and left](images/magic-pen-6-colours.jpg "This sucker is spraying rainbows and unicorns right and left")
 
 Create composable extensible styled text in both consoles and
 browsers.
