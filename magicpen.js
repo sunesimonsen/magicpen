@@ -454,7 +454,7 @@
     };
 
     MagicPen.prototype.space = MagicPen.prototype.sp = function (count) {
-        this.text(duplicateText(' ', count || 1));
+        this.write('text', duplicateText(' ', count || 1));
         return this;
     };
 
