@@ -53,7 +53,7 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'space', 'block'];
+    var requireStyles = ['lines', 'text', 'block'];
 
     function Serializer(styles) {
         var that = this;
@@ -66,9 +66,6 @@
         this.styles.raw = function (text) {
             return text;
         };
-
-        // Alias space as sp
-        this.styles.sp = this.styles.space;
 
         var textStyles = [
             'bold',
@@ -194,9 +191,6 @@
 
             return map(lines, serializeLine).join('\n');
         },
-        space: function (count) {
-            return duplicateText(' ', count || 1);
-        },
         block: function (content) {
             return content;
         }
@@ -321,9 +315,6 @@
         },
         block: function (content) {
             return '<div style="display: inline-block; vertical-align: top">' + content + '</div>';
-        },
-        space: function (count) {
-            return duplicateText('&nbsp;', count || 1);
         }
     });
 
@@ -459,6 +450,11 @@
             return outputToPrepend.concat(line);
         });
 
+        return this;
+    };
+
+    MagicPen.prototype.space = MagicPen.prototype.sp = function (count) {
+        this.text(duplicateText(' ', count || 1));
         return this;
     };
 
