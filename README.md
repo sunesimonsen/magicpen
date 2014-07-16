@@ -19,7 +19,7 @@ Then:
 
 ```js
 var magicpen = require('magicpen');
-pen = magicpen('ansi');
+var pen = magicpen('ansi');
 pen.red('Hello').sp().green('world!');
 console.log(pen.toString());
 ```
@@ -35,9 +35,10 @@ Include `magicpen.js`.
 this will expose the `magicpen` function under the following namespace:
 
 ```js
-var expect = weknowhow.magicpen;
+var magicpen = weknowhow.magicpen;
+var pen = magicpen('html');
 pen.red('Hello').sp().green('world!');
-console.log(pen.toString());
+document.getElementById('output').innerHTML = pen.toString();
 ```
 
 ### RequireJS
@@ -51,10 +52,10 @@ require.config({
     }
 });
 
-define(['magicpen'], function (expect) {
-    pen = magicpen('ansi');
+define(['magicpen'], function (magicpen) {
+    var pen = magicpen('html');
     pen.red('Hello').sp().green('world!');
-    console.log(pen.toString());
+    document.getElementById('output').innerHTML = pen.toString();
 });
 ```
 
@@ -71,7 +72,7 @@ styling.
 Let's try to create our first `magicpen` in `ansi` mode:
 
 ```js
-magicpen('ansi');
+var pen = magicpen('ansi');
 pen.red('Hello').sp().green('world!');
 console.log(pen.toString());
 ```
@@ -85,7 +86,7 @@ output to the console. This will produce the following output:
 Let's try to create the same output but format it as html:
 
 ```js
-magicpen('html');
+var pen = magicpen('html');
 pen.red('Hello').sp().green('world!');
 document.getElementById('output').innerHTML = pen.toString();
 ```
