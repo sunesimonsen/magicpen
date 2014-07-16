@@ -169,6 +169,12 @@ Decrements the indentation level and starts a new line.
 
 Appends the indentation to the output.
 
+### clone()
+
+Returns a clone of the current pen with an empty output buffer. This
+operation is very cheap, so don't hesitate to use it when it makes
+sense.
+
 ## Aliases
 
 ### space(count = 1), sp(count = 1)
