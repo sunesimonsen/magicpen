@@ -175,6 +175,33 @@ Returns a clone of the current pen with an empty output buffer. This
 operation is very cheap, so don't hesitate to use it when it makes
 sense.
 
+### addStyle(style, handler)
+
+Defines a new style for the magicpen. The usage is best explained by
+an example:
+
+```js
+var pen = magicpen('ansi');
+
+pen.addStyle('rainbow', function (text, rainbowColors) {
+    rainbowColors = rainbowColors ||
+        ['gray', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'];
+    for (var i = 0; i < text.length; i += 1) {
+        var color = rainbowColors[i % rainbowColors.length];
+        this.text(text[i], color);
+    }
+});
+
+pen.rainbow('The unicorns are flying low today').nl();
+   .rainbow('The unicorns are flying low today', ['green', 'red', 'cyan']);
+console.log(pen.toString());
+```
+
+As you can see in the example above, a custom style can produce any
+kind of output using an instance of a magicpen.
+
+![The unicors are flying low today](images/rainbows.png)
+
 ## Aliases
 
 ### space(count = 1), sp(count = 1)
