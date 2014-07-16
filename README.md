@@ -47,7 +47,7 @@ Include the library with RequireJS the following way:
 ```js
 require.config({
     paths: {
-        magicpen: 'path/to/magicpen
+        magicpen: 'path/to/magicpen'
     }
 });
 
