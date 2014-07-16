@@ -197,10 +197,10 @@ pen.rainbow('The unicorns are flying low today').nl();
 console.log(pen.toString());
 ```
 
+![The unicors are flying low today](images/rainbows.png)
+
 As you can see in the example above, a custom style can produce any
 kind of output using an instance of a magicpen.
-
-![The unicors are flying low today](images/rainbows.png)
 
 ## Aliases
 
