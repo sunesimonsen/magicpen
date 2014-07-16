@@ -137,6 +137,38 @@ expect(pen.toString(), 'to equal',
     '</code>');
 ```
 
+### newline(), nl()
+
+Starts a new line.
+
+### Indentation
+
+Example:
+
+```js
+pen.text('Hello')
+    .indentLines()
+        .indent().text('beautiful')
+    .outdentLines()
+    .text('world');
+expect(pen.toString(), 'to equal',
+    'Hello\n' +
+    '  beautiful\n' +
+    'world');
+```
+
+#### indentLines()
+
+Starts a new line and increments the indentation level.
+
+#### outdentLines()
+
+Decrements the indentation level and starts a new line.
+
+#### indent()
+
+Appends the indentation to the output.
+
 ## Aliases
 
 ### space(count = 1), sp(count = 1)
