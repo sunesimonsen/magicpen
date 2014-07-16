@@ -365,13 +365,14 @@
 
     MagicPen.prototype.addStyle = function (style, handler) {
         var that = this;
-        this.styles[style] = handler;
-        if (!this[style]) {
-            this[style] = function () {
-                handler.apply(that, arguments);
-                return that;
-            };
+        if (this[style]) {
+            throw new Error('"' + style + '" style is already defined');
         }
+        this.styles[style] = handler;
+        this[style] = function () {
+            handler.apply(that, arguments);
+            return that;
+        };
         return this;
     };
 

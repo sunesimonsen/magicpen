@@ -337,15 +337,6 @@ describe('magicpen', function () {
 
     describe('Fib example', function () {
         function writeFibWithPen(pen) {
-            pen.addStyle('keyword', function (text) {
-                this.text(text);
-            });
-            pen.addStyle('functionName', function (text) {
-                this.text(text);
-            });
-            pen.addStyle('number', function (text) {
-                this.text(text);
-            });
             pen.keyword('function').sp().functionName('fib').text(' {')
                 .indentLines()
                     .i().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1).text('];').nl()
@@ -362,6 +353,15 @@ describe('magicpen', function () {
 
         it('in plain mode', function () {
             var pen = magicpen();
+            pen.addStyle('keyword', function (text) {
+                this.text(text);
+            });
+            pen.addStyle('functionName', function (text) {
+                this.text(text);
+            });
+            pen.addStyle('number', function (text) {
+                this.text(text);
+            });
             writeFibWithPen(pen);
             expect(pen.toString(), 'to equal',
                    'function fib {\n' +
