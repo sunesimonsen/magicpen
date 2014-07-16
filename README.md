@@ -146,9 +146,9 @@ Starts a new line.
 Example:
 
 ```js
-pen.text('Hello')
+pen.text('Hello').nl()
     .indentLines()
-        .indent().text('beautiful')
+        .indent().text('beautiful').nl()
     .outdentLines()
     .text('world');
 expect(pen.toString(), 'to equal',
@@ -159,11 +159,11 @@ expect(pen.toString(), 'to equal',
 
 #### indentLines()
 
-Starts a new line and increments the indentation level.
+Increments the indentation level.
 
 #### outdentLines()
 
-Decrements the indentation level and starts a new line.
+Decrements the indentation level.
 
 #### indent(), i()
 

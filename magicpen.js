@@ -346,7 +346,6 @@
 
     MagicPen.prototype.indentLines = function () {
         this.indentationLevel += 1;
-        this.newline();
         return this;
     };
 
@@ -359,19 +358,17 @@
 
     MagicPen.prototype.outdentLines = function () {
         this.indentationLevel = Math.max(0, this.indentationLevel - 1);
-        this.newline();
         return this;
     };
 
     MagicPen.prototype.addStyle = function (style, handler) {
-        var that = this;
         if (this[style]) {
             throw new Error('"' + style + '" style is already defined');
         }
         this.styles[style] = handler;
         this[style] = function () {
-            handler.apply(that, arguments);
-            return that;
+            handler.apply(this, arguments);
+            return this;
         };
         return this;
     };
@@ -440,6 +437,8 @@
         function MagicPenClone() {}
         MagicPenClone.prototype = this;
         var clonedPen = new MagicPenClone();
+        clonedPen.serializer = new MagicPen.serializers[this.mode]();
+        clonedPen.styles = extend({}, this.styles);
         clonedPen.indentationLevel = 0;
         clonedPen.output = [];
         return clonedPen;

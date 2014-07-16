@@ -24,9 +24,9 @@ describe('magicpen', function () {
         });
 
         it('handles indented lines', function () {
-            pen.red('Hello')
+            pen.red('Hello').nl()
                 .indentLines()
-                .indent().text('beautiful')
+                .indent().text('beautiful').nl()
                 .outdentLines()
                 .green('world');
             expect(pen.toString(), 'to equal',
@@ -36,9 +36,9 @@ describe('magicpen', function () {
         });
 
         it('gutter can be set for and reset', function () {
-            pen.red('Hello')
+            pen.red('Hello').nl()
                 .indentLines()
-                .indent().text('beautiful')
+                .indent().text('beautiful').nl()
                 .outdentLines()
                 .green('world');
             expect(pen.toString(), 'to equal',
@@ -55,7 +55,7 @@ describe('magicpen', function () {
         it('the content of a pen can be appended in a block', function () {
             pen.red('Hello').block(
                 pen.clone()
-                    .gray(' // ').text('This is a')
+                    .gray(' // ').text('This is a').nl()
                     .indentLines()
                     .gray(' // ').indent().text('multiline comment'));
             expect(pen.toString(), 'to equal',
@@ -73,7 +73,7 @@ describe('magicpen', function () {
 
         it('the content of a pen can be prepended to the start of each line', function () {
             pen.text('First line').nl()
-                .text('Second line')
+                .text('Second line').nl()
                 .indentLines()
                 .indent().text('Third line')
                 .prependLinesWith(pen.clone().gray(' // '));
@@ -110,9 +110,9 @@ describe('magicpen', function () {
         });
 
         it('handles indented lines', function () {
-            pen.red('Hello')
+            pen.red('Hello').nl()
                 .indentLines()
-                .indent().text('beautiful')
+                .indent().text('beautiful').nl()
                 .outdentLines()
                 .green('world');
             expect(pen.toString(), 'to equal',
@@ -167,9 +167,9 @@ describe('magicpen', function () {
         });
 
         it('handles indented lines', function () {
-            pen.red('Hello')
+            pen.red('Hello').nl()
                 .indentLines()
-                .indent().text('beautiful')
+                .indent().text('beautiful').nl()
                 .outdentLines()
                 .green('world');
             expect(pen.toString(), 'to equal',
@@ -212,7 +212,7 @@ describe('magicpen', function () {
 
         it('the content of a pen can be prepended to the start of each line', function () {
             pen.text('First line').nl()
-                .text('Second line')
+                .text('Second line').nl()
                 .indentLines()
                 .indent().text('Third line')
                 .prependLinesWith(pen.clone().gray(' // '));
@@ -228,7 +228,7 @@ describe('magicpen', function () {
         it('the content of a pen can be appended in a block', function () {
             pen.red('Hello').block(
                 pen.clone()
-                    .gray(' // ').text('This is a')
+                    .gray(' // ').text('This is a').nl()
                     .indentLines()
                     .gray(' // ').indent().text('multiline comment'));
             expect(pen.toString(), 'to equal',
@@ -335,18 +335,72 @@ describe('magicpen', function () {
         });
     });
 
+    describe('Recursive custom style example', function () {
+        function writeObjectWithPen(pen) {
+            pen.addStyle('object', function (obj) {
+                if (obj && typeof obj === 'object') {
+                    this.text('{').nl()
+                        .indentLines();
+                    var keys = [];
+                    for (var prop in obj) {
+                        if (obj.hasOwnProperty(prop)) {
+                            keys.push(prop);
+                        }
+                    }
+                    for (var i = 0; i < keys.length; i += 1) {
+                        var key = keys[i];
+                        this.i().cyan(key).text(': ').object(obj[key]);
+                        if (i < keys.length - 1) {
+                            this.text(',');
+                        }
+                        this.nl();
+                    }
+                    this.outdentLines()
+                        .i().text('}');
+                } else if (typeof obj === 'string') {
+                    this.yellow('"' + obj + '"');
+                } else {
+                    this.text(obj);
+                }
+            });
+
+            pen.object({
+                1337: 'leet',
+                3: {
+                    37: 'eet',
+                    7: 'et'
+                },
+                7: 't'
+            });
+        }
+
+        it('in plain mode', function () {
+            var pen = magicpen();
+            writeObjectWithPen(pen);
+            expect(pen.toString(), 'to equal',
+                   '{\n' +
+                   '  3: {\n' +
+                   '    7: "et",\n' +
+                   '    37: "eet"\n' +
+                   '  },\n' +
+                   '  7: "t",\n' +
+                   '  1337: "leet"\n' +
+                   '}');
+        });
+    });
+
     describe('Fib example', function () {
         function writeFibWithPen(pen) {
-            pen.keyword('function').sp().functionName('fib').text(' {')
+            pen.keyword('function').sp().functionName('fib').text(' {').nl()
                 .indentLines()
                     .i().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1).text('];').nl()
-                    .i().keyword('for').text(' (; i < n; i += ').number(1).text(') {')
+                    .i().keyword('for').text(' (; i < n; i += ').number(1).text(') {').nl()
                     .indentLines()
                         .i().text('fibs.push(fibs[').number(0).text('] + fibs[').number(1).text(']);').nl()
-                        .i().text('fibs.shift();')
+                        .i().text('fibs.shift();').nl()
                     .outdentLines()
                     .i().text('}').nl()
-                    .i().keyword('return').text(' fibs[').number(0).text('];')
+                    .i().keyword('return').text(' fibs[').number(0).text('];').nl()
                 .outdentLines()
                 .text('}');
         }
