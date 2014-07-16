@@ -165,7 +165,7 @@ Starts a new line and increments the indentation level.
 
 Decrements the indentation level and starts a new line.
 
-#### indent()
+#### indent(), i()
 
 Appends the indentation to the output.
 
