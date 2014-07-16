@@ -242,6 +242,42 @@ describe('magicpen', function () {
 
     });
 
+    describe('aliases', function () {
+        forEach(['space', 'sp'], function (methodName) {
+            it(methodName + '() is an alias for text(" ")', function () {
+                pen.text = sinon.spy();
+                pen[methodName]();
+                expect(pen.text, 'was called with', ' ');
+            });
+
+            it(methodName + '(1) is an alias for text(" ")', function () {
+                pen.text = sinon.spy();
+                pen[methodName](1);
+                expect(pen.text, 'was called with', ' ');
+            });
+
+            it(methodName + '(2) is an alias for text("  ")', function () {
+                pen.text = sinon.spy();
+                pen[methodName](2);
+                expect(pen.text, 'was called with', '  ');
+            });
+        });
+
+        forEach([
+            'bold', 'dim', 'italic', 'underline', 'inverse', 'hidden',
+            'strikeThrough', 'black', 'red', 'green', 'yellow',
+            'blue', 'magenta', 'cyan', 'white', 'gray', 'bgBlack',
+            'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta',
+            'bgCyan', 'bgWhite'
+        ], function (textStyle) {
+            it(textStyle + '(content) is an alias for text(content, "' + textStyle + '"', function () {
+                pen.text = sinon.spy();
+                pen[textStyle]('test');
+                expect(pen.text, 'was called with', 'test', textStyle);
+            });
+        });
+    });
+
     describe('Rainbow example', function () {
         var rainbowColors = ['gray', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'];
         function writeRainbowWithPen(pen) {
@@ -296,42 +332,6 @@ describe('magicpen', function () {
                    '<span style="color: green">l</span>' +
                    '<span style="color: yellow">d</span></div>\n' +
                    '</code>');
-        });
-    });
-
-    describe('aliases', function () {
-        forEach(['space', 'sp'], function (methodName) {
-            it(methodName + '() is an alias for text(" ")', function () {
-                pen.text = sinon.spy();
-                pen[methodName]();
-                expect(pen.text, 'was called with', ' ');
-            });
-
-            it(methodName + '(1) is an alias for text(" ")', function () {
-                pen.text = sinon.spy();
-                pen[methodName](1);
-                expect(pen.text, 'was called with', ' ');
-            });
-
-            it(methodName + '(2) is an alias for text("  ")', function () {
-                pen.text = sinon.spy();
-                pen[methodName](2);
-                expect(pen.text, 'was called with', '  ');
-            });
-        });
-
-        forEach([
-            'bold', 'dim', 'italic', 'underline', 'inverse', 'hidden',
-            'strikeThrough', 'black', 'red', 'green', 'yellow',
-            'blue', 'magenta', 'cyan', 'white', 'gray', 'bgBlack',
-            'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta',
-            'bgCyan', 'bgWhite'
-        ], function (textStyle) {
-            it(textStyle + '(content) is an alias for text(content, "' + textStyle + '"', function () {
-                pen.text = sinon.spy();
-                pen[textStyle]('test');
-                expect(pen.text, 'was called with', 'test', textStyle);
-            });
         });
     });
 
