@@ -169,6 +169,61 @@ Decrements the indentation level.
 
 Appends the indentation to the output.
 
+### append(pen)
+
+Appends the content of the given pen to the end of this pen.
+
+Notice, that the given pen must be in the same mode as this pen.
+
+Example:
+
+```js
+var pen = magicpen();
+var otherPen = pen.clone().text('world!');
+pen.text('Hello').sp().append(otherPen);
+expect(pen.toString(), 'to equal', 'Hello world!');
+```
+
+### block(pen)
+
+Appends the content of the given pen to the end of this pen in an
+inline block.
+
+Notice, that the given pen must be in the same mode as this pen.
+
+Example:
+
+```js
+var pen = magicpen();
+var otherPen = pen.clone()
+    .text(' // This is a').nl()
+    .text(' // multiline block');
+pen.text('Text before block').block(otherPen);
+expect(pen.toString(), 'to equal',
+    'Text before block // This is a\n' +
+    '                  // multiline block');
+```
+
+### prependLinesWith(pen)
+
+Prepends each line of this pen with the content of the given pen.
+
+Notice, that the given pen must be in the same mode as this pen.
+
+Example:
+
+```js
+var pen = magicpen();
+var otherPen = pen.clone().text('> ');
+pen.text('Line').nl()
+   .text('after line').nl()
+   .text('after line');
+expect(pen.toString(), 'to equal',
+    '> Line\n' +
+    '> after line\n' +
+    '> after line');
+```
+
 ### clone()
 
 Returns a clone of the current pen with an empty output buffer. This
