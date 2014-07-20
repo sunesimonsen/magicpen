@@ -92,7 +92,7 @@
         if (entry.style in this.styles) {
             return this.styles[entry.style].apply(this.styles, entry.args);
         } else {
-            return entry.args.join('');
+            throw new Error('Unknown style: "' + entry.style + '"');
         }
     };
 
