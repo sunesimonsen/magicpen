@@ -23,22 +23,20 @@
 
     function forEach(arr, callback, that) {
         for (var i = 0, n = arr.length; i < n; i += 1)
-            if (i in arr)
-                callback.call(that, arr[i], i, arr);
+            callback.call(that, arr[i], i, arr);
     }
 
     function map(arr, callback, that) {
         var result = [];
         for (var i = 0, n = arr.length; i < n; i += 1)
-            if (i in arr)
-                result.push(callback.call(that, arr[i], i, arr));
+            result.push(callback.call(that, arr[i], i, arr));
         return result;
     }
 
     function filter(arr, callback, that) {
         var result = [];
         for (var i = 0, n = arr.length; i < n; i += 1)
-            if (i in arr && callback.call(that, arr[i], i, arr))
+            if (callback.call(that, arr[i], i, arr))
                 result.push(arr[i]);
         return result;
     }
