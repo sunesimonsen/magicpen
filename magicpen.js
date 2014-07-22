@@ -61,9 +61,6 @@
             }
         });
         this.styles = styles;
-        this.styles.raw = function (content) {
-            return content;
-        };
     }
 
     Serializer.prototype.serialize = function (lines) {
@@ -324,9 +321,7 @@
 
     MagicPen.prototype.write = function () {
         var args = Array.prototype.slice.call(arguments);
-        if (args.length === 0) {
-            return this;
-        } else if (args.length === 1 && isOutputEntry(args[0])) {
+        if (args.length === 1 && isOutputEntry(args[0])) {
             var options = args[0];
             if (this.styles[options.style]) {
                 this.styles[options.style].apply(this, options.args);
@@ -335,8 +330,6 @@
             this.output[0] = this.output[0] || [];
             this.output[this.output.length - 1].push(options);
             return this;
-        } else if (args.length === 1) {
-            return this.write({ style: 'text', args: args });
         } else {
             return this.write({ style: args[0], args: args.slice(1) });
         }

@@ -13,6 +13,20 @@ describe('magicpen', function () {
                 callback.call(that, arr[i], i, arr);
     }
 
+    it('throws if an unknown style is used', function () {
+        expect(function () {
+            magicpen().write('test', 'text').toString();
+        }, 'to throw', 'Unknown style: "test"');
+    });
+
+    it('throws when creating a custom style with a name that already exists', function () {
+        forEach(['red', 'write', 'addStyle'], function (name) {
+            expect(function () {
+                magicpen().addStyle(name, function () {});
+            }, 'to throw', '"' + name + '" style is already defined');
+        });
+    });
+
     describe('in plain mode', function () {
         beforeEach(function () {
             pen = magicpen();
