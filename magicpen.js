@@ -1,11 +1,11 @@
-/*global weknowhow:true*/
 (function (global, factory) {
     if (typeof exports === 'object') {
         module.exports = factory();
     } else if (typeof define === 'function' && define.amd) {
         define(factory);
     } else {
-        weknowhow.magicpen = factory();
+        global.weknowhow = global.weknowhow || {};
+        global.weknowhow.magicpen = factory();
     }
 }(this, function () {
     var global = this;
