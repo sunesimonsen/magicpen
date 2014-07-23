@@ -276,22 +276,16 @@
         }
     });
 
-    var defaults = {
-        mode: 'text'
-    };
-
     function MagicPen(mode) {
         if (this === global) {
             return new MagicPen(mode);
         }
 
-        extend(this, defaults, {
-            indentationLevel: 0,
-            output: [],
-            styles: {}
-        });
+        this.indentationLevel = 0;
+        this.output = [];
+        this.styles = {};
 
-        this.mode = mode || this.mode;
+        this.mode = mode || 'text';
         this.serializer = new MagicPen.serializers[this.mode]();
     }
 
