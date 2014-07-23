@@ -54,7 +54,6 @@
     var requireStyles = ['lines', 'text', 'block'];
 
     function Serializer(styles) {
-        var that = this;
         forEach(requireStyles, function (style) {
             if (!styles[style]) {
                 throw new Error("Required style '" + style + "' is missing");
@@ -85,7 +84,6 @@
     }
 
     Serializer.prototype.serializeEntry = function (entry) {
-        var that = this;
         if (entry.style in this.styles) {
             return this.styles[entry.style].apply(this.styles, entry.args);
         } else {
@@ -286,8 +284,6 @@
         if (this === global) {
             return new MagicPen(mode);
         }
-
-        var that = this;
 
         extend(this, defaults, {
             indentationLevel: 0,
