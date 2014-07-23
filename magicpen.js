@@ -112,7 +112,7 @@
     // License https://raw.githubusercontent.com/sindresorhus/ansi-regex/master/license
     var ansiRegex = /\u001b\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]/g;
 
-    var PlainSerializer = createSerializer({
+    var TextSerializer = createSerializer({
         text: function (content) {
             return content;
         },
@@ -200,7 +200,7 @@
         return styles;
     }());
 
-    var AnsiSerializer = createSerializer(extend({}, PlainSerializer.prototype.styles, {
+    var AnsiSerializer = createSerializer(extend({}, TextSerializer.prototype.styles, {
         text: function (content) {
             if (arguments.length > 1) {
                 var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
@@ -279,7 +279,7 @@
     });
 
     var defaults = {
-        mode: 'plain'
+        mode: 'text'
     };
 
     function MagicPen(mode) {
@@ -314,7 +314,7 @@
     };
 
     MagicPen.serializers = {
-        plain: PlainSerializer,
+        text: TextSerializer,
         ansi: AnsiSerializer,
         html: HtmlSerializer
     };

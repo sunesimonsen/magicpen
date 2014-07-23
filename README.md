@@ -63,7 +63,7 @@ define(['magicpen'], function (magicpen) {
 
 You create a new `magicpen` instance by calling the `magicpen`
 function. The function takes one parameter, the output mode. By
-default the `plain` mode is console output without colors. You can
+default the `text` mode is console output without colors. You can
 also choose the `ansi` mode or the `html` mode. The `ansi` mode will
 format the output for the console with colors and basic styling. The
 `html` mode will format the output in html with colors and basic

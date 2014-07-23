@@ -27,7 +27,7 @@ describe('magicpen', function () {
         });
     });
 
-    describe('in plain mode', function () {
+    describe('in text mode', function () {
         beforeEach(function () {
             pen = magicpen();
         });
@@ -305,7 +305,7 @@ describe('magicpen', function () {
             pen.rainbow('Hello world');
         }
 
-        it('in plain mode', function () {
+        it('in text mode', function () {
             var pen = magicpen();
             writeRainbowWithPen(pen);
             expect(pen.toString(), 'to equal', 'Hello world');
@@ -388,7 +388,7 @@ describe('magicpen', function () {
             });
         }
 
-        it('in plain mode', function () {
+        it('in text mode', function () {
             var pen = magicpen();
             writeObjectWithPen(pen);
             expect(pen.toString(), 'to equal',
@@ -419,7 +419,7 @@ describe('magicpen', function () {
                 .text('}');
         }
 
-        it('in plain mode', function () {
+        it('in text mode', function () {
             var pen = magicpen();
             pen.addStyle('keyword', function (text) {
                 this.text(text);
