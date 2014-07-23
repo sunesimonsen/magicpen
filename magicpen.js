@@ -297,15 +297,6 @@
 
         this.mode = mode || this.mode;
         this.serializer = new MagicPen.serializers[this.mode]();
-
-        forEach(getKeys(this.serializer.styles), function (style) {
-            if (!that[style]) {
-                that[style] = function () {
-                    var args = Array.prototype.slice.call(arguments);
-                    return this.write.call(this, { style: style, args: args });
-                };
-            }
-        });
     }
 
     MagicPen.prototype.newline = MagicPen.prototype.nl = function () {
@@ -320,9 +311,8 @@
     };
 
     MagicPen.prototype.write = function () {
-        var args = Array.prototype.slice.call(arguments);
-        if (args.length === 1 && isOutputEntry(args[0])) {
-            var options = args[0];
+        if (arguments.length === 1 && isOutputEntry(arguments[0])) {
+            var options = arguments[0];
             if (this.styles[options.style]) {
                 this.styles[options.style].apply(this, options.args);
                 return this;
@@ -331,7 +321,8 @@
             this.output[this.output.length - 1].push(options);
             return this;
         } else {
-            return this.write({ style: args[0], args: args.slice(1) });
+            var args = Array.prototype.slice.call(arguments, 1);
+            return this.write({ style: arguments[0], args: args });
         }
     };
 
@@ -372,6 +363,11 @@
         if (!(pen instanceof MagicPen) || pen.mode !== this.mode) {
             throw new Error('Expected an instance of a MagicPen in ' + this.mode + ' mode');
         }
+    };
+
+    MagicPen.prototype.text = function () {
+        var args = Array.prototype.slice.call(arguments);
+        return this.write({ style: 'text', args: args });
     };
 
     MagicPen.prototype.block = function (pen) {
