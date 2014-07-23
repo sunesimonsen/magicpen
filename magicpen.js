@@ -68,10 +68,7 @@
 
     Serializer.prototype.serializeLines = function (lines) {
         return this.styles.lines(map(lines, function (line) {
-            return {
-                indentation: line.indentation,
-                content: this.serializeLineContent(line)
-            };
+            return this.serializeLineContent(line);
         }, this));
     };
 
@@ -118,7 +115,7 @@
             function serializeLine(line) {
                 var serializedLines = [''];
 
-                forEach(line.content, function (inlineBlock, blockIndex) {
+                forEach(line, function (inlineBlock, blockIndex) {
                     var blockLines = map(String(inlineBlock).split('\n'), function (serializedBlockLine) {
                         return {
                             content: serializedBlockLine,
@@ -132,7 +129,7 @@
 
                     var blockStartIndex = serializedLines[0].replace(ansiRegex, '').length;
                     serializedLines[0] += blockLines[0].content;
-                    if (blockLines.length > 1 && blockIndex < line.content.length - 1) {
+                    if (blockLines.length > 1 && blockIndex < line.length - 1) {
                         serializedLines[0] += duplicateText(' ', longestBlockLine - blockLines[0].length);
                     }
 
@@ -267,7 +264,7 @@
         lines: function (lines) {
             return '<code>\n' +
                 map(lines, function (line) {
-                    return '  <div>' + line.content.join('') + '</div>';
+                    return '  <div>' + line.join('') + '</div>';
                 }).join('\n') + '\n' +
                 '</code>';
         },
