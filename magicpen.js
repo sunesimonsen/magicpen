@@ -286,8 +286,14 @@
         this.serializer = new MagicPen.serializers[this.mode]();
     }
 
-    MagicPen.prototype.newline = MagicPen.prototype.nl = function () {
-        this.output.push([]);
+    MagicPen.prototype.newline = MagicPen.prototype.nl = function (count) {
+        if (typeof count === 'undefined') {
+            count = 1;
+        }
+
+        for (var i = 0; i < count; i += 1) {
+            this.output.push([]);
+        }
         return this;
     };
 
@@ -396,7 +402,15 @@
     };
 
     MagicPen.prototype.space = MagicPen.prototype.sp = function (count) {
-        this.text(duplicateText(' ', count || 1));
+        if (count === 0) {
+            return this;
+        }
+
+        if (typeof count === 'undefined') {
+            count = 1;
+        }
+
+        this.text(duplicateText(' ', count));
         return this;
     };
 
