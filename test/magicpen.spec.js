@@ -27,6 +27,13 @@ describe('magicpen', function () {
         });
     });
 
+    it('throw when prepending lines with multi line pen', function () {
+        expect(function () {
+            var multiLinePen = magicpen().text('Multiple').nl().text('Lines');
+            magicpen().text('Hello').nl().text('world').prependLinesWith(multiLinePen);
+        }, 'to throw', 'PrependLinesWith only supports a pen with single line content');
+    });
+
     describe('in text mode', function () {
         beforeEach(function () {
             pen = magicpen();

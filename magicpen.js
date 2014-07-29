@@ -381,7 +381,12 @@
         if (pen.output.length === 0 || this.output.length === 0) {
             return this;
         }
-        var outputToPrepend = Array.prototype.concat.apply([], pen.output);
+
+        if (pen.output.length > 1) {
+            throw new Error('PrependLinesWith only supports a pen with single line content');
+        }
+
+        var outputToPrepend = [].concat(pen.output[0]);
 
         this.output = map(this.output, function (line) {
             return outputToPrepend.concat(line);
