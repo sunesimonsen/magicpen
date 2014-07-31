@@ -142,6 +142,11 @@ describe('magicpen', function () {
             expect(pen.toString(), 'to equal',
                    'Danger danger');
         });
+
+        it('known the size of the output', function () {
+            writeComplicatedExampleWithPen(pen);
+            expect(pen.size(), 'to equal', { height: 21, width: 48 });
+        });
     });
 
     describe('in ansi mode', function () {
@@ -203,6 +208,11 @@ describe('magicpen', function () {
                    ' ' +
                    '\x1B[32mworld\x1B[39m' +
                    '\x1B[1m\x1B[31m!\x1B[39m\x1B[22m');
+        });
+
+        it('known the size of the output', function () {
+            writeComplicatedExampleWithPen(pen);
+            expect(pen.size(), 'to equal', { height: 21, width: 48 });
         });
     });
 
@@ -314,6 +324,10 @@ describe('magicpen', function () {
                    '</code>');
         });
 
+        it('known the size of the output', function () {
+            writeComplicatedExampleWithPen(pen);
+            expect(pen.size(), 'to equal', { height: 21, width: 48 });
+        });
     });
 
     describe('aliases', function () {

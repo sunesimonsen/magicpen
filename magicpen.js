@@ -117,6 +117,33 @@
         return this.serialize(content);
     };
 
+    TextSerializer.prototype.lineSize = function (line) {
+        var size = { height: 1, width: 0 };
+        forEach(line, function (outputEntry) {
+            switch (outputEntry.style) {
+            case 'text':
+                size.width += String(outputEntry.args[0]).length;
+                break;
+            case 'block':
+                var blockSize = this.size(outputEntry.args[0]);
+                size.width += blockSize.width;
+                size.height = Math.max(blockSize.height, size.height);
+                break;
+            }
+        }, this);
+        return size;
+    };
+
+    TextSerializer.prototype.size = function (lines) {
+        var size = { height: 0, width: 0 };
+        forEach(lines, function (line) {
+            var lineSize = this.lineSize(line);
+            size.height += lineSize.height;
+            size.width = Math.max(size.width, lineSize.width);
+        }, this);
+        return size;
+    };
+
     var ansiStyles = (function () {
         // Copied from https://github.com/sindresorhus/ansi-styles/
         // License: raw.githubusercontent.com/sindresorhus/ansi-styles/master/license
@@ -252,6 +279,33 @@
             }).join('; ') + '">' + content + '</span>';
         }
         return content;
+    };
+
+    HtmlSerializer.prototype.lineSize = function (line) {
+        var size = { height: 1, width: 0 };
+        forEach(line, function (outputEntry) {
+            switch (outputEntry.style) {
+            case 'text':
+                size.width += String(outputEntry.args[0]).length;
+                break;
+            case 'block':
+                var blockSize = this.size(outputEntry.args[0]);
+                size.width += blockSize.width;
+                size.height = Math.max(blockSize.height, size.height);
+                break;
+            }
+        }, this);
+        return size;
+    };
+
+    HtmlSerializer.prototype.size = function (lines) {
+        var size = { height: 0, width: 0 };
+        forEach(lines, function (line) {
+            var lineSize = this.lineSize(line);
+            size.height += lineSize.height;
+            size.width = Math.max(size.width, lineSize.width);
+        }, this);
+        return size;
     };
 
     function MagicPen(mode) {
@@ -427,6 +481,11 @@
         clonedPen.output = [];
         return clonedPen;
     };
+
+    MagicPen.prototype.size = function () {
+        return this.serializer.size(this.output);
+    };
+
 
     return MagicPen;
 }));
