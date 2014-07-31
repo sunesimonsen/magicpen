@@ -13,6 +13,35 @@ describe('magicpen', function () {
                 callback.call(that, arr[i], i, arr);
     }
 
+    function writeComplicatedExampleWithPen(pen) {
+        pen.addStyle('dragon', function (author) {
+            this.gray("          /           /").nl()
+                .gray("         /' .,,,,  ./").nl()
+                .gray("        /';'     ,/").nl()
+                .gray("       / /   ,,//,`'`").nl()
+                .gray("      ( ,, '_,  ,,,' ``").nl()
+                .gray("      |    /").red("@").gray("  ,,, ;\" `").nl()
+                .gray("     /    .   ,''/' `,``").nl()
+                .gray("    /   .     ./, `,, ` ;").nl()
+                .gray(" ,./  .   ,-,',` ,,/''\\,'").nl()
+                .gray("|   /; ./,,'`,,'' |   |").nl()
+                .gray("|     /   ','    /    |").nl()
+                .gray(" \\___/'   '     |     |").nl()
+                .gray("   `,,'  |      /     `\\").nl()
+                .gray("        /      |        ~\\").nl()
+                .gray("       '       (").nl()
+                .gray("      :").nl()
+                .gray("     ; .         \\--").nl()
+                .gray("   :   \\         ; ").blue(author);
+        });
+        pen.blue('This').sp().red('will').nl()
+            .green('output').sp().yellow('a').sp().cyan('dragon:')
+            .sp().block(pen.clone().dragon('Ooyamaneko')).append(
+                pen.clone().nl(2).text('stolen from the interwebs.'))
+            .prependLinesWith(pen.clone().text('  '));
+        return pen;
+    }
+
     it('throws if an unknown style is used', function () {
         expect(function () {
             magicpen().write('test', 'text').toString();
