@@ -66,6 +66,9 @@
     // copied from https://github.com/sindresorhus/ansi-regex
     // License https://raw.githubusercontent.com/sindresorhus/ansi-regex/master/license
     var ansiRegex = /\u001b\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]/g;
+    function stripAnsi(text) {
+        return text.replace(ansiRegex, '');
+    }
 
     function TextSerializer() {}
 
@@ -76,6 +79,7 @@
     TextSerializer.prototype.serializeLine = function (line) {
         var serializedLines = [''];
 
+        var startIndex = 0;
         forEach(line, function (outputEntry, blockIndex) {
             var inlineBlock = this[outputEntry.style] ?
                 this[outputEntry.style].apply(this, outputEntry.args) :
@@ -84,7 +88,7 @@
             var blockLines = map(String(inlineBlock).split('\n'), function (serializedBlockLine) {
                 return {
                     content: serializedBlockLine,
-                    length: serializedBlockLine.replace(ansiRegex, '').length
+                    length: stripAnsi(serializedBlockLine).length
                 };
             });
             var longestBlockLine = 0;
@@ -92,18 +96,12 @@
                 longestBlockLine = Math.max(longestBlockLine, blockLine.length);
             });
 
-            var blockStartIndex = serializedLines[0].replace(ansiRegex, '').length;
-            serializedLines[0] += blockLines[0].content;
-            if (blockLines.length > 1 && blockIndex < line.length - 1) {
-                serializedLines[0] += duplicateText(' ', longestBlockLine - blockLines[0].length);
-            }
-
-            forEach(blockLines.slice(1), function (blockLine, index) {
-                var lineIndex = index + 1;
-                serializedLines[lineIndex] = serializedLines[lineIndex] || '';
-                var padding = duplicateText(' ', blockStartIndex - serializedLines[lineIndex].replace(ansiRegex, '').length);
-                serializedLines[lineIndex] += padding + blockLine.content;
+            forEach(blockLines, function (blockLine, index) {
+                serializedLines[index] = serializedLines[index] || '';
+                var padding = duplicateText(' ', startIndex - stripAnsi(serializedLines[index]).length);
+                serializedLines[index] += padding + blockLine.content;
             });
+            startIndex += longestBlockLine;
         }, this);
 
         return serializedLines.join('\n');
