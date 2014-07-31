@@ -224,6 +224,22 @@ expect(pen.toString(), 'to equal',
     '> after line');
 ```
 
+### size()
+
+Returns the dimensions of the content of this pen.
+
+Example:
+
+```js
+var pen magicpen();
+pen.text('First line').nl()
+   .text('Second line');
+expect(pen.size(), 'to equal', {
+    height: 2,
+    width: 11
+});
+```
+
 ### clone()
 
 Returns a clone of the current pen with an empty output buffer. This
