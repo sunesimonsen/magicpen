@@ -291,6 +291,12 @@
             count = 1;
         }
 
+        if (count === 0) {
+            return this;
+        }
+
+        this.output[0] = this.output[0] || [];
+
         for (var i = 0; i < count; i += 1) {
             this.output.push([]);
         }
