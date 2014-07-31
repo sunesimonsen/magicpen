@@ -381,7 +381,8 @@
         }
 
         this.output[0] = this.output[0] || [];
-        this.output[0].push.apply(this.output[0], pen.output[0]);
+        var lastLine = this.output[this.output.length - 1];
+        Array.prototype.push.apply(lastLine, pen.output[0]);
 
         this.output.push.apply(this.output, pen.output.slice(1));
 
