@@ -114,7 +114,7 @@
     };
 
     TextSerializer.prototype.block = function (content) {
-        return content;
+        return this.serialize(content);
     };
 
     var ansiStyles = (function () {
@@ -228,7 +228,9 @@
     };
 
     HtmlSerializer.prototype.block = function (content) {
-        return '<div style="display: inline-block; vertical-align: top">' + content + '</div>';
+        return '<div style="display: inline-block; vertical-align: top">' +
+            this.serialize(content) +
+            '</div>';
     };
 
     HtmlSerializer.prototype.text = function (content) {
@@ -350,7 +352,10 @@
 
     MagicPen.prototype.block = function (pen) {
         this.ensurePenWithSameMode(pen);
-        return this.write('block', pen.toString());
+        var blockOutput = map(pen.output, function (line) {
+            return [].concat(line);
+        });
+        return this.write('block', blockOutput);
     };
 
     MagicPen.prototype.append = function (pen) {

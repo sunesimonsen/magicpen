@@ -184,6 +184,18 @@ describe('magicpen', function () {
                    '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
         });
 
+        it('the content of a pen can be appended in a block', function () {
+            pen.red('Hello').block(
+                pen.clone()
+                    .gray(' // ').text('This is a').nl()
+                    .indentLines()
+                    .gray(' // ').indent().text('multiline comment'));
+            expect(pen.toString(), 'to equal',
+                   '\u001b[31mHello\u001b[39m\u001b[90m // \u001b[39mThis is a\n' +
+                   '     \u001b[90m // \u001b[39m  multiline comment');
+        });
+
+
         it('styles an be called as methods', function () {
             pen.red('Hello').sp().green('world').text('!', 'red, bold');
             expect(pen.toString(), 'to equal',
