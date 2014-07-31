@@ -51,48 +51,8 @@
         return target;
     }
 
-    var requireStyles = ['lines', 'text', 'block'];
-
-    function Serializer(styles) {
-        forEach(requireStyles, function (style) {
-            if (!styles[style]) {
-                throw new Error("Required style '" + style + "' is missing");
-            }
-        });
-        this.styles = styles;
-    }
-
-    Serializer.prototype.serialize = function (lines) {
-        return this.serializeLines(lines);
-    };
-
-    Serializer.prototype.serializeLines = function (lines) {
-        return this.styles.lines(map(lines, function (line) {
-            return this.serializeLineContent(line);
-        }, this));
-    };
-
-    Serializer.prototype.serializeLineContent = function (content) {
-        return map(content, this.serializeEntry, this);
-    };
-
     function isOutputEntry(obj) {
         return typeof obj === 'object' && 'style' in obj && 'args' in obj;
-    }
-
-    Serializer.prototype.serializeEntry = function (entry) {
-        if (entry.style in this.styles) {
-            return this.styles[entry.style].apply(this.styles, entry.args);
-        } else {
-            throw new Error('Unknown style: "' + entry.style + '"');
-        }
-    };
-
-    function createSerializer(styles) {
-        function CustomSerializer() {
-        }
-        CustomSerializer.prototype = new Serializer(styles);
-        return CustomSerializer;
     }
 
     function duplicateText(content, times) {
@@ -107,49 +67,55 @@
     // License https://raw.githubusercontent.com/sindresorhus/ansi-regex/master/license
     var ansiRegex = /\u001b\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]/g;
 
-    var TextSerializer = createSerializer({
-        text: function (content) {
-            return content;
-        },
-        lines: function (lines) {
-            function serializeLine(line) {
-                var serializedLines = [''];
+    function TextSerializer() {}
 
-                forEach(line, function (inlineBlock, blockIndex) {
-                    var blockLines = map(String(inlineBlock).split('\n'), function (serializedBlockLine) {
-                        return {
-                            content: serializedBlockLine,
-                            length: serializedBlockLine.replace(ansiRegex, '').length
-                        };
-                    });
-                    var longestBlockLine = 0;
-                    forEach(blockLines, function (blockLine) {
-                        longestBlockLine = Math.max(longestBlockLine, blockLine.length);
-                    });
+    TextSerializer.prototype.serialize = function (lines) {
+        return map(lines, this.serializeLine, this).join('\n');
+    };
 
-                    var blockStartIndex = serializedLines[0].replace(ansiRegex, '').length;
-                    serializedLines[0] += blockLines[0].content;
-                    if (blockLines.length > 1 && blockIndex < line.length - 1) {
-                        serializedLines[0] += duplicateText(' ', longestBlockLine - blockLines[0].length);
-                    }
+    TextSerializer.prototype.serializeLine = function (line) {
+        var serializedLines = [''];
 
-                    forEach(blockLines.slice(1), function (blockLine, index) {
-                        var lineIndex = index + 1;
-                        serializedLines[lineIndex] = serializedLines[lineIndex] || '';
-                        var padding = duplicateText(' ', blockStartIndex - serializedLines[lineIndex].replace(ansiRegex, '').length);
-                        serializedLines[lineIndex] += padding + blockLine.content;
-                    });
-                });
+        forEach(line, function (outputEntry, blockIndex) {
+            var inlineBlock = this[outputEntry.style] ?
+                this[outputEntry.style].apply(this, outputEntry.args) :
+                '';
 
-                return serializedLines.join('\n');
+            var blockLines = map(String(inlineBlock).split('\n'), function (serializedBlockLine) {
+                return {
+                    content: serializedBlockLine,
+                    length: serializedBlockLine.replace(ansiRegex, '').length
+                };
+            });
+            var longestBlockLine = 0;
+            forEach(blockLines, function (blockLine) {
+                longestBlockLine = Math.max(longestBlockLine, blockLine.length);
+            });
+
+            var blockStartIndex = serializedLines[0].replace(ansiRegex, '').length;
+            serializedLines[0] += blockLines[0].content;
+            if (blockLines.length > 1 && blockIndex < line.length - 1) {
+                serializedLines[0] += duplicateText(' ', longestBlockLine - blockLines[0].length);
             }
 
-            return map(lines, serializeLine).join('\n');
-        },
-        block: function (content) {
-            return content;
-        }
-    });
+            forEach(blockLines.slice(1), function (blockLine, index) {
+                var lineIndex = index + 1;
+                serializedLines[lineIndex] = serializedLines[lineIndex] || '';
+                var padding = duplicateText(' ', blockStartIndex - serializedLines[lineIndex].replace(ansiRegex, '').length);
+                serializedLines[lineIndex] += padding + blockLine.content;
+            });
+        }, this);
+
+        return serializedLines.join('\n');
+    };
+
+    TextSerializer.prototype.text = function (content) {
+        return content;
+    };
+
+    TextSerializer.prototype.block = function (content) {
+        return content;
+    };
 
     var ansiStyles = (function () {
         // Copied from https://github.com/sindresorhus/ansi-styles/
@@ -195,21 +161,22 @@
         return styles;
     }());
 
-    var AnsiSerializer = createSerializer(extend({}, TextSerializer.prototype.styles, {
-        text: function (content) {
-            if (arguments.length > 1) {
-                var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
-                var styles = stylesString.split(/\s*,\s*/);
-                forEach(styles, function (style) {
-                    if (ansiStyles[style]) {
-                        content = ansiStyles[style].open + content + ansiStyles[style].close;
-                    }
-                });
-            }
+    function AnsiSerializer() {}
+    AnsiSerializer.prototype = new TextSerializer();
 
-            return content;
+    AnsiSerializer.prototype.text = function (content) {
+        if (arguments.length > 1) {
+            var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
+            var styles = stylesString.split(/\s*,\s*/);
+            forEach(styles, function (style) {
+                if (ansiStyles[style]) {
+                    content = ansiStyles[style].open + content + ansiStyles[style].close;
+                }
+            });
         }
-    }));
+
+        return content;
+    };
 
     var htmlStyles = {
         bold: 'font-weight: bold',
@@ -240,38 +207,50 @@
         bgWhite: 'background-color: white'
     };
 
-    var HtmlSerializer = createSerializer({
-        text: function (content) {
-            content = String(content)
-                .replace(/&/g, '&amp;')
-                .replace(/ /g, '&nbsp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+    function HtmlSerializer() {}
 
-            if (arguments.length > 1) {
-                var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
-                var styles = filter(stylesString.split(/\s*,\s*/), function (styleName) {
-                    return htmlStyles[styleName];
-                });
+    HtmlSerializer.prototype.serialize = function (lines) {
+        return '<code>\n' + this.serializeLines(lines) + '\n</code>';
+    };
 
-                content = '<span style="' + map(styles, function (styleName) {
-                    return htmlStyles[styleName];
-                }).join('; ') + '">' + content + '</span>';
-            }
-            return content;
-        },
-        lines: function (lines) {
-            return '<code>\n' +
-                map(lines, function (line) {
-                    return '  <div>' + line.join('') + '</div>';
-                }).join('\n') + '\n' +
-                '</code>';
-        },
-        block: function (content) {
-            return '<div style="display: inline-block; vertical-align: top">' + content + '</div>';
+    HtmlSerializer.prototype.serializeLines = function (lines) {
+        return map(lines, function (line) {
+            return '  <div>' + this.serializeLine(line).join('') + '</div>';
+        }, this).join('\n');
+    };
+
+    HtmlSerializer.prototype.serializeLine = function (line) {
+        return map(line, function (outputEntry) {
+            return this[outputEntry.style] ?
+                this[outputEntry.style].apply(this, outputEntry.args) :
+                '';
+        }, this);
+    };
+
+    HtmlSerializer.prototype.block = function (content) {
+        return '<div style="display: inline-block; vertical-align: top">' + content + '</div>';
+    };
+
+    HtmlSerializer.prototype.text = function (content) {
+        content = String(content)
+            .replace(/&/g, '&amp;')
+            .replace(/ /g, '&nbsp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
+        if (arguments.length > 1) {
+            var stylesString = Array.prototype.slice.call(arguments, 1).join(',');
+            var styles = filter(stylesString.split(/\s*,\s*/), function (styleName) {
+                return htmlStyles[styleName];
+            });
+
+            content = '<span style="' + map(styles, function (styleName) {
+                return htmlStyles[styleName];
+            }).join('; ') + '">' + content + '</span>';
         }
-    });
+        return content;
+    };
 
     function MagicPen(mode) {
         if (this === global) {

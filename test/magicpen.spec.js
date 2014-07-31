@@ -42,12 +42,6 @@ describe('magicpen', function () {
         return pen;
     }
 
-    it('throws if an unknown style is used', function () {
-        expect(function () {
-            magicpen().write('test', 'text').toString();
-        }, 'to throw', 'Unknown style: "test"');
-    });
-
     it('throws when creating a custom style with a name that already exists', function () {
         forEach(['red', 'write', 'addStyle'], function (name) {
             expect(function () {
@@ -66,6 +60,11 @@ describe('magicpen', function () {
     describe('in text mode', function () {
         beforeEach(function () {
             pen = magicpen();
+        });
+
+        it('ignores unknown styles', function () {
+            pen.text('>').write('test', 'text').text('<');
+            expect(pen.toString(), 'to equal', '><');
         });
 
         it('handles multi line output', function () {
@@ -150,6 +149,10 @@ describe('magicpen', function () {
             pen = magicpen('ansi');
         });
 
+        it('ignores unknown styles', function () {
+            pen.text('>').write('test', 'text').text('<');
+            expect(pen.toString(), 'to equal', '><');
+        });
 
         it('handles multi line output', function () {
             pen.red('Hello').nl().green('world');
@@ -194,6 +197,15 @@ describe('magicpen', function () {
     describe('in html mode', function () {
         beforeEach(function () {
             pen = magicpen('html');
+        });
+
+        it('ignores unknown styles', function () {
+            pen.text('>').write('test', 'text').text('<');
+            expect(pen.toString(), 'to equal',
+                   '<code>\n' +
+                   '  <div>&gt;&lt;</div>\n' +
+                   '</code>'
+                  );
         });
 
         it('styles an be called as methods', function () {
