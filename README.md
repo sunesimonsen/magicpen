@@ -137,9 +137,9 @@ expect(pen.toString(), 'to equal',
     '</code>');
 ```
 
-### newline(), nl()
+### newline(count = 1), nl(count = 1)
 
-Starts a new line.
+Starts the given number of new lines.
 
 ### Indentation
 
