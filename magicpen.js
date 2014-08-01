@@ -306,16 +306,29 @@
         return size;
     };
 
-    function MagicPen(mode) {
+    function MagicPen(options) {
         if (this === global) {
-            return new MagicPen(mode);
+            return new MagicPen(options);
         }
+
+        if (typeof options === 'string') {
+            var mode = options;
+            options = {
+                mode: mode
+            };
+        }
+
+        options = options || {};
+
+        var indentationWidth = 'indentationWidth' in options ?
+            options.indentationWidth : 2;
+        this.indentationWidth = Math.max(indentationWidth, 0);
+        this.mode = options.mode || 'text';
 
         this.indentationLevel = 0;
         this.output = [];
         this.styles = {};
 
-        this.mode = mode || 'text';
         this.serializer = new MagicPen.serializers[this.mode]();
     }
 
@@ -365,7 +378,7 @@
 
     MagicPen.prototype.indent = MagicPen.prototype.i = function () {
         for (var i = 0; i < this.indentationLevel; i += 1) {
-            this.space(2);
+            this.space(this.indentationWidth);
         }
         return this;
     };

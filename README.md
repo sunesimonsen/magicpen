@@ -97,6 +97,29 @@ You will get the following output it the browser:
 
 ## API
 
+### magicpen(options) or new MagicPen(options)
+
+Creates a new instance of MagicPen with the given options.
+
+The options can be a string or an object. When given a string it will
+be interpreted as the mode of the pen. When given an options object
+you can set the mode and the indentation width.
+
+Example:
+
+```js
+// Pen in text mode with indentation width 2
+magicpen();
+// Pen in text mode with indentation width 4
+magicpen({ indentationWidth: 4 });
+// Pen in ansi mode with indentation width 2
+magicpen('ansi');
+// Pen in html mode with indentation width 2
+magicpen('html');
+// Pen in ansi mode with indentation width 4
+magicpen({ mode: 'ansi', indentationWidth: 4 });
+```
+
 ### text(content, styleString...)
 
 Append the given content to the output with the styles specified in the style strings.
@@ -168,6 +191,16 @@ Decrements the indentation level.
 #### indent(), i()
 
 Appends the indentation to the output.
+
+#### indentationWidth
+
+You can control the indentation size by setting indentationWidth
+option when creating the pen.
+
+
+```js
+var pen = magicpen({ mode: 'ansi', indentationWidth: 4 });
+```
 
 ### append(pen)
 
