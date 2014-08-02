@@ -1,5 +1,6 @@
 /*global describe, it, beforeEach, before*/
-var magicpen = require('../magicpen');
+var isCoverage = process.env["ISCOVERAGE"];
+var magicpen = isCoverage ? require('../magicpen') : require('../lib/');
 var expect = require('unexpected');
 var sinon = require('sinon');
 expect.installPlugin(require('unexpected-sinon'));
