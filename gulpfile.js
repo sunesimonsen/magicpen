@@ -13,6 +13,7 @@ var paths = {
         'lib/magicpen-es4-compatible.js',
         'lib/magicpen-es5-compatible.js',
         'lib/magicpen-utils.js',
+        'lib/magicpen-default-format.js',
         'lib/magicpen-core.js',
         'lib/magicpen-text-serializer.js',
         'lib/magicpen-ansi-serializer.js',
