@@ -152,17 +152,17 @@ describe('magicpen', function () {
 
     describe('in ansi mode', function () {
         beforeEach(function () {
-            pen = magicpen('ansi');
+            pen = magicpen();
         });
 
         it('ignores unknown styles', function () {
             pen.text('>').write('test', 'text').text('<');
-            expect(pen.toString(), 'to equal', '><');
+            expect(pen.toString('ansi'), 'to equal', '><');
         });
 
         it('handles multi line output', function () {
             pen.red('Hello').nl().green('world');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mHello\x1B[39m' +
                    '\n' +
                    '\x1B[32mworld\x1B[39m');
@@ -174,7 +174,7 @@ describe('magicpen', function () {
                 .indent().text('beautiful').nl()
                 .outdentLines()
                 .green('world');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mHello\x1B[39m\n' +
                    '  beautiful\n' +
                    '\x1B[32mworld\x1B[39m');
@@ -186,7 +186,7 @@ describe('magicpen', function () {
             });
 
             pen.error('Danger').sp().write('error', 'danger');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
         });
 
@@ -196,7 +196,7 @@ describe('magicpen', function () {
                     .gray(' // ').text('This is a').nl()
                     .indentLines()
                     .gray(' // ').indent().text('multiline comment'));
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\u001b[31mHello\u001b[39m\u001b[90m // \u001b[39mThis is a\n' +
                    '     \u001b[90m // \u001b[39m  multiline comment');
         });
@@ -204,7 +204,7 @@ describe('magicpen', function () {
 
         it('styles an be called as methods', function () {
             pen.red('Hello').sp().green('world').text('!', 'red, bold');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mHello\x1B[39m' +
                    ' ' +
                    '\x1B[32mworld\x1B[39m' +
@@ -219,12 +219,12 @@ describe('magicpen', function () {
 
     describe('in html mode', function () {
         beforeEach(function () {
-            pen = magicpen('html');
+            pen = magicpen();
         });
 
         it('ignores unknown styles', function () {
             pen.text('>').write('test', 'text').text('<');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div>&gt;&lt;</div>\n' +
                    '</code>'
@@ -233,7 +233,7 @@ describe('magicpen', function () {
 
         it('styles an be called as methods', function () {
             pen.red('Hello').sp().green('world').text('!', 'red, bold');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Hello</span>' +
                    '&nbsp;' +
@@ -244,7 +244,7 @@ describe('magicpen', function () {
 
         it('handles multi line output', function () {
             pen.red('Hello').nl().green('world');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
                    '  <div><span style="color: green">world</span></div>\n' +
@@ -257,7 +257,7 @@ describe('magicpen', function () {
                 .indent().text('beautiful').nl()
                 .outdentLines()
                 .green('world');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
                    '  <div>&nbsp;&nbsp;beautiful</div>\n' +
@@ -267,7 +267,7 @@ describe('magicpen', function () {
 
         it('encodes text inserted in tags', function () {
             pen.red('<foo & "bar">');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">&lt;foo&nbsp;&amp;&nbsp;&quot;bar&quot;&gt;</span></div>\n' +
                    '</code>');
@@ -279,7 +279,7 @@ describe('magicpen', function () {
             });
 
             pen.error('Danger').sp().write('error', 'danger');
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>\n' +
                    '</code>');
@@ -289,7 +289,7 @@ describe('magicpen', function () {
             pen.text('Hello').sp().append(
                 pen.clone()
                     .red('world!'));
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div>Hello&nbsp;<span style="color: red">world!</span></div>\n' +
                    '</code>');
@@ -302,7 +302,7 @@ describe('magicpen', function () {
                 .indent().text('Third line')
                 .prependLinesWith(pen.clone().gray(' // '));
 
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>First&nbsp;line</div>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>Second&nbsp;line</div>\n' +
@@ -316,7 +316,7 @@ describe('magicpen', function () {
                     .gray(' // ').text('This is a').nl()
                     .indentLines()
                     .gray(' // ').indent().text('multiline comment'));
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div><span style="color: red">Hello</span><div style="display: inline-block; vertical-align: top"><code>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>This&nbsp;is&nbsp;a</div>\n' +
@@ -387,9 +387,9 @@ describe('magicpen', function () {
         });
 
         it('in ansi mode', function () {
-            var pen = magicpen('ansi');
+            var pen = magicpen();
             writeRainbowWithPen(pen);
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\x1B[90mH\x1B[39m' +
                    '\x1B[31me\x1B[39m' +
                    '\x1B[32ml\x1B[39m' +
@@ -404,9 +404,9 @@ describe('magicpen', function () {
         });
 
         it('in html mode', function () {
-            var pen = magicpen('html');
+            var pen = magicpen();
             writeRainbowWithPen(pen);
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('html'), 'to equal',
                    '<code>\n' +
                    '  <div>' +
                    '<span style="color: gray">H</span>' +
@@ -518,7 +518,7 @@ describe('magicpen', function () {
         });
 
         it('in ansi mode', function () {
-            var pen = magicpen('ansi');
+            var pen = magicpen();
             pen.addStyle('keyword', function (text) {
                 this.text(text, 'blue, bold');
             });
@@ -529,7 +529,7 @@ describe('magicpen', function () {
                 this.text(text, 'cyan');
             });
             writeFibWithPen(pen);
-            expect(pen.toString(), 'to equal',
+            expect(pen.toString('ansi'), 'to equal',
                    '\u001b[1m\u001b[34mfunction\u001b[39m\u001b[22m \u001b[1m\u001b[37mfib\u001b[39m\u001b[22m {\n' +
                    '  \u001b[1m\u001b[34mvar\u001b[39m\u001b[22m i=0, fibs = [\u001b[36m0\u001b[39m, \u001b[36m1\u001b[39m];\n' +
                    '  \u001b[1m\u001b[34mfor\u001b[39m\u001b[22m (; i < n; i += \u001b[36m1\u001b[39m) {\n' +
@@ -541,7 +541,7 @@ describe('magicpen', function () {
         });
 
         it('in html mode', function () {
-            var pen = magicpen('html');
+            var pen = magicpen();
             pen.addStyle('keyword', function (text) {
                 this.text(text, 'black, bold');
             });
@@ -552,7 +552,7 @@ describe('magicpen', function () {
                 this.text(text, 'cyan');
             });
             writeFibWithPen(pen);
-            expect(pen.toString(), 'to equal', '<code>\n' +
+            expect(pen.toString('html'), 'to equal', '<code>\n' +
                    '  <div><span style="color: black; font-weight: bold">function</span>&nbsp;<span style="color: red; font-weight: bold">fib</span>&nbsp;{</div>\n' +
                    '  <div>&nbsp;&nbsp;<span style="color: black; font-weight: bold">var</span>&nbsp;i=0,&nbsp;fibs&nbsp;=&nbsp;[<span style="color: cyan">0</span>,&nbsp;<span style="color: cyan">1</span>];</div>\n' +
                    '  <div>&nbsp;&nbsp;<span style="color: black; font-weight: bold">for</span>&nbsp;(;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i&nbsp;+=&nbsp;<span style="color: cyan">1</span>)&nbsp;{</div>\n' +

@@ -19,9 +19,9 @@ Then:
 
 ```js
 var magicpen = require('magicpen');
-var pen = magicpen('ansi');
+var pen = magicpen();
 pen.red('Hello').sp().green('world!');
-console.log(pen.toString());
+console.log(pen.toString('ansi'));
 ```
 
 ### Browser
@@ -36,9 +36,9 @@ this will expose the `magicpen` function under the following namespace:
 
 ```js
 var magicpen = weknowhow.magicpen;
-var pen = magicpen('html');
+var pen = magicpen();
 pen.red('Hello').sp().green('world!');
-document.getElementById('output').innerHTML = pen.toString();
+document.getElementById('output').innerHTML = pen.toString('html');
 ```
 
 ### RequireJS
@@ -53,42 +53,40 @@ require.config({
 });
 
 define(['magicpen'], function (magicpen) {
-    var pen = magicpen('html');
+    var pen = magicpen();
     pen.red('Hello').sp().green('world!');
-    document.getElementById('output').innerHTML = pen.toString();
+    document.getElementById('output').innerHTML = pen.toString('html');
 });
 ```
 
 ## Usage
 
 You create a new `magicpen` instance by calling the `magicpen`
-function. The function takes one parameter, the output mode. By
-default the `text` mode is console output without colors. You can
-also choose the `ansi` mode or the `html` mode. The `ansi` mode will
-format the output for the console with colors and basic styling. The
-`html` mode will format the output in html with colors and basic
-styling.
+function. Then you can use methods on the instance to append content to
+the output. Finally when you created the desired output you can
+serialize it to plain `text`, `ansi` encoded text or `html`.
 
-Let's try to create our first `magicpen` in `ansi` mode:
+Let's try to create our first `magicpen` and serialize the output to
+text to `ansi` encoding:
 
 ```js
-var pen = magicpen('ansi');
+var pen = magicpen();
 pen.red('Hello').sp().green('world!');
-console.log(pen.toString());
+console.log(pen.toString('ansi'));
 ```
 
-The above snippet create a new `magicpen` in `ansi` mode and writes
-_Hello_ in red, space and _world!_ in green and prints the formatted
-output to the console. This will produce the following output:
+The above snippet create a new `magicpen` and writes _Hello_ in red,
+space and _world!_ in green and prints the formatted output to the
+console. This will produce the following output:
 
 ![Hello world!](images/Hello world - ansi.png)
 
 Let's try to create the same output but format it as html:
 
 ```js
-var pen = magicpen('html');
+var pen = magicpen();
 pen.red('Hello').sp().green('world!');
-document.getElementById('output').innerHTML = pen.toString();
+document.getElementById('output').innerHTML = pen.toString('html');
 ```
 
 You will get the following output it the browser:
@@ -101,23 +99,16 @@ You will get the following output it the browser:
 
 Creates a new instance of MagicPen with the given options.
 
-The options can be a string or an object. When given a string it will
-be interpreted as the mode of the pen. When given an options object
-you can set the mode and the indentation width.
+Currently there is only on option: `indentationWidth` which defaults
+to 2.
 
 Example:
 
 ```js
-// Pen in text mode with indentation width 2
+// Pen with indentation width 2
 magicpen();
-// Pen in text mode with indentation width 4
+// Pen with indentation width 4
 magicpen({ indentationWidth: 4 });
-// Pen in ansi mode with indentation width 2
-magicpen('ansi');
-// Pen in html mode with indentation width 2
-magicpen('html');
-// Pen in ansi mode with indentation width 4
-magicpen({ mode: 'ansi', indentationWidth: 4 });
 ```
 
 ### text(content, styleString...)
@@ -135,30 +126,36 @@ Append the given content to the output with the styles specified in the style st
 #### Example:
 
 ```js
-var pen = magicpen('ansi');
+var pen = magicpen();
 pen.text('Hello', 'red')
    .text(' ')
    .text('colorful', 'yellow, bold')
    .text(' ')
    .text('world', 'green', 'underline')
    .text('!', 'bgYellow, blue');
-console.log(pen.toString());
+console.log(pen.toString('ansi'));
 ```
 
 ![Hello colorful world](images/Hello colorful world.png)
 
 Notice that special characters might get escaped by this method. The
 example below shows how special html characters is escaped by the html
-mode.
+format.
 
 ```js
-var pen = magicpen('html');
+var pen = magicpen();
 pen.text('<strong>Hello world!</strong>');
-expect(pen.toString(), 'to equal',
+expect(pen.toString('html'), 'to equal',
     '<code>\n' +
     '  <div>&lt;strong&gt;Hello&nbsp;world!&lt;/strong&gt;</div>\n' +
     '</code>');
 ```
+
+### toString(format = 'text')
+
+Returns the content of the pen in the specified format.
+
+Accepted formats are `text`, `ansi` and `html`.
 
 ### newline(count = 1), nl(count = 1)
 
@@ -194,19 +191,17 @@ Appends the indentation to the output.
 
 #### indentationWidth
 
-You can control the indentation size by setting indentationWidth
+You can control the indentation size by setting `indentationWidth`
 option when creating the pen.
 
 
 ```js
-var pen = magicpen({ mode: 'ansi', indentationWidth: 4 });
+var pen = magicpen({ indentationWidth: 4 });
 ```
 
 ### append(pen)
 
 Appends the content of the given pen to the end of this pen.
-
-Notice, that the given pen must be in the same mode as this pen.
 
 Example:
 
@@ -221,8 +216,6 @@ expect(pen.toString(), 'to equal', 'Hello world!');
 
 Appends the content of the given pen to the end of this pen in an
 inline block.
-
-Notice, that the given pen must be in the same mode as this pen.
 
 Example:
 
@@ -240,8 +233,6 @@ expect(pen.toString(), 'to equal',
 ### prependLinesWith(pen)
 
 Prepends each line of this pen with the content of the given pen.
-
-Notice, that the given pen must be in the same mode as this pen.
 
 Example:
 
@@ -264,7 +255,7 @@ Returns the dimensions of the content of this pen.
 Example:
 
 ```js
-var pen magicpen();
+var pen = magicpen();
 pen.text('First line').nl()
    .text('Second line');
 expect(pen.size(), 'to equal', {
@@ -285,7 +276,7 @@ Defines a new style for the magicpen. The usage is best explained by
 an example:
 
 ```js
-var pen = magicpen('ansi');
+var pen = magicpen();
 
 pen.addStyle('rainbow', function (text, rainbowColors) {
     rainbowColors = rainbowColors ||
@@ -298,7 +289,7 @@ pen.addStyle('rainbow', function (text, rainbowColors) {
 
 pen.rainbow('The unicorns are flying low today').nl();
    .rainbow('The unicorns are flying low today', ['green', 'red', 'cyan']);
-console.log(pen.toString());
+console.log(pen.toString('ansi'));
 ```
 
 ![The unicors are flying low today](images/rainbows.png)
