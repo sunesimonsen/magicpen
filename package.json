@@ -2,7 +2,7 @@
   "name": "magicpen",
   "version": "0.1.2",
   "description": "Styled output in both consoles and browsers",
-  "main": "./lib/index.js",
+  "main": "./lib/MagicPen.js",
   "directories": {
     "test": "test"
   },
@@ -12,19 +12,21 @@
   },
   "scripts": {
     "test": "gulp test",
-    "prepublish": "gulp scripts"
+    "prepublish": "browserify lib/MagicPen.js -e lib/MagicPen -s weknowhow.MagicPen > magicpen.js",
+    "coverage": "NODE_ENV=development ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- --reporter dot"
   },
   "author": "Sune Simonsen",
   "devDependencies": {
     "del": "^0.1.1",
-    "gulp": "^3.8.6",
-    "gulp-concat": "^2.3.4",
-    "gulp-insert": "^0.4.0",
-    "gulp-istanbul": "^0.2.1",
-    "gulp-mocha": "^0.5.1",
+    "istanbul": "^0.3.0",
     "mocha": "^1.20.1",
     "sinon": "=1.9.1",
     "unexpected": "^3.2.2",
     "unexpected-sinon": "^3.0.2"
+  },
+  "dependencies": {
+    "ansi-styles": "^1.1.0",
+    "browserify": "^5.9.1",
+    "supports-color": "^0.2.0"
   }
 }
