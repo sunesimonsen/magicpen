@@ -373,3 +373,7 @@ Alias for `text(content, 'bgCyan')`.
 
 ### bgWhite(content)
 Alias for `text(content, 'bgWhite')`.
+
+## License
+
+MIT, see the `LICENSE` file for details.
