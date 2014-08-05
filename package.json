@@ -28,5 +28,6 @@
     "ansi-styles": "^1.1.0",
     "browserify": "^5.9.1",
     "supports-color": "^0.2.0"
-  }
+  },
+  "license": "MIT"
 }
