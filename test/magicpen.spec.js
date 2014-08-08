@@ -386,7 +386,7 @@ describe('magicpen', function () {
             'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta',
             'bgCyan', 'bgWhite'
         ], function (textStyle) {
-            it(textStyle + '(content) is an alias for text(content, "' + textStyle + '"', function () {
+            it(textStyle + '(content) is an alias for text(content, "' + textStyle + '")', function () {
                 pen.text = sinon.spy();
                 pen[textStyle]('test');
                 expect(pen.text, 'was called with', 'test', textStyle);
