@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "ansi-styles": "^1.1.0",
+    "color-diff": "^0.1.3",
     "supports-color": "^0.2.0"
   },
   "license": "MIT"

@@ -214,6 +214,12 @@ describe('magicpen', function () {
             writeComplicatedExampleWithPen(pen);
             expect(pen.size(), 'to equal', { height: 21, width: 48 });
         });
+
+        it('converts RGB colors to ansi colors', function () {
+            pen.text('Hello world', '#bada55');
+            expect(pen.toString('ansi'), 'to equal',
+                   '\x1B[33mHello world\x1B[39m');
+        });
     });
 
     describe('in html mode', function () {
@@ -327,6 +333,14 @@ describe('magicpen', function () {
         it('known the size of the output', function () {
             writeComplicatedExampleWithPen(pen);
             expect(pen.size(), 'to equal', { height: 21, width: 48 });
+        });
+
+        it('supports RGB colors', function () {
+            pen.text('Hello world', '#bada55');
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace">\n' +
+                   '  <div><span style="color: #bada55">Hello&nbsp;world</span></div>\n' +
+                   '</div>');
         });
     });
 
