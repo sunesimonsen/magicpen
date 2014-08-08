@@ -5,6 +5,11 @@
 Create composable extensible styled text in both consoles and
 browsers.
 
+[![NPM version](https://badge.fury.io/js/magicpen.png)](http://badge.fury.io/js/magicpen)
+[![Build Status](https://travis-ci.org/sunesimonsen/magicpen.png)](https://travis-ci.org/sunesimonsen/magicpen)
+[![Coverage Status](https://coveralls.io/repos/sunesimonsen/magicpen/badge.png)](https://coveralls.io/r/sunesimonsen/magicpen)
+[![Dependency Status](https://david-dm.org/sunesimonsen/magicpen.png)](https://david-dm.org/sunesimonsen/magicpen)
+
 ## Installation
 
 ### Node
