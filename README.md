@@ -119,9 +119,9 @@ Append the given content to the output with the styles specified in the style st
 
 *Text properties*: `bold`, `dim`, `italic`, `underline`, `inverse`, `hidden`, `strikeThrough`.
 
-*Foreground colors*: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `gray`.
+*Foreground colors*: `#bada55`, `#eee`, `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `gray`.
 
-*Background colors*: `bgBlack`, `bgRed`, `bgGreen`, `bgYellow`, `bgBlue`, `bgMagenta`, `bgCyan`, `bgWhite`.
+*Background colors*: `bg#bada55`, `bg#eee`, `bgBlack`, `bgRed`, `bgGreen`, `bgYellow`, `bgBlue`, `bgMagenta`, `bgCyan`, `bgWhite`.
 
 #### Example:
 

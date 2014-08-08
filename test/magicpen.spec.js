@@ -220,6 +220,12 @@ describe('magicpen', function () {
             expect(pen.toString('ansi'), 'to equal',
                    '\x1B[33mHello world\x1B[39m');
         });
+
+        it('converts RGB background colors to ansi colors', function () {
+            pen.text('Hello world', 'bg#333');
+            expect(pen.toString('ansi'), 'to equal',
+                   '\x1B[40mHello world\x1B[49m');
+        });
     });
 
     describe('in html mode', function () {
@@ -335,11 +341,19 @@ describe('magicpen', function () {
             expect(pen.size(), 'to equal', { height: 21, width: 48 });
         });
 
-        it('supports RGB colors', function () {
+        it('supports RGB text colors', function () {
             pen.text('Hello world', '#bada55');
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace">\n' +
                    '  <div><span style="color: #bada55">Hello&nbsp;world</span></div>\n' +
+                   '</div>');
+        });
+
+        it('supports RGB background colors', function () {
+            pen.text('Hello world', 'bg#333');
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace">\n' +
+                   '  <div><span style="background-color: #333">Hello&nbsp;world</span></div>\n' +
                    '</div>');
         });
     });
