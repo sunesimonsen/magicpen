@@ -11,7 +11,8 @@
     "url": "https://github.com/sunesimonsen/magicpen.git"
   },
   "scripts": {
-    "test": "mocha -R spec",
+    "lint": "jshint .",
+    "test": "npm run lint && mocha -R spec",
     "travis": "npm test && npm run coverage && <coverage/lcov.info coveralls",
     "prepublish": "(echo '/*!' && <LICENSE sed -e's/^/ * /' | sed -e's/\\s+$//' && echo ' */' && browserify -p bundle-collapser/plugin -e lib/MagicPen -s weknowhow.MagicPen) > magicpen.js",
     "coverage": "NODE_ENV=development istanbul cover _mocha -- --reporter dot"
@@ -23,6 +24,7 @@
     "coveralls": "^2.11.1",
     "del": "^0.1.1",
     "istanbul": "^0.3.0",
+    "jshint": "*",
     "mocha": "^1.20.1",
     "sinon": "=1.9.1",
     "unexpected": "^3.2.2",
