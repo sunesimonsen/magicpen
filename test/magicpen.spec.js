@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, before*/
+/*global describe, it, beforeEach*/
 var magicpen = require('..');
 var expect = require('unexpected');
 var sinon = require('sinon');
