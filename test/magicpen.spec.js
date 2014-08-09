@@ -72,6 +72,11 @@ describe('magicpen', function () {
             expect(pen.toString(), 'to equal', 'Hello\nworld');
         });
 
+        it('handles multi line input', function () {
+            pen.red('Hello\nworld');
+            expect(pen.toString(), 'to equal', 'Hello\nworld');
+        });
+
         it('handles indented lines', function () {
             pen.red('Hello').nl()
                 .indentLines()
@@ -167,6 +172,14 @@ describe('magicpen', function () {
                    '\x1B[32mworld\x1B[39m');
         });
 
+        it('handles multi line input', function () {
+            pen.red('Hello\nworld');
+            expect(pen.toString('ansi'), 'to equal',
+                   '\x1B[31mHello\x1B[39m' +
+                   '\n' +
+                   '\x1B[31mworld\x1B[39m');
+        });
+
         it('handles indented lines', function () {
             pen.red('Hello').nl()
                 .indentLines()
@@ -259,6 +272,15 @@ describe('magicpen', function () {
                    '<div style="font-family: monospace">\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
                    '  <div><span style="color: green">world</span></div>\n' +
+                   '</div>');
+        });
+
+        it('handles multi line input', function () {
+            pen.red('Hello\nworld');
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace">\n' +
+                   '  <div><span style="color: red">Hello</span></div>\n' +
+                   '  <div><span style="color: red">world</span></div>\n' +
                    '</div>');
         });
 
