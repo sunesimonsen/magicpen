@@ -304,7 +304,7 @@ kind of output using an instance of a magicpen.
 
 ### removeFormatting()
 
-Creates a new pen with content of this pen with all text formatting removed.
+Creates a new pen with the content of this pen where all text formatting is removed.
 
 Example:
 
