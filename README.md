@@ -310,7 +310,7 @@ Example:
 
 ```js
 var pen = magicpen();
-pen.red('Hello').sp().green('world);
+pen.red('Hello').sp().green('world');
 console.log(pen.toString('ansi'));
 console.log(pen.removeFormatting().toString('ansi'));
 ```
