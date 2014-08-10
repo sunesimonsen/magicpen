@@ -302,6 +302,21 @@ console.log(pen.toString('ansi'));
 As you can see in the example above, a custom style can produce any
 kind of output using an instance of a magicpen.
 
+### removeFormatting()
+
+Creates a new pen with content of this pen with all text formatting removed.
+
+Example:
+
+```js
+var pen = magicpen();
+pen.red('Hello').sp().green('world);
+console.log(pen.toString('ansi'));
+console.log(pen.removeFormatting().toString('ansi'));
+```
+
+![Remove text formatting](images/Hello world - removeFormatting.png)
+
 ## Aliases
 
 ### space(count = 1), sp(count = 1)

@@ -148,9 +148,15 @@ describe('magicpen', function () {
                    'Danger danger');
         });
 
-        it('known the size of the output', function () {
+        it('knows the size of the output', function () {
             writeComplicatedExampleWithPen(pen);
             expect(pen.size(), 'to equal', { height: 21, width: 48 });
+        });
+
+        it('is capable of removing text formatting from the output', function () {
+            pen.red('Hello').sp().green('world');
+            expect(pen.removeFormatting().toString('text'), 'to equal',
+                   'Hello world');
         });
     });
 
@@ -223,7 +229,7 @@ describe('magicpen', function () {
                    '\x1B[1m\x1B[31m!\x1B[39m\x1B[22m');
         });
 
-        it('known the size of the output', function () {
+        it('knows the size of the output', function () {
             writeComplicatedExampleWithPen(pen);
             expect(pen.size(), 'to equal', { height: 21, width: 48 });
         });
@@ -238,6 +244,12 @@ describe('magicpen', function () {
             pen.text('Hello world', 'bg#333');
             expect(pen.toString('ansi'), 'to equal',
                    '\x1B[40mHello world\x1B[49m');
+        });
+
+        it('is capable of removing text formatting from the output', function () {
+            pen.red('Hello').sp().green('world');
+            expect(pen.removeFormatting().toString('ansi'), 'to equal',
+                   'Hello world');
         });
     });
 
@@ -358,7 +370,7 @@ describe('magicpen', function () {
                    '</div>');
         });
 
-        it('known the size of the output', function () {
+        it('knows the size of the output', function () {
             writeComplicatedExampleWithPen(pen);
             expect(pen.size(), 'to equal', { height: 21, width: 48 });
         });
@@ -376,6 +388,14 @@ describe('magicpen', function () {
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace">\n' +
                    '  <div><span style="background-color: #333">Hello&nbsp;world</span></div>\n' +
+                   '</div>');
+        });
+
+        it('is capable of removing text formatting from the output', function () {
+            pen.red('Hello').sp().green('world');
+            expect(pen.removeFormatting().toString('html'), 'to equal',
+                   '<div style="font-family: monospace">\n' +
+                   '  <div>Hello&nbsp;world</div>\n' +
                    '</div>');
         });
     });
