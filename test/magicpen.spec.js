@@ -46,7 +46,13 @@ describe('magicpen', function () {
         forEach(['red', 'write', 'addStyle'], function (name) {
             expect(function () {
                 magicpen().addStyle(name, function () {});
-            }, 'to throw', '"' + name + '" style is already defined');
+            }, 'to throw', '"' + name + '" style is already defined, set 3rd arg (allowRedefinition) to true to define it anyway');
+        });
+    });
+
+    it('allows redefining a style if allowRedefinition is set to true', function () {
+        forEach(['red', 'write', 'addStyle'], function (name) {
+            magicpen().addStyle(name, function () {}, true);
         });
     });
 
