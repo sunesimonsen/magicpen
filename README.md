@@ -317,6 +317,23 @@ console.log(pen.removeFormatting().toString('ansi'));
 
 ![Remove text formatting](images/Hello world - removeFormatting.png)
 
+### installPlugin(plugin)
+
+MagicPen plugins are just functions that uses the `addStyle`
+method to add new custom styles to the MagicPen instance.
+
+```js
+var pen = magicpen();
+function starPlugin(pen) {
+    pen.addStyle('stars', function (content) {
+        this.text(String(content).replace(/./g, '*'));
+    });
+}
+pen.installPlugin(starPlugin);
+pen.stars('secret');
+expect(pen.toString(), 'to equal', '******');
+```
+
 ## Aliases
 
 ### space(count = 1), sp(count = 1)

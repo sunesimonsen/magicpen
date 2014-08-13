@@ -63,6 +63,23 @@ describe('magicpen', function () {
         }, 'to throw', 'PrependLinesWith only supports a pen with single line content');
     });
 
+    describe('installPlugin', function () {
+        it('calls the given plugin with the magicpen instance as the parameter', function (done) {
+            var pen = magicpen();
+            var plugin = function (magicpenInstance) {
+                expect(magicpenInstance, 'to be', pen);
+                done();
+            };
+            pen.installPlugin(plugin);
+        });
+
+        it('throws if the given arguments is not a function', function () {
+            expect(function () {
+                magicpen().installPlugin({});
+            }, 'to throw', 'Expected first argument given to installPlugin to be a function');
+        });
+    });
+
     describe('in text mode', function () {
         beforeEach(function () {
             pen = magicpen();
