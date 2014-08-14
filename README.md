@@ -122,11 +122,17 @@ Append the given content to the output with the styles specified in the style st
 
 #### Supported styles are:
 
-*Text properties*: `bold`, `dim`, `italic`, `underline`, `inverse`, `hidden`, `strikeThrough`.
+*Text properties*:
 
-*Foreground colors*: `#bada55`, `#eee`, `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `gray`.
+![Text properties](images/text_properties.png)
 
-*Background colors*: `bg#bada55`, `bg#eee`, `bgBlack`, `bgRed`, `bgGreen`, `bgYellow`, `bgBlue`, `bgMagenta`, `bgCyan`, `bgWhite`.
+*Foreground colors*:
+
+![Foreground colors](images/text_colors.png)
+
+*Background colors*:
+
+![Background colors](images/background_colors.png)
 
 #### Example:
 
