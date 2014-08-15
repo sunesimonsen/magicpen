@@ -124,15 +124,15 @@ Append the given content to the output with the styles specified in the style st
 
 *Text properties*:
 
-![Text properties](images/text_properties.png)
+![Text properties: bold, dim, italic, underline, inverse, hidden, strikeThrough.](images/text_properties.png)
 
 *Foreground colors*:
 
-![Foreground colors](images/text_colors.png)
+![Foreground colors: #bada55, #eee, black, red, green, yellow, blue, magenta, cyan, white, gray.](images/text_colors.png)
 
 *Background colors*:
 
-![Background colors](images/background_colors.png)
+![Background colors: bg#bada55, bg#eee, bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite.](images/background_colors.png)
 
 #### Example:
 
