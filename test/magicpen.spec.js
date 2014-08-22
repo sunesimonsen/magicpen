@@ -7,6 +7,10 @@ expect.installPlugin(require('unexpected-sinon'));
 describe('magicpen', function () {
     var pen;
 
+    beforeEach(function () {
+        pen = magicpen();
+    });
+
     function forEach(arr, callback, that) {
         for (var i = 0, n = arr.length; i < n; i += 1)
             if (i in arr)
@@ -80,11 +84,79 @@ describe('magicpen', function () {
         });
     });
 
-    describe('in text mode', function () {
-        beforeEach(function () {
-            pen = magicpen();
+    describe('block', function () {
+        it('all lines in the block are indented', function () {
+            pen.red('Hello').block(
+                pen.clone()
+                    .gray(' // ').text('This is a').nl()
+                    .indentLines()
+                    .gray(' // ').indent().text('multiline comment'));
+            expect(pen.toString(), 'to equal',
+                   'Hello // This is a\n' +
+                   '      //   multiline comment');
         });
 
+        it('can be called with a function as argument', function () {
+            pen.red('Hello').block(function () {
+                this.gray(' // ').text('This is a').nl()
+                    .indentLines()
+                    .gray(' // ').indent().text('multiline comment');
+            });
+            expect(pen.toString(), 'to equal',
+                   'Hello // This is a\n' +
+                   '      //   multiline comment');
+        });
+    });
+
+    describe('append', function () {
+        it('appends the given pen to the end of the output', function () {
+            pen.text('Hello').sp().append(
+                pen.clone()
+                    .red('world!'));
+            expect(pen.toString(), 'to equal',
+                   'Hello world!');
+        });
+
+        it('can be called with a function as argument', function () {
+            pen.text('Hello').sp().append(function () {
+                this.red('world!');
+            });
+            expect(pen.toString(), 'to equal',
+                   'Hello world!');
+        });
+    });
+
+    describe('prependLinesWith', function () {
+        it('prepends all lines with the the content of the given pen', function () {
+            pen.text('First line').nl()
+                .text('Second line').nl()
+                .indentLines()
+                .indent().text('Third line')
+                .prependLinesWith(pen.clone().gray(' // '));
+
+            expect(pen.toString(), 'to equal',
+                   ' // First line\n' +
+                   ' // Second line\n' +
+                   ' //   Third line');
+        });
+
+        it('can be called with a function as argument', function () {
+            pen.text('First line').nl()
+                .text('Second line').nl()
+                .indentLines()
+                .indent().text('Third line')
+                .prependLinesWith(function () {
+                    this.gray(' // ');
+                });
+
+            expect(pen.toString(), 'to equal',
+                   ' // First line\n' +
+                   ' // Second line\n' +
+                   ' //   Third line');
+        });
+    });
+
+    describe('in text mode', function () {
         it('ignores unknown styles', function () {
             pen.text('>').write('test', 'text').text('<');
             expect(pen.toString(), 'to equal', '><');
