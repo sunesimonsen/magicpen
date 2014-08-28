@@ -332,13 +332,13 @@ describe('magicpen', function () {
         it('converts RGB colors to ansi colors', function () {
             pen.text('Hello world', '#bada55');
             expect(pen.toString('ansi'), 'to equal',
-                   '\x1B[33mHello world\x1B[39m');
+                   '\x1b[33m\x1b[38;5;192mHello world\x1b[39m');
         });
 
         it('converts RGB background colors to ansi colors', function () {
             pen.text('Hello world', 'bg#333');
             expect(pen.toString('ansi'), 'to equal',
-                   '\x1B[40mHello world\x1B[49m');
+                  '\x1b[40m\x1b[48;5;236mHello world\x1b[49m' );
         });
 
         it('is capable of removing text formatting from the output', function () {
