@@ -162,6 +162,14 @@ expect(pen.toString('html'), 'to equal',
     '</code>');
 ```
 
+When you use hex colors in the terminal the colors will be
+approximated to the palette in use. The below images shows a limited
+color sample in html and in a terminal supporting 256 colors.
+
+![Color sample html](images/Color sample - html.png)
+
+![Color sample ansi-256](images/Color sample - ansi-256.png)
+
 ### toString(format = 'text')
 
 Returns the content of the pen in the specified format.
