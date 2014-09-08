@@ -356,7 +356,7 @@ describe('magicpen', function () {
         it('ignores unknown styles', function () {
             pen.text('>').write('test', 'text').text('<');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>&gt;&lt;</div>\n' +
                    '</div>'
                   );
@@ -365,7 +365,7 @@ describe('magicpen', function () {
         it('styles an be called as methods', function () {
             pen.red('Hello').sp().green('world').text('!', 'red, bold');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Hello</span>' +
                    '&nbsp;' +
                    '<span style="color: green">world</span>' +
@@ -376,7 +376,7 @@ describe('magicpen', function () {
         it('handles multi line output', function () {
             pen.red('Hello').nl().green('world');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
                    '  <div><span style="color: green">world</span></div>\n' +
                    '</div>');
@@ -385,7 +385,7 @@ describe('magicpen', function () {
         it('handles multi line input', function () {
             pen.red('Hello\nworld');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
                    '  <div><span style="color: red">world</span></div>\n' +
                    '</div>');
@@ -398,7 +398,7 @@ describe('magicpen', function () {
                 .outdentLines()
                 .green('world');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Hello</span></div>\n' +
                    '  <div>&nbsp;&nbsp;beautiful</div>\n' +
                    '  <div><span style="color: green">world</span></div>\n' +
@@ -408,7 +408,7 @@ describe('magicpen', function () {
         it('encodes text inserted in tags', function () {
             pen.red('<foo & "bar">');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">&lt;foo&nbsp;&amp;&nbsp;&quot;bar&quot;&gt;</span></div>\n' +
                    '</div>');
         });
@@ -420,7 +420,7 @@ describe('magicpen', function () {
 
             pen.error('Danger').sp().write('error', 'danger');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>\n' +
                    '</div>');
         });
@@ -430,7 +430,7 @@ describe('magicpen', function () {
                 pen.clone()
                     .red('world!'));
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>Hello&nbsp;<span style="color: red">world!</span></div>\n' +
                    '</div>');
         });
@@ -443,7 +443,7 @@ describe('magicpen', function () {
                 .prependLinesWith(pen.clone().gray(' // '));
 
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>First&nbsp;line</div>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>Second&nbsp;line</div>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;Third&nbsp;line</div>\n' +
@@ -457,8 +457,8 @@ describe('magicpen', function () {
                     .indentLines()
                     .gray(' // ').indent().text('multiline comment'));
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
-                   '  <div><span style="color: red">Hello</span><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><span style="color: red">Hello</span><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>This&nbsp;is&nbsp;a</div>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;multiline&nbsp;comment</div>\n' +
                    '</div></div></div>\n' +
@@ -473,7 +473,7 @@ describe('magicpen', function () {
         it('supports RGB text colors', function () {
             pen.text('Hello world', '#bada55');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: #bada55">Hello&nbsp;world</span></div>\n' +
                    '</div>');
         });
@@ -481,7 +481,7 @@ describe('magicpen', function () {
         it('supports RGB background colors', function () {
             pen.text('Hello world', 'bg#333');
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="background-color: #333">Hello&nbsp;world</span></div>\n' +
                    '</div>');
         });
@@ -489,7 +489,7 @@ describe('magicpen', function () {
         it('is capable of removing text formatting from the output', function () {
             pen.red('Hello').sp().green('world');
             expect(pen.removeFormatting().toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>Hello&nbsp;world</div>\n' +
                    '</div>');
         });
@@ -571,7 +571,7 @@ describe('magicpen', function () {
             var pen = magicpen();
             writeRainbowWithPen(pen);
             expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace">\n' +
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>' +
                    '<span style="color: gray">H</span>' +
                    '<span style="color: red">e</span>' +
@@ -716,7 +716,7 @@ describe('magicpen', function () {
                 this.text(text, 'cyan');
             });
             writeFibWithPen(pen);
-            expect(pen.toString('html'), 'to equal', '<div style="font-family: monospace">\n' +
+            expect(pen.toString('html'), 'to equal', '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: black; font-weight: bold">function</span>&nbsp;<span style="color: red; font-weight: bold">fib</span>&nbsp;{</div>\n' +
                    '  <div>&nbsp;&nbsp;<span style="color: black; font-weight: bold">var</span>&nbsp;i=0,&nbsp;fibs&nbsp;=&nbsp;[<span style="color: cyan">0</span>,&nbsp;<span style="color: cyan">1</span>];</div>\n' +
                    '  <div>&nbsp;&nbsp;<span style="color: black; font-weight: bold">for</span>&nbsp;(;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i&nbsp;+=&nbsp;<span style="color: cyan">1</span>)&nbsp;{</div>\n' +
