@@ -157,9 +157,9 @@ format.
 var pen = magicpen();
 pen.text('<strong>Hello world!</strong>');
 expect(pen.toString('html'), 'to equal',
-    '<code>\n' +
+    '<div style="font-family: monospace; white-space: nowrap">\n' +
     '  <div>&lt;strong&gt;Hello&nbsp;world!&lt;/strong&gt;</div>\n' +
-    '</code>');
+    '</div>');
 ```
 
 When you use hex colors in the terminal the colors will be
