@@ -140,10 +140,10 @@ Append the given content to the output with the styles specified in the style st
 var pen = magicpen();
 pen.text('Hello', 'red')
    .text(' ')
-   .text('colorful', 'yellow, bold')
+   .text('colorful', 'yellow', 'bold')
    .text(' ')
    .text('world', 'green', 'underline')
-   .text('!', 'bgYellow, blue');
+   .text('!', 'bgYellow', 'blue');
 console.log(pen.toString('ansi'));
 ```
 

@@ -197,7 +197,7 @@ describe('magicpen', function () {
         });
 
         it('styles an be called as methods', function () {
-            pen.red('Hello').sp().green('world').text('!', 'red, bold');
+            pen.red('Hello').sp().green('world').text('!', 'red', 'bold');
             expect(pen.toString(), 'to equal', 'Hello world!');
         });
 
@@ -293,6 +293,12 @@ describe('magicpen', function () {
                    '\x1B[32mworld\x1B[39m');
         });
 
+        it('merges adjacent text entries with the same styling', function () {
+            pen.red('Hello').red(' ').red('world');
+            expect(pen.toString('ansi'), 'to equal',
+                   '\x1B[31mHello world\x1B[39m');
+        });
+
         it('handles custom styles', function () {
             pen.addStyle('error', function (text) {
                 this.red(text);
@@ -316,7 +322,7 @@ describe('magicpen', function () {
 
 
         it('styles an be called as methods', function () {
-            pen.red('Hello').sp().green('world').text('!', 'red, bold');
+            pen.red('Hello').sp().green('world').text('!', 'red', 'bold');
             expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mHello\x1B[39m' +
                    ' ' +
@@ -363,7 +369,7 @@ describe('magicpen', function () {
         });
 
         it('styles an be called as methods', function () {
-            pen.red('Hello').sp().green('world').text('!', 'red, bold');
+            pen.red('Hello').sp().green('world').text('!', 'red', 'bold');
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Hello</span>' +
@@ -410,6 +416,14 @@ describe('magicpen', function () {
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">&lt;foo&nbsp;&amp;&nbsp;&quot;bar&quot;&gt;</span></div>\n' +
+                   '</div>');
+        });
+
+        it('merges adjacent text entries with the same styling', function () {
+            pen.red('Hello').red(' ').red('world');
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><span style="color: red">Hello&nbsp;world</span></div>\n' +
                    '</div>');
         });
 
@@ -684,10 +698,10 @@ describe('magicpen', function () {
         it('in ansi mode', function () {
             var pen = magicpen();
             pen.addStyle('keyword', function (text) {
-                this.text(text, 'blue, bold');
+                this.text(text, 'blue', 'bold');
             });
             pen.addStyle('functionName', function (text) {
-                this.text(text, 'white, bold');
+                this.text(text, 'white', 'bold');
             });
             pen.addStyle('number', function (text) {
                 this.text(text, 'cyan');
@@ -707,10 +721,10 @@ describe('magicpen', function () {
         it('in html mode', function () {
             var pen = magicpen();
             pen.addStyle('keyword', function (text) {
-                this.text(text, 'black, bold');
+                this.text(text, 'black', 'bold');
             });
             pen.addStyle('functionName', function (text) {
-                this.text(text, 'red, bold');
+                this.text(text, 'red', 'bold');
             });
             pen.addStyle('number', function (text) {
                 this.text(text, 'cyan');
