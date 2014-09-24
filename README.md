@@ -218,7 +218,7 @@ option when creating the pen.
 var pen = magicpen({ indentationWidth: 4 });
 ```
 
-### append(pen), append(function()), append(style, arg...)
+### append(pen), append(function())
 
 Appends the content of the given pen to the end of this pen.
 
@@ -236,12 +236,6 @@ var pen = magicpen();
 pen.text('Hello').sp().append(function () {
     this.text('world!');
 });
-expect(pen.toString(), 'to equal', 'Hello world!');
-```
-
-```js
-var pen = magicpen();
-pen.text('Hello').sp().append('text', 'world!');
 expect(pen.toString(), 'to equal', 'Hello world!');
 ```
 
