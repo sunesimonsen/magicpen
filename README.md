@@ -218,7 +218,7 @@ option when creating the pen.
 var pen = magicpen({ indentationWidth: 4 });
 ```
 
-### append(pen), append(function())
+### append(pen), append(function()), append(style, arg...)
 
 Appends the content of the given pen to the end of this pen.
 
@@ -239,7 +239,13 @@ pen.text('Hello').sp().append(function () {
 expect(pen.toString(), 'to equal', 'Hello world!');
 ```
 
-### block(pen), block(function)
+```js
+var pen = magicpen();
+pen.text('Hello').sp().append('text', 'world!');
+expect(pen.toString(), 'to equal', 'Hello world!');
+```
+
+### block(pen), block(function), block(style, arg...)
 
 Appends the content of the given pen to the end of this pen in an
 inline block.
@@ -268,7 +274,15 @@ expect(pen.toString(), 'to equal',
     '                  // multiline block');
 ```
 
-### prependLinesWith(pen), prependLinesWith(function)
+```js
+var pen = magicpen();
+pen.red('Hello').block('text', ' // This is a\n // multiline comment');
+expect(pen.toString(), 'to equal',
+       'Hello // This is a\n' +
+       '      // multiline comment');
+```
+
+### prependLinesWith(pen), prependLinesWith(function), prependLinesWith(style, arg...)
 
 Prepends each line of this pen with the content of the given pen.
 
@@ -295,6 +309,18 @@ pen.text('Line').nl()
    .prependLinesWith(function () {
        this.text('> ');
    });
+expect(pen.toString(), 'to equal',
+    '> Line\n' +
+    '> after line\n' +
+    '> after line');
+```
+
+```js
+var pen = magicpen();
+pen.text('Line').nl()
+   .text('after line').nl()
+   .text('after line')
+   .prependLinesWith('grey', '> ');
 expect(pen.toString(), 'to equal',
     '> Line\n' +
     '> after line\n' +

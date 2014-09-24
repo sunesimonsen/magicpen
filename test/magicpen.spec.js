@@ -106,6 +106,13 @@ describe('magicpen', function () {
                    'Hello // This is a\n' +
                    '      //   multiline comment');
         });
+
+        it('can be called with style arguments', function () {
+            pen.red('Hello').block('text', ' // This is a\n // multiline comment');
+            expect(pen.toString(), 'to equal',
+                   'Hello // This is a\n' +
+                   '      // multiline comment');
+        });
     });
 
     describe('append', function () {
@@ -121,6 +128,12 @@ describe('magicpen', function () {
             pen.text('Hello').sp().append(function () {
                 this.red('world!');
             });
+            expect(pen.toString(), 'to equal',
+                   'Hello world!');
+        });
+
+        it('can be called with style arguments', function () {
+            pen.text('Hello').sp().append('red', 'world!');
             expect(pen.toString(), 'to equal',
                    'Hello world!');
         });
@@ -148,6 +161,19 @@ describe('magicpen', function () {
                 .prependLinesWith(function () {
                     this.gray(' // ');
                 });
+
+            expect(pen.toString(), 'to equal',
+                   ' // First line\n' +
+                   ' // Second line\n' +
+                   ' //   Third line');
+        });
+
+        it('can be called with style arguments', function () {
+            pen.text('First line').nl()
+                .text('Second line').nl()
+                .indentLines()
+                .indent().text('Third line')
+                .prependLinesWith('gray', ' // ');
 
             expect(pen.toString(), 'to equal',
                    ' // First line\n' +
