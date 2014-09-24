@@ -154,6 +154,16 @@ describe('magicpen', function () {
                    ' // Second line\n' +
                    ' //   Third line');
         });
+
+        it.skip('works with blocks', function () {
+            pen.block(function () {
+                this.text('Hello\nworld');
+            }).prependLinesWith(function () {
+                this.text('> ');
+            });
+
+            expect(pen.toString(), 'to equal', '> Hello\n> world');
+        });
     });
 
     describe('in text mode', function () {
