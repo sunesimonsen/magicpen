@@ -145,7 +145,7 @@ describe('magicpen', function () {
                 .text('Second line').nl()
                 .indentLines()
                 .indent().text('Third line')
-                .prependLinesWith(pen.clone().gray(' // '));
+                .prependLinesWith(pen.clone().sp().gray('//').sp());
 
             expect(pen.toString(), 'to equal',
                    ' // First line\n' +
@@ -261,7 +261,7 @@ describe('magicpen', function () {
                 .text('Second line').nl()
                 .indentLines()
                 .indent().text('Third line')
-                .prependLinesWith(pen.clone().gray(' // '));
+                .prependLinesWith(pen.clone().sp().gray('//').sp());
 
             expect(pen.toString(), 'to equal',
                    ' // First line\n' +
@@ -330,9 +330,9 @@ describe('magicpen', function () {
         });
 
         it('merges adjacent text entries with the same styling', function () {
-            pen.red('Hello').red(' ').red('world');
+            pen.red('Hello').red(' ').red('world').append('red', '!');
             expect(pen.toString('ansi'), 'to equal',
-                   '\x1B[31mHello world\x1B[39m');
+                   '\x1B[31mHello world!\x1B[39m');
         });
 
         it('handles custom styles', function () {
@@ -343,6 +343,19 @@ describe('magicpen', function () {
             pen.error('Danger').sp().write('error', 'danger');
             expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
+        });
+
+        it('the content of a pen can be prepended to the start of each line', function () {
+            pen.text('First line').nl()
+                .text('Second line').nl()
+                .indentLines()
+                .indent().text('Third line')
+                .prependLinesWith(pen.clone().sp().gray('//').sp());
+
+            expect(pen.toString('ansi'), 'to equal',
+                   ' \u001b[90m//\u001b[39m First line\n' +
+                   ' \u001b[90m//\u001b[39m Second line\n' +
+                   ' \u001b[90m//\u001b[39m   Third line');
         });
 
         it('the content of a pen can be appended in a block', function () {
@@ -456,10 +469,10 @@ describe('magicpen', function () {
         });
 
         it('merges adjacent text entries with the same styling', function () {
-            pen.red('Hello').red(' ').red('world');
+            pen.red('Hello').red(' ').red('world').append('red', '!');
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
-                   '  <div><span style="color: red">Hello&nbsp;world</span></div>\n' +
+                   '  <div><span style="color: red">Hello&nbsp;world!</span></div>\n' +
                    '</div>');
         });
 
@@ -490,13 +503,13 @@ describe('magicpen', function () {
                 .text('Second line').nl()
                 .indentLines()
                 .indent().text('Third line')
-                .prependLinesWith(pen.clone().gray(' // '));
+                .prependLinesWith(pen.clone().sp().gray('//').sp());
 
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
-                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>First&nbsp;line</div>\n' +
-                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>Second&nbsp;line</div>\n' +
-                   '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;Third&nbsp;line</div>\n' +
+                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;First&nbsp;line</div>\n' +
+                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;Second&nbsp;line</div>\n' +
+                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;&nbsp;&nbsp;Third&nbsp;line</div>\n' +
                    '</div>');
         });
 
