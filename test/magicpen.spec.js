@@ -139,6 +139,19 @@ describe('magicpen', function () {
         });
     });
 
+    describe('replaceText', function () {
+        describe('with a given pattern', function () {
+            it('replaces text content maching pattern', function () {
+                pen.red('Hello').sp().green('world!').replaceText(/[a-z]{3}/, function (styles, text) {
+                    var args = [text.toUpperCase()].concat(styles);
+                    this.text.apply(this, args);
+                });
+                expect(pen.toString(), 'to equal',
+                       'HELLo WORld!');
+            });
+        });
+    });
+
     describe('prependLinesWith', function () {
         it('prepends all lines with the the content of the given pen', function () {
             pen.text('First line').nl()
