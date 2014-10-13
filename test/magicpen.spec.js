@@ -173,6 +173,15 @@ describe('magicpen', function () {
             expect(pen, 'to equal',
                    magicpen().green('Hello world!'));
         });
+
+        it('is capable of introducing newlines from callback', function () {
+            pen.text('Hello <placeholder>!').replaceText(/<placeholder>/, function (styles, text) {
+                this.green('Jane Doe').nl().red('the incredible');
+            });
+            expect(pen, 'to equal',
+                   magicpen().text('Hello').sp().green('Jane Doe').nl()
+                             .red('the incredible').text('!'));
+        });
     });
 
     describe('prependLinesWith', function () {
