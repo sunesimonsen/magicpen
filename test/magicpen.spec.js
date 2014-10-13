@@ -154,7 +154,18 @@ describe('magicpen', function () {
     });
 
     describe('replaceText', function () {
-        describe('with a given pattern', function () {
+        describe('with only a callback', function () {
+            it('replaces all region with same styling', function () {
+                pen.red('Hello').sp().green('world!').replaceText(function (styles, text) {
+                    var args = [text.toUpperCase()].concat(styles);
+                    this.text.apply(this, args);
+                });
+                expect(pen, 'to equal',
+                       magicpen().red('HELLO').sp().green('WORLD!'));
+            });
+        });
+
+        describe('with a given pattern and a callback', function () {
             it('replaces text content maching pattern', function () {
                 pen.red('Hello').sp().green('world!').replaceText(/[a-z]{3}/, function (styles, text) {
                     var args = [text.toUpperCase()].concat(styles);
@@ -163,7 +174,14 @@ describe('magicpen', function () {
                 expect(pen, 'to equal',
                        magicpen().red('HELLo').sp().green('WORld!'));
             });
+        });
 
+        describe('with a given pattern and a string', function () {
+            it('replaces text content maching pattern', function () {
+                pen.text('Hello ').green('<placeholder>!').replaceText(/<placeholder>/, 'Jane Doe');
+                expect(pen, 'to equal',
+                       magicpen().text('Hello ').green('Jane Doe!'));
+            });
         });
 
         it('collapses entries with similar styles', function () {
