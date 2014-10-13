@@ -200,6 +200,14 @@ describe('magicpen', function () {
                    magicpen().text('Hello').sp().green('Jane Doe').nl()
                              .red('the incredible').text('!'));
         });
+
+        it('group matches are given as arguments to the replace callback', function () {
+            pen.text('foo@example.com').replaceText(/(.+)@(.+)/, function (styles, text, user, domain) {
+                this.text(user + ' at ' + domain);
+            });
+            expect(pen, 'to equal',
+                   magicpen().text('foo at example.com'));
+        });
     });
 
     describe('prependLinesWith', function () {
