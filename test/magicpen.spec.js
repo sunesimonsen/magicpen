@@ -210,27 +210,30 @@ describe('magicpen', function () {
         });
 
         it('replace in complex output', function () {
+            pen.addStyle('lightGray', function (content) {
+                this.text(content, '#AAA');
+            });
             writeComplicatedExampleWithPen(pen).replaceText(/\//g, function (styles, text) {
-                this.text(text, '#AAA');
+                this.lightGray(text);
             });
             expect(pen, 'to equal',
-                   magicpen().blue('This').sp().red('will').nl()
+                   pen.clone().blue('This').sp().red('will').nl()
                        .green('output').sp().yellow('a').sp().cyan('dragon:')
                        .sp().block(function () {
-                            this.gray("          ").text("/", "#AAA").gray("           ").text("/", "#AAA").nl()
-                                .gray("         ").text("/", "#AAA").gray("' .,,,,  .").text("/", "#AAA").nl()
-                                .gray("        ").text("/", "#AAA").gray("';'     ,").text("/", "#AAA").nl()
-                                .gray("       ").text("/", "#AAA").gray(" ").text("/", "#AAA").gray("   ,,").text("//", "#AAA").gray(",`'`").nl()
+                            this.gray("          ").lightGray("/").gray("           ").lightGray("/").nl()
+                                .gray("         ").lightGray("/").gray("' .,,,,  .").lightGray("/").nl()
+                                .gray("        ").lightGray("/").gray("';'     ,").lightGray("/").nl()
+                                .gray("       ").lightGray("/").gray(" ").lightGray("/").gray("   ,,").text("//", "#AAA").gray(",`'`").nl()
                                 .gray("      ( ,, '_,  ,,,' ``").nl()
-                                .gray("      |    ").text("/", "#AAA").red("@").gray("  ,,, ;\" `").nl()
-                                .gray("     ").text("/", "#AAA").gray("    .   ,''").text("/", "#AAA").gray("' `,``").nl()
-                                .gray("    ").text("/", "#AAA").gray("   .     .").text("/", "#AAA").gray(", `,, ` ;").nl()
-                                .gray(" ,.").text("/", "#AAA").gray("  .   ,-,',` ,,").text("/", "#AAA").gray("''\\,'").nl()
-                                .gray("|   ").text("/", "#AAA").gray("; .").text("/", "#AAA").gray(",,'`,,'' |   |").nl()
-                                .gray("|     ").text("/", "#AAA").gray("   ','    ").text("/", "#AAA").gray("    |").nl()
-                                .gray(" \\___").text("/", "#AAA").gray("'   '     |     |").nl()
-                                .gray("   `,,'  |      ").text("/", "#AAA").gray("     `\\").nl()
-                                .gray("        ").text("/", "#AAA").gray("      |        ~\\").nl()
+                                .gray("      |    ").lightGray("/").red("@").gray("  ,,, ;\" `").nl()
+                                .gray("     ").lightGray("/").gray("    .   ,''").lightGray("/").gray("' `,``").nl()
+                                .gray("    ").lightGray("/").gray("   .     .").lightGray("/").gray(", `,, ` ;").nl()
+                                .gray(" ,.").lightGray("/").gray("  .   ,-,',` ,,").lightGray("/").gray("''\\,'").nl()
+                                .gray("|   ").lightGray("/").gray("; .").lightGray("/").gray(",,'`,,'' |   |").nl()
+                                .gray("|     ").lightGray("/").gray("   ','    ").lightGray("/").gray("    |").nl()
+                                .gray(" \\___").lightGray("/").gray("'   '     |     |").nl()
+                                .gray("   `,,'  |      ").lightGray("/").gray("     `\\").nl()
+                                .gray("        ").lightGray("/").gray("      |        ~\\").nl()
                                 .gray("       '       (").nl()
                                 .gray("      :").nl()
                                 .gray("     ; .         \\--").nl()
