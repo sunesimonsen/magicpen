@@ -208,6 +208,37 @@ describe('magicpen', function () {
             expect(pen, 'to equal',
                    magicpen().text('foo at example.com'));
         });
+
+        it('replace in complex output', function () {
+            writeComplicatedExampleWithPen(pen).replaceText(/\//g, function (styles, text) {
+                this.text(text, '#AAA');
+            });
+            expect(pen, 'to equal',
+                   magicpen().blue('This').sp().red('will').nl()
+                       .green('output').sp().yellow('a').sp().cyan('dragon:')
+                       .sp().block(function () {
+                            this.gray("          ").text("/", "#AAA").gray("           ").text("/", "#AAA").nl()
+                                .gray("         ").text("/", "#AAA").gray("' .,,,,  .").text("/", "#AAA").nl()
+                                .gray("        ").text("/", "#AAA").gray("';'     ,").text("/", "#AAA").nl()
+                                .gray("       ").text("/", "#AAA").gray(" ").text("/", "#AAA").gray("   ,,").text("//", "#AAA").gray(",`'`").nl()
+                                .gray("      ( ,, '_,  ,,,' ``").nl()
+                                .gray("      |    ").text("/", "#AAA").red("@").gray("  ,,, ;\" `").nl()
+                                .gray("     ").text("/", "#AAA").gray("    .   ,''").text("/", "#AAA").gray("' `,``").nl()
+                                .gray("    ").text("/", "#AAA").gray("   .     .").text("/", "#AAA").gray(", `,, ` ;").nl()
+                                .gray(" ,.").text("/", "#AAA").gray("  .   ,-,',` ,,").text("/", "#AAA").gray("''\\,'").nl()
+                                .gray("|   ").text("/", "#AAA").gray("; .").text("/", "#AAA").gray(",,'`,,'' |   |").nl()
+                                .gray("|     ").text("/", "#AAA").gray("   ','    ").text("/", "#AAA").gray("    |").nl()
+                                .gray(" \\___").text("/", "#AAA").gray("'   '     |     |").nl()
+                                .gray("   `,,'  |      ").text("/", "#AAA").gray("     `\\").nl()
+                                .gray("        ").text("/", "#AAA").gray("      |        ~\\").nl()
+                                .gray("       '       (").nl()
+                                .gray("      :").nl()
+                                .gray("     ; .         \\--").nl()
+                                .gray("   :   \\         ; ").blue('Ooyamaneko');
+                        }).append(function () {
+                            this.nl(2).text('stolen from the interwebs.');
+                        }).prependLinesWith('text', '  '));
+        });
     });
 
     describe('prependLinesWith', function () {
