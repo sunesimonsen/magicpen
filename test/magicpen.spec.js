@@ -3,6 +3,20 @@ var magicpen = require('..');
 var expect = require('unexpected');
 var sinon = require('sinon');
 expect.installPlugin(require('unexpected-sinon'));
+expect.addType({
+    name: 'magicpen',
+    identify: function (obj) {
+        return obj.isMagicPen;
+    },
+    inspect: function (pen, depth, output) {
+        return output.append(pen);
+    },
+    equal: function (a, b) {
+        return a.toString() === b.toString() &&
+            a.toString('ansi') === b.toString('ansi') &&
+            a.toString('html') === b.toString('html');
+    }
+});
 
 describe('magicpen', function () {
     var pen;
@@ -146,9 +160,18 @@ describe('magicpen', function () {
                     var args = [text.toUpperCase()].concat(styles);
                     this.text.apply(this, args);
                 });
-                expect(pen.toString(), 'to equal',
-                       'HELLo WORld!');
+                expect(pen, 'to equal',
+                       magicpen().red('HELLo').sp().green('WORld!'));
             });
+
+        });
+
+        it('collapses entries with similar styles', function () {
+            pen.green('Hello').sp().green('world!').replaceText(/ /, function (styles, text) {
+                this.text(text, 'green');
+            });
+            expect(pen, 'to equal',
+                   magicpen().green('Hello world!'));
         });
     });
 
