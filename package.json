@@ -1,6 +1,6 @@
 {
   "name": "magicpen",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Styled output in both consoles and browsers",
   "main": "./lib/MagicPen.js",
   "directories": {
