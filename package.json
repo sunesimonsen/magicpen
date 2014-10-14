@@ -27,7 +27,7 @@
     "jshint": "*",
     "mocha": "^1.20.1",
     "sinon": "=1.9.1",
-    "unexpected": "^3.2.2",
+    "unexpected": "^5.0.0-beta5",
     "unexpected-sinon": "^3.0.2"
   },
   "dependencies": {

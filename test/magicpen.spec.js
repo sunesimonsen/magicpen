@@ -3,6 +3,20 @@ var magicpen = require('..');
 var expect = require('unexpected');
 var sinon = require('sinon');
 expect.installPlugin(require('unexpected-sinon'));
+expect.addType({
+    name: 'magicpen',
+    identify: function (obj) {
+        return obj.isMagicPen;
+    },
+    inspect: function (pen, depth, output) {
+        return output.append(pen);
+    },
+    equal: function (a, b) {
+        return a.toString() === b.toString() &&
+            a.toString('ansi') === b.toString('ansi') &&
+            a.toString('html') === b.toString('html');
+    }
+});
 
 describe('magicpen', function () {
     var pen;
@@ -136,6 +150,97 @@ describe('magicpen', function () {
             pen.text('Hello').sp().append('red', 'world!');
             expect(pen.toString(), 'to equal',
                    'Hello world!');
+        });
+    });
+
+    describe('replaceText', function () {
+        describe('with only a callback', function () {
+            it('replaces all region with same styling', function () {
+                pen.red('Hello').sp().green('world!').replaceText(function (styles, text) {
+                    var args = [text.toUpperCase()].concat(styles);
+                    this.text.apply(this, args);
+                });
+                expect(pen, 'to equal',
+                       magicpen().red('HELLO').sp().green('WORLD!'));
+            });
+        });
+
+        describe('with a given pattern and a callback', function () {
+            it('replaces text content maching pattern', function () {
+                pen.red('Hello').sp().green('world!').replaceText(/[a-z]{3}/, function (styles, text) {
+                    var args = [text.toUpperCase()].concat(styles);
+                    this.text.apply(this, args);
+                });
+                expect(pen, 'to equal',
+                       magicpen().red('HELLo').sp().green('WORld!'));
+            });
+        });
+
+        describe('with a given pattern and a string', function () {
+            it('replaces text content maching pattern', function () {
+                pen.text('Hello ').green('<placeholder>!').replaceText(/<placeholder>/, 'Jane Doe');
+                expect(pen, 'to equal',
+                       magicpen().text('Hello ').green('Jane Doe!'));
+            });
+        });
+
+        it('collapses entries with similar styles', function () {
+            pen.green('Hello').sp().green('world!').replaceText(/ /, function (styles, text) {
+                this.text(text, 'green');
+            });
+            expect(pen, 'to equal',
+                   magicpen().green('Hello world!'));
+        });
+
+        it('is capable of introducing newlines from callback', function () {
+            pen.text('Hello <placeholder>!').replaceText(/<placeholder>/, function (styles, text) {
+                this.green('Jane Doe').nl().red('the incredible');
+            });
+            expect(pen, 'to equal',
+                   magicpen().text('Hello').sp().green('Jane Doe').nl()
+                             .red('the incredible').text('!'));
+        });
+
+        it('group matches are given as arguments to the replace callback', function () {
+            pen.text('foo@example.com').replaceText(/(.+)@(.+)/, function (styles, text, user, domain) {
+                this.text(user + ' at ' + domain);
+            });
+            expect(pen, 'to equal',
+                   magicpen().text('foo at example.com'));
+        });
+
+        it('replace in complex output', function () {
+            pen.addStyle('lightGray', function (content) {
+                this.text(content, '#AAA');
+            });
+            writeComplicatedExampleWithPen(pen).replaceText(/\//g, function (styles, text) {
+                this.lightGray(text);
+            });
+            expect(pen, 'to equal',
+                   pen.clone().blue('This').sp().red('will').nl()
+                       .green('output').sp().yellow('a').sp().cyan('dragon:')
+                       .sp().block(function () {
+                            this.gray("          ").lightGray("/").gray("           ").lightGray("/").nl()
+                                .gray("         ").lightGray("/").gray("' .,,,,  .").lightGray("/").nl()
+                                .gray("        ").lightGray("/").gray("';'     ,").lightGray("/").nl()
+                                .gray("       ").lightGray("/").gray(" ").lightGray("/").gray("   ,,").text("//", "#AAA").gray(",`'`").nl()
+                                .gray("      ( ,, '_,  ,,,' ``").nl()
+                                .gray("      |    ").lightGray("/").red("@").gray("  ,,, ;\" `").nl()
+                                .gray("     ").lightGray("/").gray("    .   ,''").lightGray("/").gray("' `,``").nl()
+                                .gray("    ").lightGray("/").gray("   .     .").lightGray("/").gray(", `,, ` ;").nl()
+                                .gray(" ,.").lightGray("/").gray("  .   ,-,',` ,,").lightGray("/").gray("''\\,'").nl()
+                                .gray("|   ").lightGray("/").gray("; .").lightGray("/").gray(",,'`,,'' |   |").nl()
+                                .gray("|     ").lightGray("/").gray("   ','    ").lightGray("/").gray("    |").nl()
+                                .gray(" \\___").lightGray("/").gray("'   '     |     |").nl()
+                                .gray("   `,,'  |      ").lightGray("/").gray("     `\\").nl()
+                                .gray("        ").lightGray("/").gray("      |        ~\\").nl()
+                                .gray("       '       (").nl()
+                                .gray("      :").nl()
+                                .gray("     ; .         \\--").nl()
+                                .gray("   :   \\         ; ").blue('Ooyamaneko');
+                        }).append(function () {
+                            this.nl(2).text('stolen from the interwebs.');
+                        }).prependLinesWith('text', '  '));
         });
     });
 
