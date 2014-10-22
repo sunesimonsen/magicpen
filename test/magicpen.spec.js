@@ -612,9 +612,15 @@ describe('magicpen', function () {
 
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
-                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;First&nbsp;line</div>\n' +
-                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;Second&nbsp;line</div>\n' +
-                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;&nbsp;&nbsp;Third&nbsp;line</div>\n' +
+                   '  <div><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;</div>\n' +
+                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;</div>\n' +
+                   '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;</div>\n' +
+                   '</div></div><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div>First&nbsp;line</div>\n' +
+                   '  <div>Second&nbsp;line</div>\n' +
+                   '  <div>&nbsp;&nbsp;Third&nbsp;line</div>\n' +
+                   '</div></div></div>\n' +
                    '</div>');
         });
 
