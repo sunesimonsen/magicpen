@@ -165,7 +165,7 @@ describe('magicpen', function () {
             });
         });
 
-        describe('with a given pattern and a callback', function () {
+        describe('with given a pattern and a callback', function () {
             it('replaces text content maching pattern', function () {
                 pen.red('Hello').sp().green('world!').replaceText(/[a-z]{3}/, function (styles, text) {
                     var args = [text.toUpperCase()].concat(styles);
@@ -176,9 +176,17 @@ describe('magicpen', function () {
             });
         });
 
-        describe('with a given pattern and a string', function () {
+        describe('with given a pattern and a string', function () {
             it('replaces text content maching pattern', function () {
                 pen.text('Hello ').green('<placeholder>!').replaceText(/<placeholder>/, 'Jane Doe');
+                expect(pen, 'to equal',
+                       magicpen().text('Hello ').green('Jane Doe!'));
+            });
+        });
+
+        describe('with given a string and a string', function () {
+            it('replaces text content maching string', function () {
+                pen.text('Hello ').green('<placeholder>!').replaceText('<placeholder>', 'Jane Doe');
                 expect(pen, 'to equal',
                        magicpen().text('Hello ').green('Jane Doe!'));
             });
