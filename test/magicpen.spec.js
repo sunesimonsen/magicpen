@@ -620,15 +620,15 @@ describe('magicpen', function () {
 
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
-                   '  <div><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><div style="display: inline-block; vertical-align: top">\n' +
                    '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;</div>\n' +
                    '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;</div>\n' +
                    '  <div>&nbsp;<span style="color: gray">//</span>&nbsp;</div>\n' +
-                   '</div></div><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace; white-space: nowrap">\n' +
+                   '</div><div style="display: inline-block; vertical-align: top">\n' +
                    '  <div>First&nbsp;line</div>\n' +
                    '  <div>Second&nbsp;line</div>\n' +
                    '  <div>&nbsp;&nbsp;Third&nbsp;line</div>\n' +
-                   '</div></div></div>\n' +
+                   '</div></div>\n' +
                    '</div>');
         });
 
@@ -638,12 +638,13 @@ describe('magicpen', function () {
                     .gray(' // ').text('This is a').nl()
                     .indentLines()
                     .gray(' // ').indent().text('multiline comment'));
+
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
-                   '  <div><span style="color: red">Hello</span><div style="display: inline-block; vertical-align: top"><div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><span style="color: red">Hello</span><div style="display: inline-block; vertical-align: top">\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>This&nbsp;is&nbsp;a</div>\n' +
                    '  <div><span style="color: gray">&nbsp;//&nbsp;</span>&nbsp;&nbsp;multiline&nbsp;comment</div>\n' +
-                   '</div></div></div>\n' +
+                   '</div></div>\n' +
                    '</div>');
         });
 
