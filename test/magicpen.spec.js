@@ -143,6 +143,24 @@ describe('magicpen', function () {
                    '              =======level 4\n' +
                    '                     =======');
         });
+
+        it('can be appended after each other', function () {
+            var spaceships = pen.clone()
+                .text('>').nl()
+                .text(' >').nl()
+                .text('  >').nl()
+                .text(' >').nl()
+                .text('>');
+
+            pen.block(spaceships).sp().block(spaceships).sp().block(spaceships).sp().block(spaceships);
+            expect(pen.toString(), 'to equal',
+                   '>   >   >   >\n' +
+                   ' >   >   >   >\n' +
+                   '  >   >   >   >\n' +
+                   ' >   >   >   >\n' +
+                   '>   >   >   >');
+
+        });
     });
 
     describe('append', function () {
