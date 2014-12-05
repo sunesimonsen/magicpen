@@ -310,7 +310,7 @@ describe('magicpen', function () {
                    ' //   Third line');
         });
 
-        it.skip('works with blocks', function () {
+        it('works with blocks', function () {
             pen.block(function () {
                 this.text('Hello\nworld');
             }).prependLinesWith(function () {
