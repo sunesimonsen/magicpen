@@ -127,6 +127,22 @@ describe('magicpen', function () {
                    'Hello // This is a\n' +
                    '      // multiline comment');
         });
+
+        it('can be nested abitrarily', function () {
+            pen.text('level 1').nl().text('=======').block(function () {
+                this.text('level 2').nl().text('=======').block(function () {
+                    this.text('level 3').nl().text('=======').block(function () {
+                        this.text('level 4').nl().text('=======');
+                    });
+                });
+            });
+            expect(pen.toString(), 'to equal',
+                   'level 1\n' +
+                   '=======level 2\n' +
+                   '       =======level 3\n' +
+                   '              =======level 4\n' +
+                   '                     =======');
+        });
     });
 
     describe('append', function () {
