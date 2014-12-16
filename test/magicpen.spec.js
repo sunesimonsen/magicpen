@@ -341,7 +341,7 @@ describe('magicpen', function () {
 
     describe('in text mode', function () {
         it('ignores unknown styles', function () {
-            pen.text('>').write('test', 'text').text('<');
+            pen.text('>').write({ style: 'test', args: ['text'] }).text('<');
             expect(pen.toString(), 'to equal', '><');
         });
 
@@ -444,7 +444,7 @@ describe('magicpen', function () {
         });
 
         it('ignores unknown styles', function () {
-            pen.text('>').write('test', 'text').text('<');
+            pen.text('>').write({ style: 'test', args: ['text'] }).text('<');
             expect(pen.toString('ansi'), 'to equal', '><');
         });
 
@@ -487,7 +487,7 @@ describe('magicpen', function () {
                 this.red(text);
             });
 
-            pen.error('Danger').sp().write('error', 'danger');
+            pen.error('Danger').sp().write({ style: 'error', args: ['danger'] });
             expect(pen.toString('ansi'), 'to equal',
                    '\x1B[31mDanger\x1B[39m \x1B[31mdanger\x1B[39m');
         });
@@ -556,7 +556,7 @@ describe('magicpen', function () {
         });
 
         it('ignores unknown styles', function () {
-            pen.text('>').write('test', 'text').text('<');
+            pen.text('>').write({ style: 'test', args: ['text'] }).text('<');
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>&gt;&lt;</div>\n' +
@@ -628,7 +628,7 @@ describe('magicpen', function () {
                 this.red(text);
             });
 
-            pen.error('Danger').sp().write('error', 'danger');
+            pen.error('Danger').sp().write({ style: 'error', args: ['danger'] });
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: red">Danger</span>&nbsp;<span style="color: red">danger</span></div>\n' +
