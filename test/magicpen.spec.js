@@ -968,5 +968,11 @@ describe('magicpen', function () {
                 'color: red', 'color: gray', '', '', '', 'color: gray', ''
             ]);
         });
+
+        it('should escape literal percent signs', function () {
+            expect(magicpen().text('%').toString('coloredConsole'), 'to equal', [
+                '%c%%', ''
+            ]);
+        });
     });
 });
