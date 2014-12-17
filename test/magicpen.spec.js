@@ -6,7 +6,7 @@ expect.installPlugin(require('unexpected-sinon'));
 expect.addType({
     name: 'magicpen',
     identify: function (obj) {
-        return obj.isMagicPen;
+        return obj && obj.isMagicPen;
     },
     inspect: function (pen, depth, output) {
         return output.append(pen);
@@ -943,6 +943,30 @@ describe('magicpen', function () {
                    '  <div>&nbsp;&nbsp;<span style="color: black; font-weight: bold">return</span>&nbsp;fibs[<span style="color: cyan">0</span>];</div>\n' +
                    '  <div>}</div>\n' +
                    '</div>');
+        });
+    });
+
+    describe('ColoredConsoleSerializer', function () {
+        it('should output an array', function () {
+            var pen = magicpen();
+            pen.red('Hello, world!');
+            expect(pen.toString('coloredConsole'), 'to equal', [
+                '%cHello, world!',
+                'color: red'
+            ]);
+        });
+
+        it('should support blocks', function () {
+            var pen = magicpen();
+            pen.red('Hello').block(function () {
+                this.gray(' // ').text('This is a').nl()
+                    .indentLines()
+                    .gray(' // ').indent().text('multiline comment');
+            });
+            expect(pen.toString('coloredConsole'), 'to equal', [
+                '%cHello%c // %cThis is a\n %c     %c // %c  multiline comment',
+                'color: red', 'color: gray', '', '', 'color: gray', ''
+            ]);
         });
     });
 });
