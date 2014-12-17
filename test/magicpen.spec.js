@@ -964,8 +964,8 @@ describe('magicpen', function () {
                     .gray(' // ').indent().text('multiline comment');
             });
             expect(pen.toString('coloredConsole'), 'to equal', [
-                '%cHello%c // %cThis is a\n %c     %c // %c  multiline comment',
-                'color: red', 'color: gray', '', '', 'color: gray', ''
+                '%cHello%c // %cThis is a%c\n %c     %c // %c  multiline comment',
+                'color: red', 'color: gray', '', '', '', 'color: gray', ''
             ]);
         });
     });
