@@ -69,9 +69,11 @@ describe('magicpen', function () {
     });
 
     it('allows redefining a style if allowRedefinition is set to true', function () {
-        forEach(['red', 'write', 'addStyle'], function (name) {
-            magicpen().addStyle(name, function () {}, true);
-        });
+        var pen = magicpen();
+        pen.addStyle('red', function (content) {
+            this.blue(content);
+        }, true);
+        expect(pen.red('wat'), 'to equal', magicpen().blue('wat'));
     });
 
     it('throw when prepending lines with multi line pen', function () {
