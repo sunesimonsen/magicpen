@@ -84,19 +84,109 @@ describe('magicpen', function () {
     });
 
     describe('installPlugin', function () {
+        var pen;
+        beforeEach(function () {
+            pen = magicpen();
+        });
         it('calls the given plugin with the magicpen instance as the parameter', function (done) {
-            var pen = magicpen();
-            var plugin = function (magicpenInstance) {
-                expect(magicpenInstance, 'to be', pen);
-                done();
+            var plugin = {
+                name: 'test',
+                installInto: function (magicpenInstance) {
+                    expect(magicpenInstance, 'to be', pen);
+                    done();
+                }
             };
             pen.installPlugin(plugin);
         });
 
-        it('throws if the given arguments is not a function', function () {
+        it('throws if the given arguments does not adhere to the plugin interface', function () {
             expect(function () {
-                magicpen().installPlugin({});
-            }, 'to throw', 'Expected first argument given to installPlugin to be a function');
+                pen.installPlugin({});
+            }, 'to throw', 'Plugins must adhere to the following interface\n' +
+                   '{\n' +
+                   '  name: <plugin name>,\n' +
+                   '  dependencies: <an optional list of dependencies>,\n' +
+                   '  installInto: <a function that will update the given magicpen instance>\n' +
+                   '}');
+        });
+
+        it('does not fail if all plugin dependencies has been fulfilled', function (done) {
+            var pluginA = {
+                name: 'PluginA',
+                installInto: function (expect) {}
+            };
+            var pluginB = {
+                name: 'PluginB',
+                dependencies: ['PluginA'],
+                installInto: function (expect) {
+                    done();
+                }
+            };
+            pen.installPlugin(pluginA);
+            pen.installPlugin(pluginB);
+        });
+
+        it('throws if the plugin has unfulfilled plugin dependencies', function () {
+            var pluginB = {
+                name: 'PluginB',
+                dependencies: ['PluginA'],
+                installInto: function (expect) {}
+            };
+
+            expect(function () {
+                pen.installPlugin(pluginB);
+            }, 'to throw', 'PluginB requires plugin PluginA');
+
+            var pluginC = {
+                name: 'PluginC',
+                dependencies: ['PluginA', 'PluginB'],
+                installInto: function (expect) {}
+            };
+
+            expect(function () {
+                pen.installPlugin(pluginC);
+            }, 'to throw', 'PluginC requires plugins PluginA and PluginB');
+
+            var pluginD = {
+                name: 'PluginD',
+                dependencies: ['PluginA', 'PluginB', 'PluginC'],
+                installInto: function (expect) {}
+            };
+
+            expect(function () {
+                pen.installPlugin(pluginD);
+            }, 'to throw', 'PluginD requires plugins PluginA, PluginB and PluginC');
+        });
+
+        it('dependencies can be fulfilled across clones', function (done) {
+            var pluginA = {
+                name: 'PluginA',
+                installInto: function (expect) {}
+            };
+            var pluginB = {
+                name: 'PluginB',
+                dependencies: ['PluginA'],
+                installInto: function (expect) {
+                    done();
+                }
+            };
+            pen.installPlugin(pluginA);
+            var clonedPen = pen.clone();
+            clonedPen.installPlugin(pluginB);
+        });
+
+        it('installing a plugin more than once is a no-op', function () {
+            var callCount = 0;
+            var plugin = {
+                name: 'plugin',
+                installInto: function () {
+                    callCount += 1;
+                }
+            };
+            pen.installPlugin(plugin);
+            pen.installPlugin(plugin);
+            pen.installPlugin(plugin);
+            expect(callCount, 'to be', 1);
         });
     });
 

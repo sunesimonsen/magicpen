@@ -387,17 +387,38 @@ console.log(pen.removeFormatting().toString('ansi'));
 
 ### installPlugin(plugin)
 
-MagicPen plugins are just functions that uses the `addStyle`
-method to add new custom styles to the MagicPen instance.
+MagicPen plugins are objects that adhere to the following interface:
+
+```js
+{
+  name: <plugin name>,
+  dependencies: <an optional list of dependencies>,
+  installInto: <a function that will update the given magicpen instance>
+}
+```
+
+The name of the plugin should be the same at the NPM package name.
+
+A plugin can require a list of other plugins to be installed prior to
+installation of the plugin. If the dependency list is not fulfilled
+the installation will fail. The idea is that you manage your plugin
+versions using NPM. If you install a plugin that is already installed
+nothing will happen.
+
+The `installInto` function receives an instance of unexpected and uses
+uses the `addStyle` method to add new custom styles to the MagicPen
+instance.
 
 ```js
 var pen = magicpen();
-function starPlugin(pen) {
-    pen.addStyle('stars', function (content) {
-        this.text(String(content).replace(/./g, '*'));
-    });
-}
-pen.installPlugin(starPlugin);
+pen.installPlugin({
+    name: 'starPlugin',
+    installInto: function (pen) {
+        pen.addStyle('stars', function (content) {
+            this.text(String(content).replace(/./g, '*'));
+        });
+    }
+);
 pen.stars('secret');
 expect(pen.toString(), 'to equal', '******');
 ```
