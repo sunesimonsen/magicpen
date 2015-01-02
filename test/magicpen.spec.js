@@ -15,6 +15,19 @@ expect.addType({
         return a.toString() === b.toString() &&
             a.toString('ansi') === b.toString('ansi') &&
             a.toString('html') === b.toString('html');
+    },
+    diff: function (actual, expected, output, diff, inspect) {
+        if (actual.toString() !== expected.toString()) {
+            return diff(actual.toString(), expected.toString());
+        }
+
+        if (actual.toString('ansi') !== expected.toString('ansi')) {
+            return diff(actual.toString('ansi'), expected.toString('ansi'));
+        }
+
+        if (actual.toString('html') !== expected.toString('html')) {
+            return diff(actual.toString('html'), expected.toString('html'));
+        }
     }
 });
 
