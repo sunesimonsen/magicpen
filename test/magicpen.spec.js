@@ -628,7 +628,7 @@ describe('magicpen', function () {
                    '\x1B[31mHello\x1B[39m' +
                    ' ' +
                    '\x1B[32mworld\x1B[39m' +
-                   '\x1B[1m\x1B[31m!\x1B[39m\x1B[22m');
+                   '\x1B[31m\x1B[1m!\x1B[22m\x1B[39m');
         });
 
         it('knows the size of the output', function () {
@@ -1016,13 +1016,13 @@ describe('magicpen', function () {
             });
             writeFibWithPen(pen);
             expect(pen.toString('ansi'), 'to equal',
-                   '\u001b[1m\u001b[34mfunction\u001b[39m\u001b[22m \u001b[1m\u001b[37mfib\u001b[39m\u001b[22m {\n' +
-                   '  \u001b[1m\u001b[34mvar\u001b[39m\u001b[22m i=0, fibs = [\u001b[36m0\u001b[39m, \u001b[36m1\u001b[39m];\n' +
-                   '  \u001b[1m\u001b[34mfor\u001b[39m\u001b[22m (; i < n; i += \u001b[36m1\u001b[39m) {\n' +
+                   '\u001b[34m\u001b[1mfunction\u001b[22m\u001b[39m \u001b[37m\u001b[1mfib\u001b[22m\u001b[39m {\n' +
+                   '  \u001b[34m\u001b[1mvar\u001b[22m\u001b[39m i=0, fibs = [\u001b[36m0\u001b[39m, \u001b[36m1\u001b[39m];\n' +
+                   '  \u001b[34m\u001b[1mfor\u001b[22m\u001b[39m (; i < n; i += \u001b[36m1\u001b[39m) {\n' +
                    '    fibs.push(fibs[\u001b[36m0\u001b[39m] + fibs[\u001b[36m1\u001b[39m]);\n' +
                    '    fibs.shift();\n' +
                    '  }\n' +
-                   '  \u001b[1m\u001b[34mreturn\u001b[39m\u001b[22m fibs[\u001b[36m0\u001b[39m];\n' +
+                   '  \u001b[34m\u001b[1mreturn\u001b[22m\u001b[39m fibs[\u001b[36m0\u001b[39m];\n' +
                    '}');
         });
 
