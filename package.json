@@ -19,21 +19,21 @@
   },
   "author": "Sune Simonsen",
   "devDependencies": {
-    "browserify": "^5.9.1",
-    "bundle-collapser": "^1.1.0",
-    "coveralls": "^2.11.1",
-    "del": "^0.1.1",
-    "istanbul": "^0.3.0",
+    "browserify": "8.1.0",
+    "bundle-collapser": "1.1.1",
+    "coveralls": "2.11.1",
+    "del": "0.1.1",
+    "istanbul": "0.3.0",
     "jshint": "*",
-    "mocha": "^1.20.1",
-    "sinon": "=1.9.1",
-    "unexpected": "5.0.0-beta36",
-    "unexpected-sinon": "^3.0.2"
+    "mocha": "1.20.1",
+    "sinon": "1.9.1",
+    "unexpected": "5.2.0",
+    "unexpected-sinon": "5.0.0"
   },
   "dependencies": {
-    "ansi-styles": "^2.0.0",
-    "color-diff": "^0.1.4",
-    "supports-color": "^1.2.0"
+    "ansi-styles": "2.0.0",
+    "color-diff": "0.1.4",
+    "supports-color": "1.2.0"
   },
   "license": "MIT"
 }
