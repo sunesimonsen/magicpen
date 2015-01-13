@@ -1080,4 +1080,84 @@ describe('magicpen', function () {
             ]);
         });
     });
+
+    describe('themes can be specified using the theme method', function () {
+        var pen;
+        beforeEach(function () {
+            pen = magicpen();
+            pen.text('// This is a comment', 'comment').nl();
+            pen.text('function', 'keyword').sp().text('wat() {').nl();
+            pen.indentLines();
+            pen.i().text('console.').text('log', 'method').text('("wat");').nl();
+            pen.outdentLines();
+            pen.text('}');
+
+            pen.theme({
+                comment: {
+                    html: ['#969896', 'italic'],
+                    ansi: 'grey'
+                },
+                keyword: {
+                    html: '#bf41ea',
+                    ansi: 'cyan'
+                }
+            });
+        });
+
+        it('when serializing to text the theme has no effect', function () {
+            expect(pen.toString('text'), 'to equal',
+                   '// This is a comment\n' +
+                   'function wat() {\n' +
+                   '  console.log("wat");\n' +
+                   '}');
+        });
+
+        it('when serializing to html the output uses the html theme', function () {
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><span style="color: #969896; font-style: italic">//&nbsp;This&nbsp;is&nbsp;a&nbsp;comment</span></div>\n' +
+                   '  <div><span style="color: #bf41ea">function</span>&nbsp;wat()&nbsp;{</div>\n' +
+                   '  <div>&nbsp;&nbsp;console.log(&quot;wat&quot;);</div>\n' +
+                   '  <div>}</div>\n' +
+                   '</div>');
+        });
+
+        it('when serializing to ansi the output uses the ansi theme', function () {
+            expect(pen.toString('ansi'), 'to equal',
+                   '\x1B[90m// This is a comment\x1B[39m\n'+
+                   '\x1B[36mfunction\x1B[39m wat() {\n'+
+                   '  console.log("wat");\n'+
+                   '}');
+        });
+
+        describe('when the theme is extended', function () {
+            beforeEach(function () {
+                pen.theme({
+                    comment: {
+                        html: ['#969896', 'italic'],
+                        ansi: '#969896'
+                    },
+                    method: ['#55ab40', 'bold']
+                });
+            });
+
+            it('when serializing to html the output uses the extended html theme', function () {
+                expect(pen.toString('html'), 'to equal',
+                       '<div style="font-family: monospace; white-space: nowrap">\n' +
+                       '  <div><span style="color: #969896; font-style: italic">//&nbsp;This&nbsp;is&nbsp;a&nbsp;comment</span></div>\n' +
+                       '  <div><span style="color: #bf41ea">function</span>&nbsp;wat()&nbsp;{</div>\n' +
+                       '  <div>&nbsp;&nbsp;console.<span style="color: #55ab40; font-weight: bold">log</span>(&quot;wat&quot;);</div>\n' +
+                       '  <div>}</div>\n' +
+                       '</div>');
+            });
+
+            it('when serializing to ansi the output uses the extended ansi theme', function () {
+                expect(pen.toString('ansi'), 'to equal',
+                       '\x1B[90m\u001b[38;5;246m// This is a comment\x1B[39m\n'+
+                       '\x1B[36mfunction\x1B[39m wat() {\n'+
+                       '  console.\x1B[32m\x1B[38;5;113m\x1B[1mlog\x1B[22m\x1B[39m("wat");\n'+
+                       '}');
+            });
+        });
+    });
 });
