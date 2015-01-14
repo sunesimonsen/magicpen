@@ -1085,15 +1085,9 @@ describe('magicpen', function () {
         var pen;
         beforeEach(function () {
             pen = magicpen();
-            pen.theme({
-                comment: {
-                    html: ['#969896', 'italic'],
-                    ansi: 'grey'
-                },
-                keyword: {
-                    html: '#bf41ea',
-                    ansi: 'cyan'
-                }
+            pen.theme('html', {
+                comment: ['#969896', 'italic'],
+                keyword: '#bf41ea'
             });
 
             pen.text('// This is a comment', 'comment').nl();
@@ -1102,6 +1096,11 @@ describe('magicpen', function () {
             pen.i().text('console.').text('log', 'method').text('("wat");').nl();
             pen.outdentLines();
             pen.text('}');
+
+            pen.theme('ansi', {
+                comment: 'grey',
+                keyword: 'cyan'
+            });
         });
 
         it('when serializing to text the theme has no effect', function () {
@@ -1132,11 +1131,13 @@ describe('magicpen', function () {
 
         describe('when the theme is extended', function () {
             beforeEach(function () {
-                pen.theme({
-                    comment: {
-                        html: ['#969896', 'italic'],
-                        ansi: '#969896'
-                    },
+                pen.theme('html', {
+                    comment: ['#969896', 'italic'],
+                    method: ['#55ab40', 'bold']
+                });
+
+                pen.theme('ansi', {
+                    comment: '#969896',
                     method: ['#55ab40', 'bold']
                 });
             });
