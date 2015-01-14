@@ -1085,13 +1085,6 @@ describe('magicpen', function () {
         var pen;
         beforeEach(function () {
             pen = magicpen();
-            pen.text('// This is a comment', 'comment').nl();
-            pen.text('function', 'keyword').sp().text('wat() {').nl();
-            pen.indentLines();
-            pen.i().text('console.').text('log', 'method').text('("wat");').nl();
-            pen.outdentLines();
-            pen.text('}');
-
             pen.theme({
                 comment: {
                     html: ['#969896', 'italic'],
@@ -1102,6 +1095,13 @@ describe('magicpen', function () {
                     ansi: 'cyan'
                 }
             });
+
+            pen.text('// This is a comment', 'comment').nl();
+            pen.keyword('function').sp().text('wat() {').nl();
+            pen.indentLines();
+            pen.i().text('console.').text('log', 'method').text('("wat");').nl();
+            pen.outdentLines();
+            pen.text('}');
         });
 
         it('when serializing to text the theme has no effect', function () {
