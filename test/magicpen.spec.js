@@ -1081,23 +1081,23 @@ describe('magicpen', function () {
         });
     });
 
-    describe('themes can be specified using the theme method', function () {
+    describe('themes can be specified using the installTheme method', function () {
         var pen;
         beforeEach(function () {
             pen = magicpen();
-            pen.theme('html', {
+            pen.installTheme('html', {
                 comment: ['#969896', 'italic'],
                 keyword: '#bf41ea'
             });
 
             pen.text('// This is a comment', 'comment').nl();
-            pen.keyword('function').sp().text('wat() {').nl();
+            pen.keyword('function').sp().text('wat', 'methodDefinition').text('() {').nl();
             pen.indentLines();
             pen.i().text('console.').text('log', 'method').text('("wat");').nl();
             pen.outdentLines();
             pen.text('}');
 
-            pen.theme('ansi', {
+            pen.installTheme('ansi', {
                 comment: 'grey',
                 keyword: 'cyan'
             });
@@ -1131,13 +1131,19 @@ describe('magicpen', function () {
 
         describe('when the theme is extended', function () {
             beforeEach(function () {
-                pen.theme('html', {
-                    comment: ['#969896', 'italic'],
-                    method: ['#55ab40', 'bold']
+                pen.installTheme(['ansi', 'html'], {
+                    'methodDefinition': '#55ab40'
                 });
 
-                pen.theme('ansi', {
-                    comment: '#969896',
+                pen.installTheme('html', {
+                    comment: ['#969896', 'italic']
+                });
+
+                pen.installTheme('ansi', {
+                    comment: '#969896'
+                });
+
+                pen.installTheme({
                     method: ['#55ab40', 'bold']
                 });
             });
@@ -1146,7 +1152,7 @@ describe('magicpen', function () {
                 expect(pen.toString('html'), 'to equal',
                        '<div style="font-family: monospace; white-space: nowrap">\n' +
                        '  <div><span style="color: #969896; font-style: italic">//&nbsp;This&nbsp;is&nbsp;a&nbsp;comment</span></div>\n' +
-                       '  <div><span style="color: #bf41ea">function</span>&nbsp;wat()&nbsp;{</div>\n' +
+                       '  <div><span style="color: #bf41ea">function</span>&nbsp;<span style="color: #55ab40">wat</span>()&nbsp;{</div>\n' +
                        '  <div>&nbsp;&nbsp;console.<span style="color: #55ab40; font-weight: bold">log</span>(&quot;wat&quot;);</div>\n' +
                        '  <div>}</div>\n' +
                        '</div>');
@@ -1155,7 +1161,7 @@ describe('magicpen', function () {
             it('when serializing to ansi the output uses the extended ansi theme', function () {
                 expect(pen.toString('ansi'), 'to equal',
                        '\x1B[90m\u001b[38;5;246m// This is a comment\x1B[39m\n'+
-                       '\x1B[36mfunction\x1B[39m wat() {\n'+
+                       '\x1B[36mfunction\x1B[39m \x1B[32m\x1B[38;5;113mwat\x1B[39m() {\n'+
                        '  console.\x1B[32m\x1B[38;5;113m\x1B[1mlog\x1B[22m\x1B[39m("wat");\n'+
                        '}');
             });
