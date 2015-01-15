@@ -423,6 +423,79 @@ pen.stars('secret');
 expect(pen.toString(), 'to equal', '******');
 ```
 
+### installTheme(theme), installTheme(format, theme), installTheme(formats, theme)
+
+MagicPen have support for theming text styles differently for each
+format. A theme is just a hash of aliases to build in text styles. You
+install the theme for one or more formats.
+
+```js
+pen.installTheme({
+    keyword: 'yellow',
+    functionName: ['green', 'italic'],
+    number: '#FF8DFE'
+});
+```
+
+After installing the theme you get the following methods on the pen
+`keyword`, `functionName` and `number`. If you wish to install the
+theme after writing to the pen, you need to use the `text` method
+instead: `pen.text('this uses the keyword style', 'keyword')`
+
+Let's print some code with the pen:
+
+```js
+pen.keyword('function').sp().functionName('fib').text(' {').nl()
+    .indentLines()
+        .i().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1)
+            .text('];').nl()
+        .i().keyword('for').text(' (; i < n; i += ').number(1).text(') {').nl()
+        .indentLines()
+            .i().text('fibs.push(fibs[').number(0).text('] + fibs[').number(1)
+                .text(']);').nl()
+            .i().text('fibs.shift();').nl()
+        .outdentLines()
+        .i().text('}').nl()
+        .i().keyword('return').text(' fibs[').number(0).text('];').nl()
+    .outdentLines()
+    .text('}');
+```
+
+This will produce the following ansi output:
+
+![Fibonacci ansi output](images/fib-theme-ansi.png "Fibonacci ansi output")
+
+But these colors looks pretty lame on white background, which we
+usually use when outputting to the html format:
+
+![Fibonacci lame html output](images/fib-theme-lame-html.png "Fibonacci lame html output")
+
+Let's tweak the html colors without touching the ansi colors:
+
+```js
+pen.installTheme('html', {
+    keyword: 'bold',
+    functionName: ['#403298', 'italic', 'bold'],
+    number: '#80417F'
+});
+```
+
+![Fibonacci html output](images/fib-theme-html.png "Fibonacci html output")
+
+You can even extend the current theme:
+
+```js
+pen.installTheme('html', {
+    functionName: ['#5B9832', 'bold']
+});
+```
+
+![Fibonacci extended html output](images/fib-theme-extended-html.png "Fibonacci extended html output")
+
+The theme is applied at serialization time, so you can change the theme
+and serialize again with the theme applied without touching the
+content of the pen.
+
 ## Aliases
 
 ### space(count = 1), sp(count = 1)
