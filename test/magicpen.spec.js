@@ -266,6 +266,17 @@ describe('magicpen', function () {
                    '>   >   >   >');
 
         });
+
+        it.skip('does not create trailing whitespace', function () {
+            pen.block('text', 'tic')
+               .block('text', '\ntac')
+               .block('text', '\n\ntoe');
+
+            expect(pen.toString(), 'to equal',
+                   'tic\n' +
+                   '   tac\n' +
+                   '      toe');
+        });
     });
 
     describe('append', function () {
