@@ -267,7 +267,7 @@ describe('magicpen', function () {
 
         });
 
-        it.skip('does not create trailing whitespace', function () {
+        it('does not create trailing whitespace', function () {
             pen.block('text', 'tic')
                .block('text', '\ntac')
                .block('text', '\n\ntoe');
