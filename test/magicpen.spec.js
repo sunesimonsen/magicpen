@@ -1098,13 +1098,14 @@ describe('magicpen', function () {
             pen = magicpen();
             pen.installTheme('html', {
                 comment: ['#969896', 'italic'],
-                keyword: '#bf41ea'
+                keyword: '#bf41ea',
+                string: 'keyword'
             });
 
             pen.text('// This is a comment', 'comment').nl();
             pen.keyword('function').sp().text('wat', 'methodDefinition').text('() {').nl();
             pen.indentLines();
-            pen.i().text('console.').text('log', 'method').text('("wat");').nl();
+            pen.i().text('console.').text('log', 'method').text('(').string('"wat"').text(');').nl();
             pen.outdentLines();
             pen.text('}');
 
@@ -1127,7 +1128,7 @@ describe('magicpen', function () {
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div><span style="color: #969896; font-style: italic">//&nbsp;This&nbsp;is&nbsp;a&nbsp;comment</span></div>\n' +
                    '  <div><span style="color: #bf41ea">function</span>&nbsp;wat()&nbsp;{</div>\n' +
-                   '  <div>&nbsp;&nbsp;console.log(&quot;wat&quot;);</div>\n' +
+                   '  <div>&nbsp;&nbsp;console.log(<span style="color: #bf41ea">&quot;wat&quot;</span>);</div>\n' +
                    '  <div>}</div>\n' +
                    '</div>');
         });
@@ -1164,7 +1165,7 @@ describe('magicpen', function () {
                        '<div style="font-family: monospace; white-space: nowrap">\n' +
                        '  <div><span style="color: #969896; font-style: italic">//&nbsp;This&nbsp;is&nbsp;a&nbsp;comment</span></div>\n' +
                        '  <div><span style="color: #bf41ea">function</span>&nbsp;<span style="color: #55ab40">wat</span>()&nbsp;{</div>\n' +
-                       '  <div>&nbsp;&nbsp;console.<span style="color: #55ab40; font-weight: bold">log</span>(&quot;wat&quot;);</div>\n' +
+                       '  <div>&nbsp;&nbsp;console.<span style="color: #55ab40; font-weight: bold">log</span>(<span style="color: #bf41ea">&quot;wat&quot;</span>);</div>\n' +
                        '  <div>}</div>\n' +
                        '</div>');
             });
@@ -1175,6 +1176,24 @@ describe('magicpen', function () {
                        '\x1B[36mfunction\x1B[39m \x1B[32m\x1B[38;5;113mwat\x1B[39m() {\n'+
                        '  console.\x1B[32m\x1B[38;5;113m\x1B[1mlog\x1B[22m\x1B[39m("wat");\n'+
                        '}');
+            });
+        });
+
+        describe('when the theme has a loop', function () {
+            beforeEach(function () {
+                pen.installTheme({
+                    comment: 'foo',
+                    foo: 'bar',
+                    bar: 'baz',
+                    baz: 'qux',
+                    qux: 'bar'
+                });
+            });
+
+            it('throw when the theme is applied', function () {
+                expect(function () {
+                    pen.toString('ansi');
+                }, 'to throw', 'Your theme contains a loop: bar -> baz -> qux -> bar');
             });
         });
     });

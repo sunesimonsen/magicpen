@@ -426,14 +426,16 @@ expect(pen.toString(), 'to equal', '******');
 ### installTheme(theme), installTheme(format, theme), installTheme(formats, theme)
 
 MagicPen have support for theming text styles differently for each
-format. A theme is just a hash of aliases to build in text styles. You
-install the theme for one or more formats.
+format. A theme is just a hash of aliases to build in text styles or
+aliases to other theme entries. You install the theme for one or more
+formats.
 
 ```js
 pen.installTheme({
     keyword: 'yellow',
     functionName: ['green', 'italic'],
-    number: '#FF8DFE'
+    primitive: '#FF8DFE',
+    number: 'primitive'
 });
 ```
 
@@ -476,7 +478,7 @@ Let's tweak the html colors without touching the ansi colors:
 pen.installTheme('html', {
     keyword: 'bold',
     functionName: ['#403298', 'italic', 'bold'],
-    number: '#80417F'
+    primitive: '#80417F'
 });
 ```
 
