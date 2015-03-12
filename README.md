@@ -297,7 +297,7 @@ expect(pen.toString(), 'to equal',
     'multiline block\n' +
     'but you can still\n' +
     'amend text to\n' +
-    'it');
+    'it!');
 ```
 
 ```js
@@ -317,7 +317,7 @@ expect(pen.toString(), 'to equal',
     'multiline block\n' +
     'but you can still\n' +
     'amend text to\n' +
-    'it');
+    'it!');
 ```
 
 ```js
@@ -335,7 +335,7 @@ expect(pen.toString(), 'to equal',
     'multiline block\n' +
     'but you can still\n' +
     'amend text to\n' +
-    'it');
+    'it!');
 ```
 
 ### prependLinesWith(pen), prependLinesWith(function), prependLinesWith(style, arg...)
