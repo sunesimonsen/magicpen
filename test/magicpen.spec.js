@@ -1197,4 +1197,73 @@ describe('magicpen', function () {
             });
         });
     });
+    describe('table', function () {
+        it('foo', function () {
+
+            pen.addStyle('table', function (rowCreator) {
+                var that = this;
+                var rows = [];
+                rowCreator(function (cellCreator) {
+                    // new row
+                    var cells = [];
+                    rows.push(cells);
+                    cellCreator(function (contentCreator) {
+                        var cellPen = that.clone();
+                        contentCreator.call(cellPen);
+                        cells.push(cellPen);
+                    });
+                });
+
+                var columnCount = 0;
+                rows.forEach(function (row) {
+                    columnCount = Math.max(row.length, columnCount);
+                    var cellHeights = row.map(function (cellPen) {
+                        return cellPen.size().height;
+                    });
+
+                    var rowHeight = Math.max.apply(null, cellHeights);
+
+                    row.forEach(function (cellPen, index) {
+                        cellPen.nl(Math.max(0, rowHeight - cellHeights[index]));
+                    });
+                });
+
+                var columns = [];
+                for (var c = 0; c < columnCount; c += 1) {
+                    columns.push(that.clone());
+                }
+
+                rows.forEach(function (row, rowIndex) {
+                    row.forEach(function (cellPen, cellIndex) {
+                        if (rowIndex > 0) {
+                            columns[cellIndex].nl(2);
+                        }
+                        columns[cellIndex].append(cellPen);
+                    });
+                });
+
+                columns.forEach(function (column, index) {
+                    if (index > 0) {
+                        that.sp(2);
+                    }
+
+                    that.block(column);
+                });
+            });
+
+            pen.nl().table(function (row) {
+                for (var i = 0; i < 10; i += 1) {
+                    row(function (cell) {
+                        for (var j = 0; j < 10; j += 1) {
+                            cell(function () {
+                                this.text(i * j);
+                            });
+                        }
+                    });
+                }
+            });
+
+            console.log(pen.toString('ansi'));
+        });
+    });
 });
