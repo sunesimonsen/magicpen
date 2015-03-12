@@ -276,6 +276,68 @@ expect(pen.toString(), 'to equal',
        '      // multiline comment');
 ```
 
+### amend(pen), amend(function), amend(style, arg...)
+
+Amends the content to the end of the pen.
+
+Example:
+
+```js
+var pen = magicpen();
+pen.block('text', 'This is a\n' +
+                  'multiline block\n' +
+                  'but you can still\n' +
+                  'amend text to\n' +
+                  'it');
+
+pen.amend(pen.clone().text('!'));
+
+expect(pen.toString(), 'to equal',
+    'This is a\n' +
+    'multiline block\n' +
+    'but you can still\n' +
+    'amend text to\n' +
+    'it');
+```
+
+```js
+var pen = magicpen();
+pen.block('text', 'This is a\n' +
+                  'multiline block\n' +
+                  'but you can still\n' +
+                  'amend text to\n' +
+                  'it');
+
+pen.amend(function () {
+    this.text('!');
+});
+
+expect(pen.toString(), 'to equal',
+    'This is a\n' +
+    'multiline block\n' +
+    'but you can still\n' +
+    'amend text to\n' +
+    'it');
+```
+
+```js
+var pen = magicpen();
+pen.block('text', 'This is a\n' +
+                  'multiline block\n' +
+                  'but you can still\n' +
+                  'amend text to\n' +
+                  'it');
+
+pen.amend('text', '!');
+
+expect(pen.toString(), 'to equal',
+    'This is a\n' +
+    'multiline block\n' +
+    'but you can still\n' +
+    'amend text to\n' +
+    'it');
+```
+
 ### prependLinesWith(pen), prependLinesWith(function), prependLinesWith(style, arg...)
 
 Prepends each line of this pen with the content of the given pen.

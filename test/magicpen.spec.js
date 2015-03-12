@@ -303,6 +303,47 @@ describe('magicpen', function () {
         });
     });
 
+    describe('amend', function () {
+        it('appends the given pen to the end of the output if the last entry is not a block', function () {
+            expect(pen.text('Hello').amend(pen.clone().text('!')).toString(), 'to equal', 'Hello!');
+        });
+
+        it('appends the given pen to the last text entry in the output', function () {
+            expect(pen.block('text', 'Hello\nworld').amend(function () {
+                this.text('!');
+            }).toString(), 'to equal', 'Hello\nworld!');
+        });
+
+        it('works with abitrary nesting', function () {
+            expect(pen.block(function () {
+                this.text('block1').block(function () {
+                    this.nl().text('block2').block(function () {
+                        this.nl().text('block3').block(function () {
+                            this.nl().text('Hello');
+                        });
+                    });
+                });
+            }).amend(function () {
+                this.text('!');
+            }).toString(), 'to equal',
+                   "block1\n" +
+                   "      block2\n" +
+                   "            block3\n" +
+                   "                  Hello!");
+        });
+
+        it('can be called with a function as argument', function () {
+            expect(pen.block('text', 'Hello\nworld').amend(function () {
+                this.text('!');
+            }).toString(), 'to equal', 'Hello\nworld!');
+        });
+
+        it('can be called with style arguments', function () {
+            expect(pen.block('text', 'Hello\nworld').amend('text', '!').toString(),
+                   'to equal', 'Hello\nworld!');
+        });
+    });
+
     describe('replaceText', function () {
         describe('with only a callback', function () {
             it('replaces all region with same styling', function () {
