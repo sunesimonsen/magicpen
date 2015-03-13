@@ -1239,7 +1239,7 @@ describe('magicpen', function () {
         });
     });
 
-    describe('#isBlock', function () {
+    describe('isBlock', function () {
         it('should return false for an empty pen', function () {
             expect(magicpen().isBlock(), 'to be false');
         });
@@ -1262,6 +1262,24 @@ describe('magicpen', function () {
             }).block(function () {
                 this.text('bar');
             }).isBlock(), 'to be false');
+        });
+    });
+
+    describe('isMultiline', function () {
+        it('returns false if the output is empty', function () {
+            expect(magicpen().isMultiline(), 'to be false');
+        });
+
+        it('returns false if the output is one line', function () {
+            expect(magicpen().text('line 1').isMultiline(), 'to be false');
+        });
+
+        it('returns true if the output is multiple lines', function () {
+            expect(magicpen().text('line 1\nline 2').isMultiline(), 'to be true');
+        });
+
+        it('returns true if the output is one line containing multiline block', function () {
+            expect(magicpen().block('text', 'line 1\nline 2').isMultiline(), 'to be true');
         });
     });
 });

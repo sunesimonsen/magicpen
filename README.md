@@ -457,6 +457,15 @@ expect(magicpen().block(function () {
 }).isBlock(), 'to be true');
 ```
 
+### isMultiline()
+
+Returns `true` if the output more than one line.
+
+```js
+expect(magicpen().text('line 1').isMultiline(), 'to be false');
+expect(magicpen().text('line 1\nline 2').isMultiline(), 'to be true');
+```
+
 ### installPlugin(plugin)
 
 MagicPen plugins are objects that adhere to the following interface:
