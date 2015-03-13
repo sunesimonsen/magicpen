@@ -447,6 +447,16 @@ console.log(pen.removeFormatting().toString('ansi'));
 
 ![Remove text formatting](images/Hello world - removeFormatting.png)
 
+### isBlock()
+
+Returns `true` if the output only contains a block.
+
+```js
+expect(magicpen().block(function () {
+    this.text('foo');
+}).isBlock(), 'to be true');
+```
+
 ### installPlugin(plugin)
 
 MagicPen plugins are objects that adhere to the following interface:

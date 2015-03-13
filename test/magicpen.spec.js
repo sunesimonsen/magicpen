@@ -1238,4 +1238,30 @@ describe('magicpen', function () {
             });
         });
     });
+
+    describe('#isBlock', function () {
+        it('should return false for an empty pen', function () {
+            expect(magicpen().isBlock(), 'to be false');
+        });
+
+        it('should return true for a pen with only a block', function () {
+            expect(magicpen().block(function () {
+                this.text('foo');
+            }).isBlock(), 'to be true');
+        });
+
+        it('should return false for a pen with a block and then some', function () {
+            expect(magicpen().block(function () {
+                this.text('foo');
+            }).text(',').isBlock(), 'to be false');
+        });
+
+        it('should return false for a pen with two blocks', function () {
+            expect(magicpen().block(function () {
+                this.text('foo');
+            }).block(function () {
+                this.text('bar');
+            }).isBlock(), 'to be false');
+        });
+    });
 });
