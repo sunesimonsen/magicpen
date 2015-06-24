@@ -447,6 +447,47 @@ console.log(pen.removeFormatting().toString('ansi'));
 
 ![Remove text formatting](images/Hello world - removeFormatting.png)
 
+### raw(...)
+
+If you need something completely custom, you can specify the actual
+string that will be serialized for each of the different modes. You
+need to specify a fallback, for the modes that are not specified.
+
+The custom output is generated at serialization time and can be a
+string or a function returning a string for each mode you want to
+override.
+
+The fallback can be a pen, a function where this is a pen or a string.
+
+```js
+var pen = magicpen();
+pen.addStyle('link', function (label, url) {
+    this.raw({
+        fallback: function () {
+            this.text(label).sp().text('(').blue(url).text(')');
+        },
+        html: function () {
+            return '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
+        }
+    });
+});
+pen.link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+```
+
+This will be the output in ansi mode:
+
+```
+magicpen (\x1B[34mhttps://github.com/sunesimonsen/magicpen\x1B[39m)
+```
+
+This will be the output in html mode:
+
+```
+<div style="font-family: monospace; white-space: nowrap">
+  <div><a href="https://github.com/sunesimonsen/magicpen" alt="magicpen">magicpen</a></div>
+</div>
+```
+
 ### isBlock()
 
 Returns `true` if the output only contains a block.

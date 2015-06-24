@@ -496,6 +496,101 @@ describe('magicpen', function () {
         });
     });
 
+    describe('raw', function () {
+        it('requires an argument with an fallback key', function () {
+            expect(function () {
+                pen.raw({});
+            }, 'to throw', 'Requires the argument to be an object with atleast an fallback key');
+        });
+
+        it('is capable of providing custom output for different serializers', function () {
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: 'bar',
+                html: function () {
+                    return '<img src="..." style="width: 100em">';
+                }
+            });
+            expect(pen.toString('text'), 'to equal', 'foo');
+            expect(pen.toString('ansi'), 'to equal', 'bar');
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><img src="..." style="width: 100em"></div>\n' +
+                   '</div>');
+        });
+
+        it('custom output for modes is computed at serialization time', function () {
+            var dynamicContent = null;
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: function () {
+                    return 'This is dynamic content: ' + dynamicContent;
+                }
+            });
+            dynamicContent = 'foo';
+            expect(pen.toString('ansi'), 'to equal', 'This is dynamic content: foo');
+            dynamicContent = 'bar';
+            expect(pen.toString('ansi'), 'to equal', 'This is dynamic content: bar');
+        });
+
+        it('custom content for modes can be specified as a string', function () {
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: 'bar'
+            });
+            expect(pen.toString('ansi'), 'to equal', 'bar');
+        });
+
+        it('custom content for modes can be specified as a function', function () {
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: function () { return 'bar'; }
+            });
+            expect(pen.toString('ansi'), 'to equal', 'bar');
+        });
+
+        it('the fallback content can be specified as a string', function () {
+            pen.raw({
+                fallback: 'foo'
+            });
+            expect(pen.toString('ansi'), 'to equal', 'foo');
+        });
+
+        it('the fallback content can be specified as a function that appends the output', function () {
+            pen.raw({
+                fallback: function () {
+                    this.red('foo');
+                }
+            });
+            expect(pen.toString('ansi'), 'to equal', '\x1B[31mfoo\x1B[39m');
+        });
+
+        it('the fallback content can be specified as a pen', function () {
+            pen.raw({
+                fallback: pen.clone().red('foo')
+            });
+            expect(pen.toString('ansi'), 'to equal', '\x1B[31mfoo\x1B[39m');
+        });
+
+        it('falls back to the fallback content if there is no override for the mode that is being serialized', function () {
+            pen.raw({
+                fallback: function (output) {
+                    output.text('fallback');
+                }
+            });
+            expect(pen.toString('text'), 'to equal', 'fallback');
+            expect(pen.toString('ansi'), 'to equal', 'fallback');
+        });
+    });
+
     describe('in text mode', function () {
         it('ignores unknown styles', function () {
             pen.text('>').write({ style: 'test', args: ['text'] }).text('<');
@@ -1099,6 +1194,39 @@ describe('magicpen', function () {
                    '  <div>&nbsp;&nbsp;}</div>\n' +
                    '  <div>&nbsp;&nbsp;<span style="color: black; font-weight: bold">return</span>&nbsp;fibs[<span style="color: cyan">0</span>];</div>\n' +
                    '  <div>}</div>\n' +
+                   '</div>');
+        });
+    });
+
+    describe('link example', function () {
+        beforeEach(function () {
+            pen.addStyle('link', function (label, url) {
+                this.raw({
+                    fallback: function () {
+                        this.text(label).sp().text('(').blue(url).text(')');
+                    },
+                    html: function () {
+                        return '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
+                    }
+                });
+            });
+            pen.link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+        });
+
+        it('in text mode', function () {
+            expect(pen.toString(), 'to equal',
+                   'magicpen (https://github.com/sunesimonsen/magicpen)');
+        });
+
+        it('in ansi mode', function () {
+            expect(pen.toString('ansi'), 'to equal',
+                   'magicpen (\x1B[34mhttps://github.com/sunesimonsen/magicpen\x1B[39m)');
+        });
+
+        it('in html mode', function () {
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div><a href="https://github.com/sunesimonsen/magicpen" alt="magicpen">magicpen</a></div>\n' +
                    '</div>');
         });
     });
