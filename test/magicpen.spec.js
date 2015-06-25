@@ -497,44 +497,92 @@ describe('magicpen', function () {
     });
 
     describe('raw', function () {
-        it('requires an argument with an fallback key', function () {
+        beforeEach(function () {
+            pen = magicpen('ansi');
+        });
+
+        it('fails if the format of the pen is not set', function () {
             expect(function () {
-                pen.raw({});
-            }, 'to throw', 'Requires the argument to be an object with atleast an fallback key');
+                magicpen().raw({
+                    fallback: 'wat'
+                });
+            }, 'to throw','The raw method is only supported on pen where the format has already been set');
         });
 
-        it('is capable of providing custom output for different serializers', function () {
-            pen.raw({
-                fallback: function () {
-                    this.text('foo');
-                },
-                ansi: 'bar',
-                html: function () {
-                    return '<img src="..." style="width: 100em">';
-                }
-            });
-            expect(pen.toString('text'), 'to equal', 'foo');
-            expect(pen.toString('ansi'), 'to equal', 'bar');
-            expect(pen.toString('html'), 'to equal',
-                   '<div style="font-family: monospace; white-space: nowrap">\n' +
-                   '  <div><img src="..." style="width: 100em"></div>\n' +
-                   '</div>');
+        it('fails if the format of the pen is not set', function () {
+            expect(function () {
+                pen.raw({
+                    html: 'wat'
+                });
+            }, 'to throw','Raw output is not specified for format: ansi and no fallback method is given');
         });
 
-        it('custom output for modes is computed at serialization time', function () {
-            var dynamicContent = null;
-            pen.raw({
-                fallback: function () {
-                    this.text('foo');
-                },
-                ansi: function () {
-                    return 'This is dynamic content: ' + dynamicContent;
-                }
+        it('fails if the argument is not of the right type', function () {
+            expect(function () {
+                pen.raw({
+                    ansi: { wat: 'wat' }
+                });
+            }, 'to throw',
+                   'Properties on a raw object must be a pen, a function that writes to a pen, a string or an object with the structure\n' +
+                   '{ width: <number>, height: <number>, content: <string function() {}|string> }');
+        });
+
+        describe('in text mode', function () {
+            beforeEach(function () {
+                pen = magicpen('text');
             });
-            dynamicContent = 'foo';
-            expect(pen.toString('ansi'), 'to equal', 'This is dynamic content: foo');
-            dynamicContent = 'bar';
-            expect(pen.toString('ansi'), 'to equal', 'This is dynamic content: bar');
+
+            it('chooses the text output from raw blocks', function () {
+                pen.raw({
+                    fallback: function () { this.text('foo'); },
+                    ansi: 'bar',
+                    html: function () {
+                        return '<img src="..." style="width: 100em">';
+                    }
+                });
+                expect(pen.toString(), 'to equal', 'foo');
+            });
+        });
+
+        describe('in ansi mode', function () {
+            beforeEach(function () {
+                pen = magicpen('ansi');
+            });
+
+            it('chooses the html output from raw blocks', function () {
+                pen.raw({
+                    fallback: function () { this.text('foo'); },
+                    ansi: 'bar',
+                    html: function () {
+                        return '<img src="..." style="width: 100em">';
+                    }
+                });
+                expect(pen.toString(), 'to equal', 'bar');
+            });
+        });
+
+        describe('in html mode', function () {
+            beforeEach(function () {
+                pen = magicpen('html');
+            });
+
+            it('chooses the html output from raw blocks', function () {
+                pen.raw({
+                    fallback: function () { this.text('foo'); },
+                    ansi: 'bar',
+                    html: {
+                        height: 5,
+                        width: 100,
+                        content: function () {
+                            return '<img src="..." style="width: 100em, height: 5em">';
+                        }
+                    }
+                });
+                expect(pen.toString(), 'to equal',
+                       '<div style="font-family: monospace; white-space: nowrap">\n' +
+                       '  <div><img src="..." style="width: 100em, height: 5em"></div>\n' +
+                       '</div>');
+            });
         });
 
         it('custom content for modes can be specified as a string', function () {
@@ -544,17 +592,7 @@ describe('magicpen', function () {
                 },
                 ansi: 'bar'
             });
-            expect(pen.toString('ansi'), 'to equal', 'bar');
-        });
-
-        it('custom content for modes can be specified as a function', function () {
-            pen.raw({
-                fallback: function () {
-                    this.text('foo');
-                },
-                ansi: function () { return 'bar'; }
-            });
-            expect(pen.toString('ansi'), 'to equal', 'bar');
+            expect(pen.toString(), 'to equal', 'bar');
         });
 
         it('custom content for modes can write to a magicpen bound to this', function () {
@@ -564,7 +602,7 @@ describe('magicpen', function () {
                 },
                 ansi: function () { this.red('bar'); }
             });
-            expect(pen.toString('ansi'), 'to equal', '\x1B[31mbar\x1B[39m');
+            expect(pen.toString(), 'to equal', '\x1B[31mbar\x1B[39m');
         });
 
         it('custom content for modes can write to a magicpen recieved as the first argument', function () {
@@ -577,26 +615,11 @@ describe('magicpen', function () {
             expect(pen.toString('ansi'), 'to equal', '\x1B[31mbar\x1B[39m');
         });
 
-        it('fails if the custom content for modes is writing to the pen and returning', function () {
-            pen.raw({
-                fallback: function () {
-                    this.text('foo');
-                },
-                ansi: function () {
-                    this.red('bar');
-                    return 'this will fail';
-                }
-            });
-            expect(function () {
-                pen.toString('ansi');
-            }, 'to throw', 'Raw content for modes must eigther write to a pen or return a raw string');
-        });
-
         it('the fallback content can be specified as a string', function () {
             pen.raw({
                 fallback: 'foo'
             });
-            expect(pen.toString('ansi'), 'to equal', 'foo');
+            expect(pen.toString(), 'to equal', 'foo');
         });
 
         it('the fallback content can be specified as a function that appends the output', function () {
@@ -619,95 +642,105 @@ describe('magicpen', function () {
             pen.raw({
                 fallback: function (output) {
                     output.text('fallback');
-                }
+                },
+                text: 'wat'
             });
-            expect(pen.toString('text'), 'to equal', 'fallback');
-            expect(pen.toString('ansi'), 'to equal', 'fallback');
+            expect(pen.toString(), 'to equal', 'fallback');
         });
 
         it('can be used inside a block', function () {
-            pen.text('------------------------').nl()
-                .indentLines()
-                .i().block(function () {
-                    this.raw({
-                        fallback: function (output) {
-                            output.text('fallback');
-                        },
-                        text: 'This will be\n' +
-                            'inserted in the output\n' +
-                            'without modifications',
-                        ansi: function (output, serializer) {
-                            this.text('serializing:').nl()
-                                .red(serializer.format);
-                        },
-                        html: function () {
-                            this.text('wat').nl()
-                                .text('is').nl()
-                                .text('this');
-                        }
-                    });
-                }).nl()
-                .outdentLines()
-                .text('------------------------');
+            function examplePen(format) {
+                return magicpen(format)
+                    .text('------------------------').nl()
+                    .indentLines()
+                    .i().block(function () {
+                        this.raw({
+                            fallback: function (output) {
+                                output.text('fallback');
+                            },
+                            text: {
+                                height: 3,
+                                width: 22,
+                                content: 'This will be\n' +
+                                    'inserted in the output\n' +
+                                    'without modifications'
+                            },
+                            ansi: function (output) {
+                                this.text('serializing:').nl()
+                                    .red(this.format);
+                            },
+                            html: function () {
+                                this.text('wat').nl()
+                                    .text('is').nl()
+                                    .text('this');
+                            }
+                        });
+                    }).nl()
+                    .outdentLines()
+                    .text('------------------------');
+            }
 
-            expect(pen.toString('text'), 'to equal',
+            expect(examplePen('text').toString(), 'to equal',
                    '------------------------\n' +
                    '  This will be\n' +
                    'inserted in the output\n' +
                    'without modifications\n' +
                    '------------------------');
-            expect(pen.toString('ansi'), 'to equal',
+            expect(examplePen('ansi').toString(), 'to equal',
                    '------------------------\n' +
                    '  serializing:\n' +
                    '  \x1B[31mansi\x1B[39m\n' +
                    '------------------------');
-            expect(pen.toString('html'), 'to equal',
+            expect(examplePen('html').toString(), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>------------------------</div>\n' +
                    '  <div>&nbsp;&nbsp;<div style="display: inline-block; vertical-align: top">\n' +
-                   '  <div><div style="display: inline-block; vertical-align: top">\n' +
                    '  <div>wat</div>\n' +
                    '  <div>is</div>\n' +
                    '  <div>this</div>\n' +
-                   '</div></div>\n' +
                    '</div></div>\n' +
                    '  <div>------------------------</div>\n' +
                    '</div>');
         });
 
         it('should support fallback-less .raw within an existing raw context', function () {
-            pen.raw({
-                html: function () {
-                    this.text('Hello');
-                    this.raw('<canvas id="whoa"></canvas>');
-                    this.raw({
-                        html: '<canvas id="there"></canvas>',
-                        fallback: ''
-                    }).nl();
-                    this.indentLines();
-                    this.i().block(function () {
-                        this.raw(function () {
-                            return 'it even works in blocks';
+            function examplePen(format) {
+                return magicpen(format).raw({
+                    html: function () {
+                        this.text('Hello');
+                        this.raw({
+                            height: 20,
+                            width: 20,
+                            content: '<canvas id="whoa"></canvas>'
                         });
-                    });
-                },
-                fallback: 'foo'
-            });
+                        this.raw({
+                            html: 'The normal signature is also supported',
+                            fallback: 'wat'
+                        }).nl();
+                        this.indentLines();
+                        this.i().block(function () {
+                            this.raw(function () {
+                                this.text('it even works in blocks');
+                            });
+                        });
+                    },
+                    fallback: 'foo'
+                });
+            }
+
 
             expect(
-                pen.toString('html'),
+                examplePen('html').toString(),
                 'to equal',
-                    '<div style="font-family: monospace; white-space: nowrap">\n' +
-                    '  <div><div style="display: inline-block; vertical-align: top">\n' +
-                    '  <div>Hello<canvas id="whoa"></canvas><canvas id="there"></canvas></div>\n' +
+                '<div style="font-family: monospace; white-space: nowrap">\n' +
+                    '  <div>Hello<canvas id="whoa"></canvas>The&nbsp;normal&nbsp;signature&nbsp;is&nbsp;also&nbsp;supported</div>\n' +
                     '  <div>&nbsp;&nbsp;<div style="display: inline-block; vertical-align: top">\n' +
-                    '  <div>it even works in blocks</div>\n' +
-                    '</div></div>\n' +
+                    '  <div>it&nbsp;even&nbsp;works&nbsp;in&nbsp;blocks</div>\n' +
                     '</div></div>\n' +
                     '</div>'
             );
 
-            expect(pen.toString('text'), 'to equal', 'foo');
+            expect(examplePen('text').toString(), 'to equal', 'foo');
         });
     });
 
@@ -1235,14 +1268,14 @@ describe('magicpen', function () {
         function writeFibWithPen(pen) {
             pen.keyword('function').sp().functionName('fib').text(' {').nl()
                 .indentLines()
-                    .i().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1).text('];').nl()
-                    .i().keyword('for').text(' (; i < n; i += ').number(1).text(') {').nl()
-                    .indentLines()
-                        .i().text('fibs.push(fibs[').number(0).text('] + fibs[').number(1).text(']);').nl()
-                        .i().text('fibs.shift();').nl()
-                    .outdentLines()
-                    .i().text('}').nl()
-                    .i().keyword('return').text(' fibs[').number(0).text('];').nl()
+                .i().keyword('var').text(' i=0, fibs = [').number(0).text(', ').number(1).text('];').nl()
+                .i().keyword('for').text(' (; i < n; i += ').number(1).text(') {').nl()
+                .indentLines()
+                .i().text('fibs.push(fibs[').number(0).text('] + fibs[').number(1).text(']);').nl()
+                .i().text('fibs.shift();').nl()
+                .outdentLines()
+                .i().text('}').nl()
+                .i().keyword('return').text(' fibs[').number(0).text('];').nl()
                 .outdentLines()
                 .text('}');
         }
@@ -1321,32 +1354,34 @@ describe('magicpen', function () {
     describe('link example', function () {
         beforeEach(function () {
             pen.addStyle('link', function (label, url) {
+                var htmlLink = '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
                 this.raw({
                     fallback: function () {
                         this.text(label).sp().text('(').blue(url).text(')');
                     },
-                    html: function () {
-                        return '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
+                    html: {
+                        height: 1,
+                        width: htmlLink.length,
+                        content: htmlLink
                     }
                 });
             });
-            pen.text('This is a link:').nl().link('magicpen', 'https://github.com/sunesimonsen/magicpen');
         });
 
         it('in text mode', function () {
-            expect(pen.toString(), 'to equal',
+            expect(pen.clone('text').text('This is a link:').nl().link('magicpen', 'https://github.com/sunesimonsen/magicpen').toString(), 'to equal',
                    'This is a link:\n' +
                    'magicpen (https://github.com/sunesimonsen/magicpen)');
         });
 
         it('in ansi mode', function () {
-            expect(pen.toString('ansi'), 'to equal',
+            expect(pen.clone('ansi').text('This is a link:').nl().link('magicpen', 'https://github.com/sunesimonsen/magicpen').toString(), 'to equal',
                    'This is a link:\n' +
                    'magicpen (\x1B[34mhttps://github.com/sunesimonsen/magicpen\x1B[39m)');
         });
 
         it('in html mode', function () {
-            expect(pen.toString('html'), 'to equal',
+            expect(pen.clone('html').text('This is a link:').nl().link('magicpen', 'https://github.com/sunesimonsen/magicpen').toString(), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
                    '  <div>This&nbsp;is&nbsp;a&nbsp;link:</div>\n' +
                    '  <div><a href="https://github.com/sunesimonsen/magicpen" alt="magicpen">magicpen</a></div>\n' +
