@@ -104,14 +104,20 @@ You will get the following output it the browser:
 
 Creates a new instance of MagicPen with the given options.
 
-Currently there is only on option: `indentationWidth` which defaults
-to 2.
+Currently there is only two options: `indentationWidth` which defaults
+to 2 and `format`.
+
+Given magicpen a string is equivalent to specifying the format in the options object:
+
+Specifying the format is useful in combination with the `raw` method.
 
 Example:
 
 ```js
 // Pen with indentation width 2
 magicpen();
+// Pen with indentation width 2 and in ansi format
+magicpen('ansi');
 // Pen with indentation width 4
 magicpen({ indentationWidth: 4 });
 ```
@@ -170,11 +176,16 @@ color sample in html and in a terminal supporting 256 colors.
 
 ![Color sample ansi-256](images/Color sample - ansi-256.png)
 
-### toString(format = 'text')
+### toString([format])
 
 Returns the content of the pen in the specified format.
 
 Accepted formats are `text`, `ansi` and `html`.
+
+It fails if the pen has another format set already.
+
+If no format is specified, it will use the format of the pen or `text`
+if the pen does not have a format set.
 
 ### newline(count = 1), nl(count = 1)
 
@@ -399,11 +410,15 @@ expect(pen.size(), 'to equal', {
 });
 ```
 
-### clone()
+### clone([format])
 
 Returns a clone of the current pen with an empty output buffer. This
 operation is very cheap, so don't hesitate to use it when it makes
 sense.
+
+If a format is given, the pen cloned pen will have that format. This
+is useful in combination with the `raw` method. It will fail if the
+format of the pen has already been set.
 
 ### addStyle(style, handler)
 
@@ -450,14 +465,31 @@ console.log(pen.removeFormatting().toString('ansi'));
 ### raw(...)
 
 If you need something completely custom, you can specify the actual
-string that will be serialized for each of the different modes. You
-need to specify a fallback, for the modes that are not specified.
+string content that will be used for each format. You can even output
+raw content to the serializer.
 
-The custom output is generated at serialization time and can be a
-string or a function returning a string with raw content. Furthermore
-you can write to the pen bound to `this` that will also be given as
-the first parameter. The fallback can be a pen, a function where
-this is a pen or a string.
+Notice that you must specify the format of the pen before using this method
+either at construction time or when cloning.
+
+The format specific content can be of the following forms:
+
+* A string, that will just be appended to the pen without styling.
+* A method that will append content to the pen bound to `this`.
+* A method that will append to the pen given as the first parameter.
+* An raw object of the following structure
+  {
+    width: <number>,
+    height: <number>,
+    content: <string function() {}|string>
+  }
+  If a method is given as the content it will be called at serialization time.
+
+If the format of the pen is not defined the fallback property will be used.
+The fallback method can be specified the following way:
+
+* As string, that will just be appended to the pen without styling.
+* As method that will append content to the pen bound to `this`.
+* As method that will append to the pen given as the first parameter.
 
 ```js
 var pen = magicpen();
@@ -469,12 +501,17 @@ pen.addStyle('link', function (label, url) {
         text: function () {
             this.text(label).sp().text('<').text(url).text('>');
         },
-        html: function () {
-            return '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
+        html: {
+            height: 1,
+            width: label.length,
+            content: '<a href="' + url + '" alt="' + label + '">' + label + '</a>'
         }
     });
 });
-pen.link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+
+pen.clone('text').link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+pen.clone('ansi').link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+pen.clone('html').link('magicpen', 'https://github.com/sunesimonsen/magicpen');
 ```
 
 This will be the output in text mode:
@@ -504,11 +541,15 @@ content directly to the `raw` method:
 pen.raw({
     html: function () {
         this.text('Hello');
-        this.raw('<canvas id="whoa"></canvas>').nl();
+        this.raw({
+          height: 100,
+          width: 100,
+          content: '<canvas id="whoa"></canvas>'
+        }).nl();
         this.indentLines()
         this.i().block(function () {
             this.raw(function () {
-                return 'it even works in blocks';
+                this.text('it even works in blocks');
             });
         });
     },
