@@ -454,10 +454,10 @@ string that will be serialized for each of the different modes. You
 need to specify a fallback, for the modes that are not specified.
 
 The custom output is generated at serialization time and can be a
-string or a function returning a string for each mode you want to
-override.
-
-The fallback can be a pen, a function where this is a pen or a string.
+string or a function returning a string with raw content. Furthermore
+you can write to the pen bound to `this` that will also be given as
+the first parameter. The fallback can be a pen, a function where
+this is a pen or a string.
 
 ```js
 var pen = magicpen();
@@ -466,12 +466,21 @@ pen.addStyle('link', function (label, url) {
         fallback: function () {
             this.text(label).sp().text('(').blue(url).text(')');
         },
+        text: function () {
+            this.text(label).sp().text('<').text(url).text('>');
+        },
         html: function () {
             return '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
         }
     });
 });
 pen.link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+```
+
+This will be the output in text mode:
+
+```
+magicpen <https://github.com/sunesimonsen/magicpen\x1B[39m>
 ```
 
 This will be the output in ansi mode:

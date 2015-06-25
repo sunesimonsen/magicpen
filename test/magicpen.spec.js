@@ -557,6 +557,41 @@ describe('magicpen', function () {
             expect(pen.toString('ansi'), 'to equal', 'bar');
         });
 
+        it('custom content for modes can write to a magicpen bound to this', function () {
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: function () { this.red('bar'); }
+            });
+            expect(pen.toString('ansi'), 'to equal', '\x1B[31mbar\x1B[39m');
+        });
+
+        it('custom content for modes can write to a magicpen recieved as the first argument', function () {
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: function (output) { output.red('bar'); }
+            });
+            expect(pen.toString('ansi'), 'to equal', '\x1B[31mbar\x1B[39m');
+        });
+
+        it('fails if the custom content for modes is writing to the pen and returning', function () {
+            pen.raw({
+                fallback: function () {
+                    this.text('foo');
+                },
+                ansi: function () {
+                    this.red('bar');
+                    return 'this will fail';
+                }
+            });
+            expect(function () {
+                pen.toString('ansi');
+            }, 'to throw', 'Raw content for modes must eigther write to a pen or return a raw string');
+        });
+
         it('the fallback content can be specified as a string', function () {
             pen.raw({
                 fallback: 'foo'
@@ -588,6 +623,56 @@ describe('magicpen', function () {
             });
             expect(pen.toString('text'), 'to equal', 'fallback');
             expect(pen.toString('ansi'), 'to equal', 'fallback');
+        });
+
+        it('can be used inside a block', function () {
+            pen.text('------------------------').nl()
+                .indentLines()
+                .i().block(function () {
+                    this.raw({
+                        fallback: function (output) {
+                            output.text('fallback');
+                        },
+                        text: 'This will be\n' +
+                            'inserted in the output\n' +
+                            'without modifications',
+                        ansi: function (output, serializer) {
+                            this.text('serializing:').nl()
+                                .red(serializer.format);
+                        },
+                        html: function () {
+                            this.text('wat').nl()
+                                .text('is').nl()
+                                .text('this');
+                        }
+                    });
+                }).nl()
+                .outdentLines()
+                .text('------------------------');
+
+            expect(pen.toString('text'), 'to equal',
+                   '------------------------\n' +
+                   '  This will be\n' +
+                   'inserted in the output\n' +
+                   'without modifications\n' +
+                   '------------------------');
+            expect(pen.toString('ansi'), 'to equal',
+                   '------------------------\n' +
+                   '  serializing:\n' +
+                   '  \x1B[31mansi\x1B[39m\n' +
+                   '------------------------');
+            expect(pen.toString('html'), 'to equal',
+                   '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div>------------------------</div>\n' +
+                   '  <div>&nbsp;&nbsp;<div style="display: inline-block; vertical-align: top">\n' +
+                   '  <div><div style="display: inline-block; vertical-align: top">\n' +
+                   '  <div>wat</div>\n' +
+                   '  <div>is</div>\n' +
+                   '  <div>this</div>\n' +
+                   '</div></div>\n' +
+                   '</div></div>\n' +
+                   '  <div>------------------------</div>\n' +
+                   '</div>');
         });
     });
 
@@ -1210,22 +1295,25 @@ describe('magicpen', function () {
                     }
                 });
             });
-            pen.link('magicpen', 'https://github.com/sunesimonsen/magicpen');
+            pen.text('This is a link:').nl().link('magicpen', 'https://github.com/sunesimonsen/magicpen');
         });
 
         it('in text mode', function () {
             expect(pen.toString(), 'to equal',
+                   'This is a link:\n' +
                    'magicpen (https://github.com/sunesimonsen/magicpen)');
         });
 
         it('in ansi mode', function () {
             expect(pen.toString('ansi'), 'to equal',
+                   'This is a link:\n' +
                    'magicpen (\x1B[34mhttps://github.com/sunesimonsen/magicpen\x1B[39m)');
         });
 
         it('in html mode', function () {
             expect(pen.toString('html'), 'to equal',
                    '<div style="font-family: monospace; white-space: nowrap">\n' +
+                   '  <div>This&nbsp;is&nbsp;a&nbsp;link:</div>\n' +
                    '  <div><a href="https://github.com/sunesimonsen/magicpen" alt="magicpen">magicpen</a></div>\n' +
                    '</div>');
         });
