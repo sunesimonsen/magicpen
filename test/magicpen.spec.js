@@ -674,6 +674,41 @@ describe('magicpen', function () {
                    '  <div>------------------------</div>\n' +
                    '</div>');
         });
+
+        it('should support fallback-less .raw within an existing raw context', function () {
+            pen.raw({
+                html: function () {
+                    this.text('Hello');
+                    this.raw('<canvas id="whoa"></canvas>');
+                    this.raw({
+                        html: '<canvas id="there"></canvas>',
+                        fallback: ''
+                    }).nl();
+                    this.indentLines();
+                    this.i().block(function () {
+                        this.raw(function () {
+                            return 'it even works in blocks';
+                        });
+                    });
+                },
+                fallback: 'foo'
+            });
+
+            expect(
+                pen.toString('html'),
+                'to equal',
+                    '<div style="font-family: monospace; white-space: nowrap">\n' +
+                    '  <div><div style="display: inline-block; vertical-align: top">\n' +
+                    '  <div>Hello<canvas id="whoa"></canvas><canvas id="there"></canvas></div>\n' +
+                    '  <div>&nbsp;&nbsp;<div style="display: inline-block; vertical-align: top">\n' +
+                    '  <div>it even works in blocks</div>\n' +
+                    '</div></div>\n' +
+                    '</div></div>\n' +
+                    '</div>'
+            );
+
+            expect(pen.toString('text'), 'to equal', 'foo');
+        });
     });
 
     describe('in text mode', function () {

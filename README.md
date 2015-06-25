@@ -497,6 +497,25 @@ This will be the output in html mode:
 </div>
 ```
 
+If you're already in raw mode, you can add more raw output by passing the
+content directly to the `raw` method:
+
+```javascript
+pen.raw({
+    html: function () {
+        this.text('Hello');
+        this.raw('<canvas id="whoa"></canvas>').nl();
+        this.indentLines()
+        this.i().block(function () {
+            this.raw(function () {
+                return 'it even works in blocks';
+            });
+        });
+    },
+    fallback: 'foo'
+});
+```
+
 ### isBlock()
 
 Returns `true` if the output only contains a block.
