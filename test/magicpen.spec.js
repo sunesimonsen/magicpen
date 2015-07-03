@@ -205,6 +205,10 @@ describe('magicpen', function () {
 
     describe('block', function () {
         it('all lines in the block are indented', function () {
+console.log(pen.block(function () {
+
+}).toString('ansi'));
+
             pen.red('Hello').block(
                 pen.clone()
                     .gray(' // ').text('This is a').nl()
