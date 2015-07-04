@@ -549,7 +549,7 @@ describe('magicpen', function () {
                 pen = magicpen('ansi');
             });
 
-            it('chooses the html output from raw blocks', function () {
+            it('chooses the ansi output from raw blocks', function () {
                 pen.raw({
                     fallback: function () { this.text('foo'); },
                     ansi: 'bar',
