@@ -583,6 +583,50 @@ describe('magicpen', function () {
                        '  <div><img src="..." style="width: 100em, height: 5em"></div>\n' +
                        '</div>');
             });
+
+            it('chooses the html output from raw blocks, string returned from function not inside object alongside width/height', function () {
+                pen.raw({
+                    fallback: function () { this.text('foo'); },
+                    ansi: 'bar',
+                    html: function () {
+                        return '<img src="..." style="width: 100em, height: 5em">';
+                    }
+                });
+                expect(pen.toString(), 'to equal',
+                       '<div style="font-family: monospace; white-space: nowrap">\n' +
+                       '  <div><img src="..." style="width: 100em, height: 5em"></div>\n' +
+                       '</div>');
+            });
+
+            it('chooses the html output from raw blocks, shorthand without width/height', function () {
+                pen.raw({
+                    fallback: function () { this.text('foo'); },
+                    ansi: 'bar',
+                    html: function () {
+                        return {
+                            width: 100,
+                            height: 5,
+                            content: '<img src="..." style="width: 100em, height: 5em">'
+                        };
+                    }
+                });
+                expect(pen.toString(), 'to equal',
+                       '<div style="font-family: monospace; white-space: nowrap">\n' +
+                       '  <div><img src="..." style="width: 100em, height: 5em"></div>\n' +
+                       '</div>');
+            });
+
+            it('chooses the html output from raw blocks, HTML string given directly', function () {
+                pen.raw({
+                    fallback: function () { this.text('foo'); },
+                    ansi: 'bar',
+                    html: '<img src="..." style="width: 100em, height: 5em">'
+                });
+                expect(pen.toString(), 'to equal',
+                       '<div style="font-family: monospace; white-space: nowrap">\n' +
+                       '  <div><img src="..." style="width: 100em, height: 5em"></div>\n' +
+                       '</div>');
+            });
         });
 
         it('custom content for modes can be specified as a string', function () {
