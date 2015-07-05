@@ -496,34 +496,35 @@ describe('magicpen', function () {
         });
     });
 
-    describe('raw', function () {
+    describe('alt', function () {
         beforeEach(function () {
             pen = magicpen('ansi');
         });
 
         it('fails if the format of the pen is not set', function () {
             expect(function () {
-                magicpen().raw({
+                magicpen().alt({
                     fallback: 'wat'
                 });
-            }, 'to throw','The raw method is only supported on pen where the format has already been set');
+            }, 'to throw','The alt method is only supported on pen where the format has already been set');
         });
 
         it('fails if the format of the pen is not set', function () {
             expect(function () {
-                pen.raw({
+                pen.alt({
                     html: 'wat'
                 });
-            }, 'to throw','Raw output is not specified for format: ansi and no fallback method is given');
+            }, 'to throw','Output is not specified for format: ansi and no fallback method is given');
         });
 
         it('fails if the argument is not of the right type', function () {
             expect(function () {
-                pen.raw({
+                pen.alt({
                     ansi: { wat: 'wat' }
                 });
             }, 'to throw',
-                   'Properties on a raw object must be a pen, a function that writes to a pen, a string or an object with the structure\n' +
+                   'Arguments for the alt method must be an object with properties of the form:\n' +
+                   'a pen, a function that writes to a pen, a string or an object with the structure:\n' +
                    '{ width: <number>, height: <number>, content: <string function() {}|string> }');
         });
 
@@ -532,8 +533,8 @@ describe('magicpen', function () {
                 pen = magicpen('text');
             });
 
-            it('chooses the text output from raw blocks', function () {
-                pen.raw({
+            it('chooses the text output from alt blocks', function () {
+                pen.alt({
                     fallback: function () { this.text('foo'); },
                     ansi: 'bar',
                     html: function () {
@@ -549,8 +550,8 @@ describe('magicpen', function () {
                 pen = magicpen('ansi');
             });
 
-            it('chooses the ansi output from raw blocks', function () {
-                pen.raw({
+            it('chooses the ansi output from alt blocks', function () {
+                pen.alt({
                     fallback: function () { this.text('foo'); },
                     ansi: 'bar',
                     html: function () {
@@ -566,8 +567,8 @@ describe('magicpen', function () {
                 pen = magicpen('html');
             });
 
-            it('chooses the html output from raw blocks', function () {
-                pen.raw({
+            it('chooses the html output from alt blocks', function () {
+                pen.alt({
                     fallback: function () { this.text('foo'); },
                     ansi: 'bar',
                     html: {
@@ -586,7 +587,7 @@ describe('magicpen', function () {
         });
 
         it('custom content for modes can be specified as a string', function () {
-            pen.raw({
+            pen.alt({
                 fallback: function () {
                     this.text('foo');
                 },
@@ -596,7 +597,7 @@ describe('magicpen', function () {
         });
 
         it('custom content for modes can write to a magicpen bound to this', function () {
-            pen.raw({
+            pen.alt({
                 fallback: function () {
                     this.text('foo');
                 },
@@ -606,7 +607,7 @@ describe('magicpen', function () {
         });
 
         it('custom content for modes can write to a magicpen recieved as the first argument', function () {
-            pen.raw({
+            pen.alt({
                 fallback: function () {
                     this.text('foo');
                 },
@@ -616,14 +617,14 @@ describe('magicpen', function () {
         });
 
         it('the fallback content can be specified as a string', function () {
-            pen.raw({
+            pen.alt({
                 fallback: 'foo'
             });
             expect(pen.toString(), 'to equal', 'foo');
         });
 
         it('the fallback content can be specified as a function that appends the output', function () {
-            pen.raw({
+            pen.alt({
                 fallback: function () {
                     this.red('foo');
                 }
@@ -632,14 +633,14 @@ describe('magicpen', function () {
         });
 
         it('the fallback content can be specified as a pen', function () {
-            pen.raw({
+            pen.alt({
                 fallback: pen.clone().red('foo')
             });
             expect(pen.toString('ansi'), 'to equal', '\x1B[31mfoo\x1B[39m');
         });
 
         it('falls back to the fallback content if there is no override for the mode that is being serialized', function () {
-            pen.raw({
+            pen.alt({
                 fallback: function (output) {
                     output.text('fallback');
                 },
@@ -654,7 +655,7 @@ describe('magicpen', function () {
                     .text('------------------------').nl()
                     .indentLines()
                     .i().block(function () {
-                        this.raw({
+                        this.alt({
                             fallback: function (output) {
                                 output.text('fallback');
                             },
@@ -703,23 +704,23 @@ describe('magicpen', function () {
                    '</div>');
         });
 
-        it('should support fallback-less .raw within an existing raw context', function () {
+        it('should support fallback-less .alt within an existing alt context', function () {
             function examplePen(format) {
-                return magicpen(format).raw({
+                return magicpen(format).alt({
                     html: function () {
                         this.text('Hello');
-                        this.raw({
+                        this.alt({
                             height: 20,
                             width: 20,
                             content: '<canvas id="whoa"></canvas>'
                         });
-                        this.raw({
+                        this.alt({
                             html: 'The normal signature is also supported',
                             fallback: 'wat'
                         }).nl();
                         this.indentLines();
                         this.i().block(function () {
-                            this.raw(function () {
+                            this.alt(function () {
                                 this.text('it even works in blocks');
                             });
                         });
@@ -1354,7 +1355,7 @@ describe('magicpen', function () {
     describe('link example', function () {
         beforeEach(function () {
             pen.addStyle('link', function (label, url) {
-                this.raw({
+                this.alt({
                     fallback: function () {
                         this.text(label).sp().text('(').blue(url).text(')');
                     },

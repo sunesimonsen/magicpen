@@ -462,7 +462,7 @@ console.log(pen.removeFormatting().toString('ansi'));
 
 ![Remove text formatting](images/Hello world - removeFormatting.png)
 
-### raw(...)
+### alt(...)
 
 If you need something completely custom, you can specify the actual
 string content that will be used for each format. You can even output
@@ -484,8 +484,8 @@ The format specific content can be of the following forms:
   }
   If a method is given as the content it will be called at serialization time.
 
-If the format of the pen is not defined the fallback property will be used.
-The fallback method can be specified the following way:
+If the format of the pen is not defined the fallback property will be
+used. The fallback method can be specified the following way:
 
 * As string, that will just be appended to the pen without styling.
 * As method that will append content to the pen bound to `this`.
@@ -534,21 +534,21 @@ This will be the output in html mode:
 </div>
 ```
 
-If you're already in raw mode, you can add more raw output by passing the
-content directly to the `raw` method:
+If you're already inside an alt method, you can add more alt output by passing the
+content directly to the `alt` method:
 
 ```javascript
-pen.raw({
+pen.alt({
     html: function () {
         this.text('Hello');
-        this.raw({
+        this.alt({
           height: 100,
           width: 100,
           content: '<canvas id="whoa"></canvas>'
         }).nl();
         this.indentLines()
         this.i().block(function () {
-            this.raw(function () {
+            this.alt(function () {
                 this.text('it even works in blocks');
             });
         });
