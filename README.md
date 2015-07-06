@@ -109,7 +109,7 @@ to 2 and `format`.
 
 Given magicpen a string is equivalent to specifying the format in the options object:
 
-Specifying the format is useful in combination with the `raw` method.
+Specifying the format is useful in combination with the `alt` and `raw` methods.
 
 Example:
 
@@ -417,8 +417,8 @@ operation is very cheap, so don't hesitate to use it when it makes
 sense.
 
 If a format is given, the pen cloned pen will have that format. This
-is useful in combination with the `raw` method. It will fail if the
-format of the pen has already been set.
+is useful in combination with the `alt` and `raw` methods. It will
+fail if the format of the pen has already been set.
 
 ### addStyle(style, handler)
 
@@ -495,7 +495,7 @@ used. The fallback method can be specified the following way:
 ```js
 var pen = magicpen();
 pen.addStyle('link', function (label, url) {
-    this.raw({
+    this.alt({
         fallback: function () {
             this.text(label).sp().text('(').blue(url).text(')');
         },
@@ -535,26 +535,43 @@ This will be the output in html mode:
 </div>
 ```
 
-If you're already inside an alt method, you can add more alt output by passing the
-content directly to the `alt` method:
+### raw
+
+In case you know the format of the pen you are working with, you can append
+custom output directly to the serializer without any escaping.
+
+Notice that you must specify the format of the pen before using this method
+either at construction time or when cloning.
+
+The raw content can have the following forms:
+
+* An raw object of the following structure
+  {
+    width: <number>,
+    height: <number>,
+    content: <string function() {}|string>
+  }
+  If a method is given as the content it will be called at serialization time.
+* A string, that will be appended in it's raw form into output with a
+  size of zero.
+* A function producing a string that will appended in it's raw form into output
+  with a size of zero. The function will be called at serialization time.
 
 ```javascript
-pen.alt({
-    html: function () {
-        this.text('Hello');
-        this.alt({
-          height: 100,
-          width: 100,
-          content: '<canvas id="whoa"></canvas>'
-        }).nl();
-        this.indentLines()
-        this.i().block(function () {
-            this.alt(function () {
-                this.text('it even works in blocks');
-            });
-        });
-    },
-    fallback: 'foo'
+var pen = magicpen('html');
+var label = 'magicpen';
+var url = 'https://github.com/sunesimonsen/magicpen';
+
+pen.raw({
+  height: 1,
+  width: label.length,
+  content: '<a href="' + url + '" alt="' + label + '">' + label + '</a>'
+}).nl();
+
+pen.raw('<a href="' + url + '" alt="' + label + '">' + label + '</a>');
+
+pen.raw(function () {
+  return '<a href="' + url + '" alt="' + label + '">' + label + '</a>';
 });
 ```
 

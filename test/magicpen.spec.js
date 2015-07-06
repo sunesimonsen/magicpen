@@ -301,6 +301,12 @@ describe('magicpen', function () {
             expect(pen.toString(), 'to equal',
                    'Hello world!');
         });
+
+        it('can be called with text arguments', function () {
+            pen.text('Hello').sp().append('world!');
+            expect(pen.toString(), 'to equal',
+                   'Hello world!');
+        });
     });
 
     describe('amend', function () {
@@ -523,9 +529,11 @@ describe('magicpen', function () {
                     ansi: { wat: 'wat' }
                 });
             }, 'to throw',
-                   'Arguments for the alt method must be an object with properties of the form:\n' +
-                   'a pen, a function that writes to a pen, a string or an object with the structure:\n' +
-                   '{ width: <number>, height: <number>, content: <string function() {}|string> }');
+                   'Requires the arguments to be:\n' +
+                   'a pen or\n' +
+                   'a callback appending content to a pen or\n' +
+                   'a style and arguments for that style or\n' +
+                   'just a string.');
         });
 
         describe('in text mode', function () {
@@ -602,9 +610,9 @@ describe('magicpen', function () {
                     this.text('bar');
                 },
                 ansi: function () {
-                    this.alt('\u001b[31m');
+                    this.raw('\u001b[31m');
                     this.text('bar');
-                    this.alt('\u001b[39m');
+                    this.raw('\u001b[39m');
                 }
             });
             expect(pen.toString(), 'to equal', '\x1B[31mfoo\x1B[39m\x1B[31mbar\x1B[39m');
@@ -723,20 +731,18 @@ describe('magicpen', function () {
                 return magicpen(format).alt({
                     html: function () {
                         this.text('Hello');
-                        this.alt({
+                        this.raw({
                             height: 20,
                             width: 20,
                             content: '<canvas id="whoa"></canvas>'
                         });
                         this.alt({
-                            html: '<b>The normal signature is also supported</b>',
+                            html: '<b>Nested alt with raw content</b>',
                             fallback: 'wat'
                         }).nl();
                         this.indentLines();
                         this.i().block(function () {
-                            this.alt(function () {
-                                this.text('it even works in blocks');
-                            });
+                            this.raw('raw content inside a block');
                         });
                     },
                     fallback: 'foo'
@@ -748,9 +754,9 @@ describe('magicpen', function () {
                 examplePen('html').toString(),
                 'to equal',
                 '<div style="font-family: monospace; white-space: nowrap">\n' +
-                    '  <div>Hello<canvas id="whoa"></canvas><b>The normal signature is also supported</b></div>\n' +
+                    '  <div>Hello<canvas id="whoa"></canvas><b>Nested alt with raw content</b></div>\n' +
                     '  <div>&nbsp;&nbsp;<div style="display: inline-block; vertical-align: top">\n' +
-                    '  <div>it&nbsp;even&nbsp;works&nbsp;in&nbsp;blocks</div>\n' +
+                    '  <div>raw content inside a block</div>\n' +
                     '</div></div>\n' +
                     '</div>'
             );
