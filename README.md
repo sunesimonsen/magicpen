@@ -535,7 +535,7 @@ This will be the output in html mode:
 </div>
 ```
 
-### raw
+### raw(...)
 
 In case you know the format of the pen you are working with, you can append
 custom output directly to the serializer without any escaping.
