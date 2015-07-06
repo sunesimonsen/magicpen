@@ -473,7 +473,6 @@ either at construction time or when cloning.
 
 The format specific content can be of the following forms:
 
-* A string, that will just be appended to the pen without styling.
 * A method that will append content to the pen bound to `this`.
 * A method that will append to the pen given as the first parameter.
 * An raw object of the following structure
@@ -483,13 +482,15 @@ The format specific content can be of the following forms:
     content: <string function() {}|string>
   }
   If a method is given as the content it will be called at serialization time.
+* A string, that will be appended in it's raw form into output with a
+  size of zero.
 
 If the format of the pen is not defined the fallback property will be
 used. The fallback method can be specified the following way:
 
-* As string, that will just be appended to the pen without styling.
-* As method that will append content to the pen bound to `this`.
-* As method that will append to the pen given as the first parameter.
+* A string, that will just be appended to the pen without styling.
+* A method that will append content to the pen bound to `this`.
+* A method that will append to the pen given as the first parameter.
 
 ```js
 var pen = magicpen();

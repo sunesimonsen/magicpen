@@ -588,12 +588,26 @@ describe('magicpen', function () {
 
         it('custom content for modes can be specified as a string', function () {
             pen.alt({
-                fallback: function () {
-                    this.text('foo');
-                },
-                ansi: 'bar'
+                fallback: function () {},
+                ansi: '\u001b[31m'
             });
-            expect(pen.toString(), 'to equal', 'bar');
+            pen.text('foo');
+            pen.alt({
+                fallback: function () {},
+                ansi: '\u001b[39m'
+            });
+
+            pen.alt({
+                fallback: function () {
+                    this.text('bar');
+                },
+                ansi: function () {
+                    this.alt('\u001b[31m');
+                    this.text('bar');
+                    this.alt('\u001b[39m');
+                }
+            });
+            expect(pen.toString(), 'to equal', '\x1B[31mfoo\x1B[39m\x1B[31mbar\x1B[39m');
         });
 
         it('custom content for modes can write to a magicpen bound to this', function () {
@@ -715,7 +729,7 @@ describe('magicpen', function () {
                             content: '<canvas id="whoa"></canvas>'
                         });
                         this.alt({
-                            html: 'The normal signature is also supported',
+                            html: '<b>The normal signature is also supported</b>',
                             fallback: 'wat'
                         }).nl();
                         this.indentLines();
@@ -734,7 +748,7 @@ describe('magicpen', function () {
                 examplePen('html').toString(),
                 'to equal',
                 '<div style="font-family: monospace; white-space: nowrap">\n' +
-                    '  <div>Hello<canvas id="whoa"></canvas>The&nbsp;normal&nbsp;signature&nbsp;is&nbsp;also&nbsp;supported</div>\n' +
+                    '  <div>Hello<canvas id="whoa"></canvas><b>The normal signature is also supported</b></div>\n' +
                     '  <div>&nbsp;&nbsp;<div style="display: inline-block; vertical-align: top">\n' +
                     '  <div>it&nbsp;even&nbsp;works&nbsp;in&nbsp;blocks</div>\n' +
                     '</div></div>\n' +
