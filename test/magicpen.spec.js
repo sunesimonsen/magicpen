@@ -2,7 +2,7 @@
 var magicpen = require('..');
 var expect = require('unexpected');
 var sinon = require('sinon');
-expect.installPlugin(require('unexpected-sinon'));
+expect.installPlugin(require('unexpected-sinon')); // s/use/installPlugin once Unexpected is updated
 expect.addType({
     name: 'magicpen',
     identify: function (obj) {
@@ -96,7 +96,7 @@ describe('magicpen', function () {
         }, 'to throw', 'PrependLinesWith only supports a pen with single line content');
     });
 
-    describe('installPlugin', function () {
+    describe('use', function () {
         var pen;
         beforeEach(function () {
             pen = magicpen();
@@ -109,18 +109,58 @@ describe('magicpen', function () {
                     done();
                 }
             };
-            pen.installPlugin(plugin);
+            pen.use(plugin);
+        });
+
+        it('supports installPlugin as a legacy alias', function (done) {
+            var plugin = {
+                name: 'test',
+                installInto: function (magicpenInstance) {
+                    expect(magicpenInstance, 'to be', pen);
+                    done();
+                }
+            };
+            pen.use(plugin);
         });
 
         it('throws if the given arguments does not adhere to the plugin interface', function () {
             expect(function () {
-                pen.installPlugin({});
-            }, 'to throw', 'Plugins must adhere to the following interface\n' +
+                pen.use({});
+            }, 'to throw', 'Plugins must be functions or adhere to the following interface\n' +
                    '{\n' +
-                   '  name: <plugin name>,\n' +
+                   '  name: <an optional plugin name>,\n' +
                    '  dependencies: <an optional list of dependencies>,\n' +
                    '  installInto: <a function that will update the given magicpen instance>\n' +
                    '}');
+        });
+
+        it('allows the installation of a plugin given as an anonymous function', function () {
+            var callCount = 0;
+            var plugin = function () {
+                callCount += 1;
+            };
+            pen.use(plugin);
+            expect(callCount, 'to equal', 1);
+            pen.use(plugin);
+            expect(callCount, 'to equal', 1);
+        });
+
+        it('allows the installation of a plugin given as a named function', function () {
+            var callCount = 0;
+            var plugin = function myPlugin() {
+                callCount += 1;
+            };
+            pen.use(plugin);
+            expect(callCount, 'to equal', 1);
+            pen.use(plugin);
+            expect(callCount, 'to equal', 1);
+        });
+
+        it('fails if identically named, but different functions are installed', function () {
+            pen.use(function myPlugin() {});
+            expect(function () {
+                pen.use(function myPlugin() {});
+            }, 'to throw', "Another instance of the plugin 'myPlugin' is already installed. Please check your node_modules folder for unmet peerDependencies.");
         });
 
         it('does not fail if all plugin dependencies has been fulfilled', function (done) {
@@ -135,8 +175,8 @@ describe('magicpen', function () {
                     done();
                 }
             };
-            pen.installPlugin(pluginA);
-            pen.installPlugin(pluginB);
+            pen.use(pluginA);
+            pen.use(pluginB);
         });
 
         it('throws if the plugin has unfulfilled plugin dependencies', function () {
@@ -147,7 +187,7 @@ describe('magicpen', function () {
             };
 
             expect(function () {
-                pen.installPlugin(pluginB);
+                pen.use(pluginB);
             }, 'to throw', 'PluginB requires plugin PluginA');
 
             var pluginC = {
@@ -157,7 +197,7 @@ describe('magicpen', function () {
             };
 
             expect(function () {
-                pen.installPlugin(pluginC);
+                pen.use(pluginC);
             }, 'to throw', 'PluginC requires plugins PluginA and PluginB');
 
             var pluginD = {
@@ -167,7 +207,7 @@ describe('magicpen', function () {
             };
 
             expect(function () {
-                pen.installPlugin(pluginD);
+                pen.use(pluginD);
             }, 'to throw', 'PluginD requires plugins PluginA, PluginB and PluginC');
         });
 
@@ -183,9 +223,9 @@ describe('magicpen', function () {
                     done();
                 }
             };
-            pen.installPlugin(pluginA);
+            pen.use(pluginA);
             var clonedPen = pen.clone();
-            clonedPen.installPlugin(pluginB);
+            clonedPen.use(pluginB);
         });
 
         it('installing a plugin more than once is a no-op', function () {
@@ -196,9 +236,9 @@ describe('magicpen', function () {
                     callCount += 1;
                 }
             };
-            pen.installPlugin(plugin);
-            pen.installPlugin(plugin);
-            pen.installPlugin(plugin);
+            pen.use(plugin);
+            pen.use(plugin);
+            pen.use(plugin);
             expect(callCount, 'to be', 1);
         });
     });
