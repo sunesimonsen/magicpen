@@ -594,17 +594,21 @@ expect(magicpen().text('line 1').isMultiline(), 'to be false');
 expect(magicpen().text('line 1\nline 2').isMultiline(), 'to be true');
 ```
 
-### installPlugin(plugin)
+### use(plugin)
 
-MagicPen plugins are objects that adhere to the following interface:
+MagicPen plugins are functions or objects that adhere to the following interface:
 
 ```js
 {
-  name: <plugin name>,
+  name: <optional plugin name>,
   dependencies: <an optional list of dependencies>,
   installInto: <a function that will update the given magicpen instance>
 }
 ```
+
+If a function is passed, it will be used like `installInto`, and the
+name of the function will be used as the plugin name, unless the
+function is anonymous.
 
 The name of the plugin should be the same at the NPM package name.
 
@@ -614,13 +618,13 @@ the installation will fail. The idea is that you manage your plugin
 versions using NPM. If you install a plugin that is already installed
 nothing will happen.
 
-The `installInto` function receives an instance of unexpected and uses
-uses the `addStyle` method to add new custom styles to the MagicPen
+The `installInto` function receives an instance of `MagicPen` and uses
+the `addStyle` method to add new custom styles to the `MagicPen`
 instance.
 
 ```js
 var pen = magicpen();
-pen.installPlugin({
+pen.use({
     name: 'starPlugin',
     installInto: function (pen) {
         pen.addStyle('stars', function (content) {
@@ -634,8 +638,8 @@ expect(pen.toString(), 'to equal', '******');
 
 ### installTheme(theme), installTheme(format, theme), installTheme(formats, theme)
 
-MagicPen have support for theming text styles differently for each
-format. A theme is just a hash of aliases to build in text styles or
+MagicPen has support for theming text styles differently for each
+format. A theme is just a hash of aliases to built in text styles or
 aliases to other theme entries. You install the theme for one or more
 formats.
 
