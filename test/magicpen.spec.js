@@ -102,6 +102,7 @@ describe('magicpen', function () {
             }, 'to throw', 'Plugins must be functions or adhere to the following interface\n' +
                    '{\n' +
                    '  name: <an optional plugin name>,\n' +
+                   '  version: <an optional semver version string>,\n' +
                    '  dependencies: <an optional list of dependencies>,\n' +
                    '  installInto: <a function that will update the given magicpen instance>\n' +
                    '}');
@@ -213,6 +214,57 @@ describe('magicpen', function () {
             pen.use(plugin);
             pen.use(plugin);
             expect(callCount, 'to be', 1);
+        });
+
+        it('installing two different plugins that are identically named and have the same version (but not ===) will only install the first one', function () {
+            var callCount1 = 0;
+            var plugin1 = {
+                name: 'plugin',
+                version: '1.2.3',
+                installInto: function () {
+                    callCount1 += 1;
+                }
+            };
+            var callCount2 = 0;
+            var plugin2 = {
+                name: 'plugin',
+                version: '1.2.3',
+                installInto: function () {
+                    callCount2 += 1;
+                }
+            };
+            pen.use(plugin1).use(plugin2);
+            expect(callCount1, 'to be', 1);
+            expect(callCount2, 'to be', 0);
+        });
+
+        it('should throw an error when installing two different plugins that are identically named and have different versions', function () {
+            pen.use({
+                name: 'plugin',
+                version: '1.2.3',
+                installInto: function () {}
+            });
+            expect(function () {
+                pen.use({
+                    name: 'plugin',
+                    version: '1.5.6',
+                    installInto: function () {}
+                });
+            }, 'to throw', "Another instance of the plugin 'plugin' is already installed (version 1.2.3, trying to install 1.5.6). Please check your node_modules folder for unmet peerDependencies.");
+        });
+
+        it('should throw an error when two identically named plugins where the first one has a version number', function () {
+            pen.use({
+                name: 'plugin',
+                version: '1.2.3',
+                installInto: function () {}
+            });
+            expect(function () {
+                pen.use({
+                    name: 'plugin',
+                    installInto: function () {}
+                });
+            }, 'to throw', "Another instance of the plugin 'plugin' is already installed (version 1.2.3). Please check your node_modules folder for unmet peerDependencies.");
         });
     });
 
