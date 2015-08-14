@@ -23,7 +23,7 @@
     "bundle-collapser": "1.1.1",
     "coveralls": "2.11.1",
     "del": "0.1.1",
-    "istanbul": "0.3.0",
+    "istanbul": "0.3.17",
     "jshint": "*",
     "mocha": "1.20.1",
     "sinon": "1.9.1",
