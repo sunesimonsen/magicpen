@@ -15,7 +15,7 @@
     "test": "npm run lint && mocha -R spec",
     "travis": "npm test && npm run coverage && (<coverage/lcov.info coveralls || true)",
     "prepublish": "(echo '/*!' && <LICENSE sed -e's/^/ * /' | sed -e's/\\s+$//' && echo ' */' && browserify -p bundle-collapser/plugin -e lib/MagicPen -s weknowhow.MagicPen) > magicpen.js",
-    "coverage": "NODE_ENV=development istanbul cover _mocha -- --reporter dot && echo google-chrome coverage/lcov-report/index.html"
+    "coverage": "NODE_ENV=development istanbul cover _mocha --report text --report lcov -- --reporter dot && echo google-chrome coverage/lcov-report/index.html"
   },
   "author": "Sune Simonsen",
   "devDependencies": {
