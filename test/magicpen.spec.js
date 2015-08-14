@@ -96,7 +96,7 @@ describe('magicpen', function () {
             pen.installPlugin(plugin);
         });
 
-        it('throws if the given arguments does not adhere to the plugin interface', function () {
+        it('throws if the given arguments do not adhere to the plugin interface', function () {
             expect(function () {
                 pen.use({});
             }, 'to throw', 'Plugins must be functions or adhere to the following interface\n' +
