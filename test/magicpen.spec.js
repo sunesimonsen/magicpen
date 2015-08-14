@@ -3,33 +3,6 @@ var magicpen = require('..');
 var expect = require('unexpected');
 var sinon = require('sinon');
 expect.use(require('unexpected-sinon'));
-// expect.addType({
-//     name: 'magicpen',
-//     identify: function (obj) {
-//         return obj && obj.isMagicPen;
-//     },
-//     inspect: function (pen, depth, output) {
-//         return output.append(pen);
-//     },
-//     equal: function (a, b) {
-//         return a.toString() === b.toString() &&
-//             a.toString('ansi') === b.toString('ansi') &&
-//             a.toString('html') === b.toString('html');
-//     },
-//     diff: function (actual, expected, output, diff, inspect) {
-//         if (actual.toString() !== expected.toString()) {
-//             return diff(actual.toString(), expected.toString());
-//         }
-
-//         if (actual.toString('ansi') !== expected.toString('ansi')) {
-//             return diff(actual.toString('ansi'), expected.toString('ansi'));
-//         }
-
-//         if (actual.toString('html') !== expected.toString('html')) {
-//             return diff(actual.toString('html'), expected.toString('html'));
-//         }
-//     }
-// });
 
 describe('magicpen', function () {
     var pen;
