@@ -1658,4 +1658,27 @@ describe('magicpen', function () {
             expect(magicpen().block('text', 'line 1\nline 2').isMultiline(), 'to be true');
         });
     });
+
+    describe('split', function () {
+        it('is magic', function () {
+            pen.text('Hello').split().block(function () {
+                this.text('beautiful').split().text('world');
+            });
+
+            expect(magicpen({ preferredWidth: 30 }).append(pen).toString('text'),
+                   'to equal',
+                   'Hello beautiful world');
+
+            expect(magicpen({ preferredWidth: 20 }).append(pen).toString('text'),
+                   'to equal',
+                   'Hello beautiful\n' +
+                   '      world');
+
+            expect(magicpen({ preferredWidth: 10 }).append(pen).toString('text'),
+                   'to equal',
+                   'Hello\n' +
+                   'beautiful\n' +
+                   'world');
+        });
+    });
 });
