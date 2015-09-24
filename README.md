@@ -638,17 +638,18 @@ expect(pen.toString(), 'to equal', '******');
 
 ### installTheme(theme), installTheme(format, theme), installTheme(formats, theme)
 
-MagicPen has support for theming text styles differently for each
-format. A theme is just a hash of aliases to built in text styles or
-aliases to other theme entries. You install the theme for one or more
-formats.
+MagicPen has support for theming text styles differently for each format. A
+number of theme properties together with a `styles` hash with aliases to built in
+text styles or to aliases to other theme entries.
 
 ```js
 pen.installTheme({
-    keyword: 'yellow',
-    functionName: ['green', 'italic'],
-    primitive: '#FF8DFE',
-    number: 'primitive'
+    styles: {
+        keyword: 'yellow',
+        functionName: ['green', 'italic'],
+        primitive: '#FF8DFE',
+        number: 'primitive'
+    }
 });
 ```
 
@@ -688,11 +689,11 @@ usually use when outputting to the html format:
 Let's tweak the html colors without touching the ansi colors:
 
 ```js
-pen.installTheme('html', {
+pen.installTheme('html', { styles: {
     keyword: 'bold',
     functionName: ['#403298', 'italic', 'bold'],
     primitive: '#80417F'
-});
+}});
 ```
 
 ![Fibonacci html output](images/fib-theme-html.png "Fibonacci html output")
@@ -700,16 +701,60 @@ pen.installTheme('html', {
 You can even extend the current theme:
 
 ```js
-pen.installTheme('html', {
+pen.installTheme('html', { styles: {
     functionName: ['#5B9832', 'bold']
-});
+}});
 ```
 
 ![Fibonacci extended html output](images/fib-theme-extended-html.png "Fibonacci extended html output")
 
-The theme is applied at serialization time, so you can change the theme
-and serialize again with the theme applied without touching the
-content of the pen.
+The theme is applied at serialization time, so you can extend the theme and
+serialize again without touching the content of the pen.
+
+## theme(), theme(format)
+
+You can retrieve information about a theme the following way:
+
+```js
+pen.installTheme('html', {
+    accentColors: ['#D50000', '#C51162', '#AA00FF'],
+    styles: {}
+});
+
+pen.installTheme('ansi', {
+    accentColors: ['#F44336', '#E91E63', '#9C27B0'],
+    styles: {}
+});
+
+expect(pen.theme('html').accentColors,
+       'to equal',
+       ['#D50000', '#C51162', '#AA00FF']);
+
+expect(pen.theme('ansi').accentColors,
+       'to equal',
+       ['#F44336', '#E91E63', '#9C27B0']);
+```
+
+Calling the `theme` method will return the theme for the given format. If the
+format is not specified it will use the format of the pen.
+
+Notice you need a `styles` property even when you don't specify any styles.
+
+Let's use the accent colors define above to make a new style:
+
+```js
+pen.addStyle('colored', function (content) {
+    var accentColors = this.theme().accentColors;
+    var colorIndex = Math.round(Math.random() * (accentColors.length - 1));
+    var color = accentColors[colorIndex];
+    this.text(content, color);
+});
+
+console.log(pen.clone('ansi').colored('Colorful').toString());
+```
+
+The above style will color the given text with one of the accent colors of the
+theme.
 
 ## Aliases
 

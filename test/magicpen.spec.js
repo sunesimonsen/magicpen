@@ -1514,9 +1514,12 @@ describe('magicpen', function () {
         beforeEach(function () {
             pen = magicpen();
             pen.installTheme('html', {
-                comment: ['#969896', 'italic'],
-                keyword: '#bf41ea',
-                string: 'keyword'
+                accentColors: ['#D50000', '#C51162', '#AA00FF'],
+                styles: {
+                    comment: ['#969896', 'italic'],
+                    keyword: '#bf41ea',
+                    string: 'keyword'
+                }
             });
 
             pen.text('// This is a comment', 'comment').nl();
@@ -1527,8 +1530,48 @@ describe('magicpen', function () {
             pen.text('}');
 
             pen.installTheme('ansi', {
-                comment: 'grey',
-                keyword: 'cyan'
+                accentColors: ['#F44336', '#E91E63', '#9C27B0'],
+                styles: {
+                    comment: 'grey',
+                    keyword: 'cyan'
+                }
+            });
+        });
+
+        describe('retrieving theme information', function () {
+            describe('without specifying the format', function () {
+                it('fails if the format of the pen is not decided', function () {
+                    expect(function () {
+                        pen.theme();
+                    }, 'to throw',
+                           "Could not detect which format you want to retrieve " +
+                           "theme information for. Set the format of the pen or " +
+                           "provide it as an argument to the theme method.");
+                });
+
+                it('retrieves the theme information for the format of the pen', function () {
+                    pen.format = 'html';
+                    expect(pen.theme(), 'to equal', {
+                        accentColors: ['#D50000', '#C51162', '#AA00FF'],
+                        styles: {
+                            comment: ['#969896', 'italic'],
+                            keyword: '#bf41ea',
+                            string: 'keyword'
+                        }
+                    });
+                });
+            });
+
+            describe('for at specific format', function () {
+                it('returns the theme information for the specified format', function () {
+                    expect(pen.theme('ansi'), 'to equal', {
+                        accentColors: ['#F44336', '#E91E63', '#9C27B0'],
+                        styles: {
+                            comment: 'grey',
+                            keyword: 'cyan'
+                        }
+                    });
+                });
             });
         });
 
@@ -1561,7 +1604,7 @@ describe('magicpen', function () {
         describe('when the theme is extended', function () {
             beforeEach(function () {
                 pen.installTheme(['ansi', 'html'], {
-                    'methodDefinition': '#55ab40'
+                    methodDefinition: '#55ab40'
                 });
 
                 pen.installTheme('html', {
@@ -1574,6 +1617,20 @@ describe('magicpen', function () {
 
                 pen.installTheme({
                     method: ['#55ab40', 'bold']
+                });
+            });
+
+            describe('retrieving theme information', function () {
+                it('returns the theme information for the extended theme for the specified format', function () {
+                    expect(pen.theme('ansi'), 'to equal', {
+                        accentColors: ['#F44336', '#E91E63', '#9C27B0'],
+                        styles: {
+                            comment: '#969896',
+                            keyword: 'cyan',
+                            methodDefinition: '#55ab40',
+                            method: ['#55ab40', 'bold']
+                        }
+                    });
                 });
             });
 
