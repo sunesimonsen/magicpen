@@ -830,6 +830,26 @@ describe('magicpen', function () {
         });
     });
 
+    describe('clone', function () {
+        describe('when given a format', function () {
+            it('can be cloned to another format when the format is not specified yet', function () {
+                pen = pen.clone('text');
+                expect(pen.format, 'to equal', 'text');
+            });
+
+            it('can be cloned to another format when the pen is empty', function () {
+                pen = pen.clone('text').clone('html');
+                expect(pen.format, 'to equal', 'html');
+            });
+
+            it('fails when given an incompatible format', function () {
+                expect(function () {
+                    pen.clone('text').text('foobar').clone('html');
+                }, 'to throw', 'This pen is only compatible with the format: text');
+            });
+        });
+    });
+
     describe('in text mode', function () {
         it('ignores unknown styles', function () {
             pen.text('>').write({ style: 'test', args: ['text'] }).text('<');
