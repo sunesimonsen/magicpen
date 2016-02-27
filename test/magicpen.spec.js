@@ -580,12 +580,8 @@ describe('magicpen', function () {
             }, 'to throw','The alt method is only supported on pen where the format has already been set');
         });
 
-        it('fails if the format of the pen is not set', function () {
-            expect(function () {
-                pen.alt({
-                    html: 'wat'
-                });
-            }, 'to throw','Output is not specified for format: ansi and no fallback method is given');
+        it('assumes a noop if the alt does not specify the specific output format or a fallback', function () {
+            expect(pen.alt({ html: 'wat' }).isEmpty(), 'to be true');
         });
 
         it('fails if the argument is not of the right type', function () {
