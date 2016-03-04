@@ -54,6 +54,12 @@ describe('magicpen', function () {
         });
     });
 
+    it('throws when attempting to define a style that clashes with a falsy property', function () {
+        expect(function () {
+            magicpen().addStyle('indentationLevel', function () {});
+        }, 'to throw', '"indentationLevel" style cannot be defined, it clashes with a built-in attribute');
+    });
+
     it('allows redefining a style if allowRedefinition is set to true', function () {
         var pen = magicpen();
         pen.addStyle('red', function (content) {
