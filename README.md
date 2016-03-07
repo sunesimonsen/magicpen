@@ -594,6 +594,15 @@ expect(magicpen().text('line 1').isMultiline(), 'to be false');
 expect(magicpen().text('line 1\nline 2').isMultiline(), 'to be true');
 ```
 
+### isAtStartOfLine()
+
+Returns `true` if the "cursor" is located at the start of a line.
+
+```js
+expect(magicpen().text('line 1\n').isAtStartOfLine(), 'to be true');
+expect(magicpen().text('line 1').isAtStartOfLine(), 'to be false');
+```
+
 ### use(plugin)
 
 MagicPen plugins are functions or objects that adhere to the following interface:

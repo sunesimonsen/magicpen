@@ -1737,4 +1737,18 @@ describe('magicpen', function () {
             expect(magicpen().block('text', 'line 1\nline 2').isMultiline(), 'to be true');
         });
     });
+
+    describe('isAtStartOfLine', function () {
+        it('should return true for an empty pen', function () {
+            expect(magicpen().isAtStartOfLine(), 'to be true');
+        });
+
+        it('should return true for a non-empty pen that ends with a newline', function () {
+            expect(magicpen().text('foo').nl().isAtStartOfLine(), 'to be true');
+        });
+
+        it('should return false for a non-empty pen that does not end with a newline', function () {
+            expect(magicpen().text('foo').isAtStartOfLine(), 'to be false');
+        });
+    });
 });
