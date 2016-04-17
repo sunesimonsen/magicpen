@@ -75,6 +75,18 @@ describe('magicpen', function () {
         }, 'to throw', 'PrependLinesWith only supports a pen with single line content');
     });
 
+    it('throw if you try to print a magicpen instance with a text style', function () {
+        expect(function () {
+            magicpen().text('Hello ').text(magicpen().text('world'));
+        }, 'to throw', "You can't print a magicpen instance with a text style");
+    });
+
+    it('throw if you try to print a magicpen instance with a derived text style', function () {
+        expect(function () {
+            magicpen().text('Hello ').red(magicpen().text('world'));
+        }, 'to throw', "You can't print a magicpen instance with a text style");
+    });
+
     describe('use', function () {
         var pen;
         beforeEach(function () {
