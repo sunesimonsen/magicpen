@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach*/
+/*global describe, it, beforeEach, afterEach*/
 var magicpen = require('..');
 var expect = require('unexpected');
 var sinon = require('sinon');
@@ -1060,6 +1060,22 @@ describe('magicpen', function () {
             pen.red('Hello').sp().green('world');
             expect(pen.removeFormatting().toString('ansi'), 'to equal',
                    'Hello world');
+        });
+
+        describe('when TERM=cygwin', function () {
+            var originalTerm = process.env.TERM;
+            beforeEach(function () {
+                process.env.TERM = 'cygwin';
+                pen = magicpen();
+            });
+            afterEach(function () {
+                process.env.TERM = originalTerm;
+            });
+
+            it('forces 16 color mode when cygwin is detected', function () {
+                pen.text('Hello world', '#bada55');
+                expect(pen.toString('ansi'), 'to equal', '\x1b[33mHello world\x1b[39m');
+            });
         });
     });
 
