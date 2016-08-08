@@ -26,6 +26,7 @@
     "istanbul": "0.3.17",
     "jshint": "*",
     "mocha": "1.20.1",
+    "proxyquire": "^1.7.10",
     "sinon": "1.9.1",
     "unexpected": "9.5.0",
     "unexpected-sinon": "6.4.2"
@@ -33,7 +34,7 @@
   "dependencies": {
     "ansi-styles": "2.0.0",
     "color-diff": "0.1.7",
-    "supports-color": "1.2.0"
+    "supports-color": "^3.1.2"
   },
   "license": "MIT"
 }

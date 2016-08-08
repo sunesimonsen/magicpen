@@ -1,5 +1,10 @@
 /*global describe, it, beforeEach*/
-var magicpen = require('..');
+var proxyquire = require('proxyquire');
+var magicpen = proxyquire('..', {
+    './AnsiSerializer': proxyquire('../lib/AnsiSerializer', {
+        'supports-color': { hasBasic: true, has256: true, has16m: true, level: 3 }
+    })
+});
 var expect = require('unexpected');
 var sinon = require('sinon');
 expect.use(require('unexpected-sinon'));
