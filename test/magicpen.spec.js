@@ -46,11 +46,17 @@ describe('magicpen', function () {
         return pen;
     }
 
-    it('throws when creating a custom style with a name that already exists', function () {
-        forEach(['red', 'write', 'addStyle'], function (name) {
+    it('throws when creating a custom style with a name that already exists as a built-in style', function () {
+        expect(function () {
+            magicpen().addStyle('red', function () {});
+         }, 'to throw', '"red" style is already defined, set 3rd arg (allowRedefinition) to true to define it anyway');
+    });
+
+    it('throws when creating a custom style that clashes with a built-in one', function () {
+        forEach(['write', 'addStyle'], function (name) {
             expect(function () {
                 magicpen().addStyle(name, function () {});
-            }, 'to throw', '"' + name + '" style is already defined, set 3rd arg (allowRedefinition) to true to define it anyway');
+            }, 'to throw', '"' + name + '" style cannot be defined, it clashes with a built-in attribute');
         });
     });
 
@@ -1749,6 +1755,64 @@ describe('magicpen', function () {
 
         it('should return false for a non-empty pen that does not end with a newline', function () {
             expect(magicpen().text('foo').isAtStartOfLine(), 'to be false');
+        });
+    });
+
+    // Unexpected uses this trick to prevent 'diff' and 'inline' styles from being added:
+    describe('when setting a property to false', function () {
+        it('prohibits definition of a style of that name', function () {
+            pen.foo = false;
+            expect(function () {
+                pen.addStyle('foo', function () {});
+            }, 'to throw', '"foo" style cannot be defined, it clashes with a built-in attribute');
+        });
+
+        it('prohibits definition of a style of that name on a clone', function () {
+            pen.foo = false;
+            expect(function () {
+                pen.clone().addStyle('foo', function () {});
+            }, 'to throw', '"foo" style cannot be defined, it clashes with a built-in attribute');
+        });
+    });
+
+    describe('when redefining styles in a clone', function () {
+        var clone;
+        beforeEach(function () {
+            pen.addStyle('someStyle', function () {
+                this.text('parent');
+            });
+            clone = pen.clone();
+        });
+
+        it('should allow redefining a style in a clone without requiring the allowRedefinition to be true', function () {
+            clone.addStyle('someStyle', function () {
+                this.text('clone');
+            });
+            expect(clone.someStyle().toString(), 'to equal', 'clone');
+        });
+
+        it('should not affect the parent', function () {
+            clone.addStyle('someStyle', function () {
+                this.text('clone');
+            });
+            expect(clone.someStyle().toString(), 'to equal', 'clone');
+            expect(pen.someStyle().toString(), 'to equal', 'parent');
+        });
+
+        it('should lazy-clone the styles object', function () {
+            expect(clone.styles, 'to be', pen.styles);
+            clone.addStyle('someStyle', function () {
+                this.text('clone');
+            });
+            expect(clone.styles, 'not to be', pen.styles);
+        });
+
+        it('should lazy-clone the _themes object', function () {
+            expect(clone._themes, 'to be', pen._themes);
+            expect(clone._themes.html, 'to be', pen._themes.html);
+            clone.installTheme({});
+            expect(clone._themes, 'not to be', pen._themes);
+            expect(clone._themes.html, 'not to be', pen._themes.html);
         });
     });
 });
