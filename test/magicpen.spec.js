@@ -1698,6 +1698,33 @@ describe('magicpen', function () {
                 }, 'to throw', 'Your theme contains a loop: bar -> baz -> qux -> bar');
             });
         });
+
+        it('should allow installing a theme for a serializer that is not built in', function () {
+            pen.installTheme('foo', {
+                methodDefinition: '#55ab40'
+            });
+            expect(pen.theme('foo'), 'to equal', {
+                styles: { methodDefinition: '#55ab40' }
+            });
+        });
+
+        it('should allow overriding a theme for a serializer that is not built in', function () {
+            pen.installTheme('foo', {
+                methodDefinition: '#55ab40'
+            });
+            var clone = pen.clone();
+            expect(clone._themes.foo, 'to be', pen._themes.foo);
+            clone.installTheme('foo', {
+                methodDefinition: '#ff0000'
+            });
+            expect(clone._themes.foo, 'not to be', pen._themes.foo);
+            expect(pen.theme('foo'), 'to equal', {
+                styles: { methodDefinition: '#55ab40' }
+            });
+            expect(clone.theme('foo'), 'to equal', {
+                styles: { methodDefinition: '#ff0000' }
+            });
+        });
     });
 
     describe('isBlock', function () {
