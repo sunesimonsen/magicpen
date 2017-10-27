@@ -84,7 +84,7 @@ The above snippet create a new `magicpen` and writes _Hello_ in red,
 space and _world!_ in green and prints the formatted output to the
 console. This will produce the following output:
 
-![Hello world!](./images/Hello world - ansi.png)
+![Hello world!](./images/Hello_world_ansi.png)
 
 Let's try to create the same output but format it as html:
 
@@ -96,7 +96,7 @@ document.getElementById('output').innerHTML = pen.toString('html');
 
 You will get the following output it the browser:
 
-![Hello world!](./images/Hello world - html.png)
+![Hello world!](./images/Hello_world_html.png)
 
 ## API
 
@@ -153,7 +153,7 @@ pen.text('Hello', 'red')
 console.log(pen.toString('ansi'));
 ```
 
-![Hello colorful world](./images/Hello colorful world.png)
+![Hello colorful world](./images/Hello_colorful_world.png)
 
 Notice that special characters might get escaped by this method. The
 example below shows how special html characters is escaped by the html
@@ -172,9 +172,9 @@ When you use hex colors in the terminal the colors will be
 approximated to the palette in use. The below images shows a limited
 color sample in html and in a terminal supporting 256 colors.
 
-![Color sample html](./images/Color sample - html.png)
+![Color sample html](./images/Color_sample_html.png)
 
-![Color sample ansi-256](./images/Color sample - ansi-256.png)
+![Color sample ansi-256](./images/Color_sample_ansi-256.png)
 
 ### toString([format])
 
@@ -460,7 +460,7 @@ console.log(pen.toString('ansi'));
 console.log(pen.removeFormatting().toString('ansi'));
 ```
 
-![Remove text formatting](./images/Hello world - removeFormatting.png)
+![Remove text formatting](./images/Hello_world_removeFormatting.png)
 
 ### alt(...)
 
