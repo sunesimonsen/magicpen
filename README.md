@@ -1,6 +1,6 @@
 # MagicPen
 
-![This sucker is spraying rainbows and unicorns right and left](images/magic-pen-6-colours.jpg "This sucker is spraying rainbows and unicorns right and left")
+![This sucker is spraying rainbows and unicorns right and left](./images/magic-pen-6-colours.jpg "This sucker is spraying rainbows and unicorns right and left")
 
 Create composable extensible styled text in both consoles and
 browsers.
@@ -84,7 +84,7 @@ The above snippet create a new `magicpen` and writes _Hello_ in red,
 space and _world!_ in green and prints the formatted output to the
 console. This will produce the following output:
 
-![Hello world!](images/Hello world - ansi.png)
+![Hello world!](./images/Hello world - ansi.png)
 
 Let's try to create the same output but format it as html:
 
@@ -96,7 +96,7 @@ document.getElementById('output').innerHTML = pen.toString('html');
 
 You will get the following output it the browser:
 
-![Hello world!](images/Hello world - html.png)
+![Hello world!](./images/Hello world - html.png)
 
 ## API
 
@@ -130,15 +130,15 @@ Append the given content to the output with the styles specified in the style st
 
 *Text properties*:
 
-![Text properties: bold, dim, italic, underline, inverse, hidden, strikeThrough.](images/text_properties.png)
+![Text properties: bold, dim, italic, underline, inverse, hidden, strikeThrough.](./images/text_properties.png)
 
 *Foreground colors*:
 
-![Foreground colors: #bada55, #eee, black, red, green, yellow, blue, magenta, cyan, white, gray.](images/text_colors.png)
+![Foreground colors: #bada55, #eee, black, red, green, yellow, blue, magenta, cyan, white, gray.](./images/text_colors.png)
 
 *Background colors*:
 
-![Background colors: bg#bada55, bg#eee, bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite.](images/background_colors.png)
+![Background colors: bg#bada55, bg#eee, bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite.](./images/background_colors.png)
 
 #### Example:
 
@@ -153,7 +153,7 @@ pen.text('Hello', 'red')
 console.log(pen.toString('ansi'));
 ```
 
-![Hello colorful world](images/Hello colorful world.png)
+![Hello colorful world](./images/Hello colorful world.png)
 
 Notice that special characters might get escaped by this method. The
 example below shows how special html characters is escaped by the html
@@ -172,9 +172,9 @@ When you use hex colors in the terminal the colors will be
 approximated to the palette in use. The below images shows a limited
 color sample in html and in a terminal supporting 256 colors.
 
-![Color sample html](images/Color sample - html.png)
+![Color sample html](./images/Color sample - html.png)
 
-![Color sample ansi-256](images/Color sample - ansi-256.png)
+![Color sample ansi-256](./images/Color sample - ansi-256.png)
 
 ### toString([format])
 
@@ -442,7 +442,7 @@ pen.rainbow('The unicorns are flying low today').nl();
 console.log(pen.toString('ansi'));
 ```
 
-![The unicors are flying low today](images/rainbows.png)
+![The unicors are flying low today](./images/rainbows.png)
 
 As you can see in the example above, a custom style can produce any
 kind of output using an instance of a magicpen.
@@ -460,7 +460,7 @@ console.log(pen.toString('ansi'));
 console.log(pen.removeFormatting().toString('ansi'));
 ```
 
-![Remove text formatting](images/Hello world - removeFormatting.png)
+![Remove text formatting](./images/Hello world - removeFormatting.png)
 
 ### alt(...)
 
@@ -688,12 +688,12 @@ pen.keyword('function').sp().functionName('fib').text(' {').nl()
 
 This will produce the following ansi output:
 
-![Fibonacci ansi output](images/fib-theme-ansi.png "Fibonacci ansi output")
+![Fibonacci ansi output](./images/fib-theme-ansi.png "Fibonacci ansi output")
 
 But these colors looks pretty lame on white background, which we
 usually use when outputting to the html format:
 
-![Fibonacci lame html output](images/fib-theme-lame-html.png "Fibonacci lame html output")
+![Fibonacci lame html output](./images/fib-theme-lame-html.png "Fibonacci lame html output")
 
 Let's tweak the html colors without touching the ansi colors:
 
@@ -705,7 +705,7 @@ pen.installTheme('html', { styles: {
 }});
 ```
 
-![Fibonacci html output](images/fib-theme-html.png "Fibonacci html output")
+![Fibonacci html output](./images/fib-theme-html.png "Fibonacci html output")
 
 You can even extend the current theme:
 
@@ -715,7 +715,7 @@ pen.installTheme('html', { styles: {
 }});
 ```
 
-![Fibonacci extended html output](images/fib-theme-extended-html.png "Fibonacci extended html output")
+![Fibonacci extended html output](./images/fib-theme-extended-html.png "Fibonacci extended html output")
 
 The theme is applied at serialization time, so you can extend the theme and
 serialize again without touching the content of the pen.
