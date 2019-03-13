@@ -33,7 +33,7 @@
   "dependencies": {
     "ansi-styles": "2.0.0",
     "color-diff": "0.1.7",
-    "supports-color": "1.2.0"
+    "supports-color": "6.1.0"
   },
   "license": "MIT"
 }
