@@ -20,8 +20,6 @@
   },
   "author": "Sune Simonsen",
   "devDependencies": {
-    "browserify": "8.1.0",
-    "bundle-collapser": "1.1.1",
     "coveralls": "^3.0.9",
     "del": "0.1.1",
     "eslint": "^6.0.0",
