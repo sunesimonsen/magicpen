@@ -1330,12 +1330,7 @@ describe('magicpen', function () {
                 if (obj && typeof obj === 'object') {
                     this.text('{').nl()
                         .indentLines();
-                    var keys = [];
-                    for (var prop in obj) {
-                        if (obj.hasOwnProperty(prop)) {
-                            keys.push(prop);
-                        }
-                    }
+                    var keys = Object.keys(obj);
                     for (var i = 0; i < keys.length; i += 1) {
                         var key = keys[i];
                         this.i().cyan(key).text(': ').object(obj[key]);
