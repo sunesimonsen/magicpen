@@ -6,22 +6,22 @@ env:
 node_js:
   - "6"
   - "7"
-  - "8.4.0"
+  - "8.10.0"
   - "9"
   - "10"
 
 matrix:
   include:
     - name: Lint
-      node_js: '8.4.0'
+      node_js: '8.10.0'
       env:
         - TARGET=lint
     - name: Coverage
-      node_js: '8.4.0'
+      node_js: '8.10.0'
       env:
         - TARGET=coverage
     - name: Chrome headless
-      node_js: '8.4.0'
+      node_js: '8.10.0'
       env:
         - TARGET=test-browser
         - BROWSER=ChromeHeadless
