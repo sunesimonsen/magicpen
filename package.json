@@ -14,14 +14,13 @@
     "coverage": "nyc --reporter=lcov --reporter=text npm test",
     "lint": "eslint .",
     "test": "npm run lint && mocha -R spec",
-    "travis": "npm test && npm run coverage && (<coverage/lcov.info coveralls || true)",
     "prepublish": "(echo '/*!' && <LICENSE sed -e's/^/ * /' | sed -e's/\\s+$//' && echo ' */' && browserify -p bundle-collapser/plugin -e lib/MagicPen -s weknowhow.MagicPen) > magicpen.js"
   },
   "author": "Sune Simonsen",
   "devDependencies": {
     "browserify": "8.1.0",
     "bundle-collapser": "1.1.1",
-    "coveralls": "2.11.1",
+    "coveralls": "^3.0.9",
     "del": "0.1.1",
     "eslint": "^6.0.0",
     "eslint-config-prettier": "^6.0.0",

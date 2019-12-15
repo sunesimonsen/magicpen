@@ -6,4 +6,5 @@ node_js:
   - "9"
   - "10"
 
-script: "npm run-script travis"
+script: "npm run coverage"
+after_success: '<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js'
