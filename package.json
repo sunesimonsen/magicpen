@@ -14,7 +14,7 @@
     "coverage": "nyc --reporter=lcov --reporter=text npm test",
     "lint": "eslint .",
     "test": "npm run lint && npm run test-node && npm run test-browser",
-    "test-browser": "npm run prepublish && true",
+    "test-browser": "npm run prepublish && PSEUDO_BROWSER=yes mocha",
     "test-node": "mocha",
     "prepublish": "rollup -c"
   },

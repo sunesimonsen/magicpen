@@ -1,5 +1,6 @@
 /*global describe, it, beforeEach*/
-var magicpen = require('..');
+var magicpen = process.env.PSEUDO_BROWSER ? require('..') : require('../lib/MagicPen');
+
 var expect = require('unexpected');
 var sinon = require('sinon');
 expect.use(require('unexpected-sinon'));

@@ -20,11 +20,10 @@ matrix:
       node_js: '8.10.0'
       env:
         - TARGET=coverage
-    - name: Chrome headless
+    - name: Pseudo Browser
       node_js: '8.10.0'
       env:
         - TARGET=test-browser
-        - BROWSER=ChromeHeadless
 
 script: "npm run $TARGET"
 after_success: '<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js'
