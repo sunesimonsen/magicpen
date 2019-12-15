@@ -1,5 +1,8 @@
-/*global describe, it, beforeEach, expect:false, sinon: false, weknowhow:false*/
-var magicpen = typeof weknowhow !== 'undefined' ? weknowhow.MagicPen : require('../lib/MagicPen');
+/*global describe, it, beforeEach*/
+var magicpen = require('..');
+var expect = require('unexpected');
+var sinon = require('sinon');
+expect.use(require('unexpected-sinon'));
 
 describe('magicpen', function () {
     var pen;
