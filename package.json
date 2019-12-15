@@ -11,9 +11,11 @@
     "url": "https://github.com/sunesimonsen/magicpen.git"
   },
   "scripts": {
-    "coverage": "nyc --reporter=lcov --reporter=text npm test",
+    "coverage": "nyc --reporter=lcov --reporter=text npm run test-node",
     "lint": "eslint .",
-    "test": "npm run lint && mocha -R spec",
+    "test": "npm run lint && npm run test-node && npm run test-browser",
+    "test-browser": "npm run prepublish && karma start --single-run --browsers ${BROWSER:-ChromeHeadless}",
+    "test-node": "mocha",
     "prepublish": "(echo '/*!' && <LICENSE sed -e's/^/ * /' | sed -e's/\\s+$//' && echo ' */' && browserify -p bundle-collapser/plugin -e lib/MagicPen -s weknowhow.MagicPen) > magicpen.js"
   },
   "author": "Sune Simonsen",
@@ -30,6 +32,9 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
+    "karma": "^4.1.0",
+    "karma-chrome-launcher": "^3.0.0",
+    "karma-mocha": "^1.3.0",
     "mocha": "^6.0.2",
     "nyc": "^14.1.1",
     "sinon": "1.9.1",
