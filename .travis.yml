@@ -1,9 +1,29 @@
 language: node_js
+
+env:
+  - TARGET=test-node
+
 node_js:
   - "6"
   - "7"
-  - "8.4.0"
+  - "8.10.0"
   - "9"
   - "10"
 
-script: "npm run-script travis"
+matrix:
+  include:
+    - name: Lint
+      node_js: '8.10.0'
+      env:
+        - TARGET=lint
+    - name: Coverage
+      node_js: '8.10.0'
+      env:
+        - TARGET=coverage
+    - name: Pseudo Browser
+      node_js: '8.10.0'
+      env:
+        - TARGET=test-browser
+
+script: "npm run $TARGET"
+after_success: '<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js'

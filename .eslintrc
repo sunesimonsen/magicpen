@@ -1,0 +1,16 @@
+{
+    "extends": ["standard", "prettier", "prettier/standard"],
+    "plugins": ["import", "mocha"],
+    "env": {
+        "mocha": true
+    },
+    "rules": {
+        "camelcase": "off",
+        "dot-notation": "off",
+        "no-useless-escape": "off",
+        "spaced-comment": "off",
+        "mocha/no-exclusive-tests": "error",
+        "mocha/no-nested-tests": "error",
+        "mocha/no-identical-title": "error"
+    }
+}

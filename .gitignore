@@ -1,3 +1,6 @@
 /node_modules/
+/.nyc_output/
 /coverage/
 magicpen.js
+magicpen.esm.js
+magicpen.esm.js.map
