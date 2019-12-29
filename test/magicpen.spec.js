@@ -590,7 +590,7 @@ describe('magicpen', function () {
                 magicpen().alt({
                     fallback: 'wat'
                 });
-            }, 'to throw','The alt method is only supported on pen where the format has already been set');
+            }, 'to throw', 'The alt method is only supported on a pen where the format has already been set');
         });
 
         it('assumes a noop if the alt does not specify the specific output format or a fallback', function () {
@@ -690,6 +690,12 @@ describe('magicpen', function () {
                 }
             });
             expect(pen.toString(), 'to equal', '\x1B[31mfoo\x1B[39m\x1B[31mbar\x1B[39m');
+        });
+
+        it('custom content fails if the format of the pen is not set', function () {
+            expect(function () {
+                magicpen().raw('wat');
+            }, 'to throw', 'The raw method is only supported on a pen where the format has already been set');
         });
 
         it('custom content for modes can write to a magicpen bound to this', function () {
