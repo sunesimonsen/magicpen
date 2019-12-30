@@ -1844,4 +1844,17 @@ describe('magicpen', function () {
             expect(clone._themes.html, 'not to be', pen._themes.html);
         });
     });
+
+    it('should use the active themes from the original pen/clone when appending to another pen', function () {
+        var clone = pen.clone();
+        clone.installTheme({
+            styles: {
+                keyword: '#eeffac'
+            }
+        });
+        clone.keyword('foo');
+        expect(clone.toString('html'), 'to equal', '<div style="font-family: monospace; white-space: nowrap"><div><span style="color: #eeffac">foo</span></div></div>');
+        pen.append(clone);
+        expect(pen.toString('html'), 'to equal', '<div style="font-family: monospace; white-space: nowrap"><div><span style="color: #eeffac">foo</span></div></div>');
+    });
 });
